@@ -19,7 +19,7 @@ public class ProgressBar {
         frame.add(bar,BorderLayout.CENTER);
         frame.setSize(300,60);
         frame.setLocation(500,400);
-        bar.setValue(20);
+        bar.setValue((done*100)/total);
         frame.setResizable(false);
         bar.setStringPainted(true);
         bar.setForeground(Color.green);

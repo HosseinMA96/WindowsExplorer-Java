@@ -5,11 +5,13 @@ import javafx.scene.layout.Pane;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.util.Scanner;
 
 
 public class MainFrame extends JFrame {
 
-    JFrame frame =new JFrame("");
+    JFrame frame =new JFrame("JFileManager");
+
 
 
     //Adress and Search Textfiled at top
@@ -77,6 +79,8 @@ public class MainFrame extends JFrame {
         //Set frame's layout
         frame.setLayout(new BorderLayout());
 
+        //set ICon
+        frame.setIconImage(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\mainIcon.png").getImage());
 
         //Two panels for upper Panel
         JPanel upperPanel =new JPanel(new BorderLayout());
@@ -262,7 +266,17 @@ public class MainFrame extends JFrame {
         new MainFrame();
         new AboutMe();
         new Help();
-        new ProgressBar(20,100);
+        new ProgressBar(80,100);
+        new Settings();
+
+        new OptionPane("File","C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\upArrow.png",100000000,"6 Match 2018",0,0);
+        new OptionPane("Folder","C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\upArrow.png",100000000,"6 Match 2018",2,3);
+
+        JPopupMenu popupMenu1= new PopMenu(false);
+        JPopupMenu popupMenu2 =new PopMenu(true);
+
+
+      //  popupMenu2.show(null,200,300);
     }
 
 }
