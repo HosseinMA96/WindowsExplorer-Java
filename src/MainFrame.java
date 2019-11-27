@@ -166,15 +166,23 @@ public class MainFrame extends JFrame {
 
         //Initialize scroll panes so that later we can scroll
         leftScrollPane=new JScrollPane(leftTree);
-        rightScrollPane=new JScrollPane(rightSidePanel);
+       rightScrollPane=new JScrollPane(rightSidePanel);
+
+        rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
 
         //Make a split pane and put it in the frame's Center
         splitPane=new JSplitPane(SwingConstants.VERTICAL,leftScrollPane,rightScrollPane);
         frame.add(splitPane,BorderLayout.CENTER);
 
+        setGridDisplay();
+       // setListDisplay();
+       // rightScrollPane.setVerticalScrollBar();
+
         
       //  splitPane.setOrientation(SwingConstants.VERTICAL);
+
 
 
 
@@ -186,10 +194,75 @@ public class MainFrame extends JFrame {
 
     }
 
-    void Debu(){}
+    void setGridDisplay()
+    {
+        rightSidePanel.setLayout(new GridLayout(4,4));
+
+        for (int i=0;i<300;i++)
+        {
+            if(i%3==0)
+                rightSidePanel.add(new GridFileIcon("file"+i));
+
+            else
+                rightSidePanel.add(new GridFolderIcon("folder"+i));
+
+        }
+
+    }
+
+    void setListDisplay()
+    {
+        rightSidePanel.setLayout(new BorderLayout());
+        JPanel northPanel=new JPanel(new GridLayout(1,4));
+
+        JLabel name=new JLabel("Name");
+        JLabel dateModified=new JLabel("Date modified");
+        JLabel type=new JLabel("Type");
+        JLabel objectSize=new JLabel("Size");
+
+        northPanel.add(name);
+        northPanel.add(dateModified);
+        northPanel.add(type);
+        northPanel.add(objectSize);
+
+        rightSidePanel.add(northPanel,BorderLayout.NORTH);
+
+
+        JPanel objectsListPanel=new JPanel(new GridLayout(6,4));
+
+        for (int i=0;i<10;i++)
+        {
+            if(i%2==0)
+            objectsListPanel.add(new ListFileIcon());
+
+            else
+                objectsListPanel.add(new ListFolderIcon());
+
+
+            objectsListPanel.add(new JLabel(2000+i+""));
+
+            if(i%2==0)
+                objectsListPanel.add(new JLabel("File"));
+
+            else
+            objectsListPanel.add(new JLabel("Folder"));
+
+
+            objectsListPanel.add(new JLabel(i*10+""));
+
+
+        }
+
+        rightSidePanel.add(objectsListPanel,BorderLayout.CENTER);
+
+
+    }
 
     public static void main(String[] args) {
         new MainFrame();
+        new AboutMe();
+        new Help();
+        new ProgressBar(20,100);
     }
 
 }
