@@ -2,16 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 
 abstract public class GridIcon extends JButton {
-    public GridIcon(String text)
+
+
+    public GridIcon(String text,Icon icon)
     {
-        this();
+        this.setIcon(icon);
         this.setText(text);
-
-    }
-
-    public GridIcon()
-    {
-
         this.setFocusable(true);
         this.setContentAreaFilled(true);
         this.setOpaque(false);

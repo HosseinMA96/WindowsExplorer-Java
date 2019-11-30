@@ -4,10 +4,14 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -74,7 +78,7 @@ public class MainFrame extends JFrame {
     JScrollPane rightScrollPane = null;
 
     //Starting pass
-    String currentAddress = "C:\\Users\\erfan\\Desktop";
+    String currentAddress = "C:\\\\Users\\\\erfan\\\\Desktop";
 
     //current file Holder
     File[] allFiles;
@@ -199,7 +203,8 @@ public class MainFrame extends JFrame {
         //   leftTree = new JTree(root, true);
         makeLeftTree();
 
-        setGridDisplay();
+    //     setGridDisplay();
+        setListDisplay();
 
         //Initialize scroll panes so that later we can scroll
         leftScrollPane = new JScrollPane(leftTree);
@@ -215,7 +220,7 @@ public class MainFrame extends JFrame {
 
 
 
-        // setListDisplay();
+
         // rightScrollPane.setVerticalScrollBar();
 
 
@@ -232,70 +237,46 @@ public class MainFrame extends JFrame {
     void setGridDisplay() {
         upgradeFiles();
 
-        rightSidePanel = new JPanel(new GridLayout(40, 10));
+        rightSidePanel = new JPanel(new GridLayout(40,6,2,2));
         gridIconArrayList=new ArrayList<>();
 
-       for (File f :allFiles)
+        for (File f :allFiles)
         {
             if(f.isFile()) {
 
-                GridFileIcon fileIcon=new GridFileIcon(f.getName());
-                fileIcon.setPreferredSize(new Dimension(10,10));
-                fileIcon.setMaximumSize(new Dimension(20,20));
+                GridFileIcon fileIcon=new GridFileIcon(f.getName(),FileSystemView.getFileSystemView().getSystemIcon( f ));
+                fileIcon.setPreferredSize(new Dimension(5,5));
                 gridIconArrayList.add(fileIcon);
                 rightSidePanel.add(fileIcon);
             }
             else {
-                gridIconArrayList.add(new GridFolderIcon(f.getName()));
+                gridIconArrayList.add(new GridFolderIcon(f.getName(),FileSystemView.getFileSystemView().getSystemIcon( f )));
                 rightSidePanel.add(gridIconArrayList.get(gridIconArrayList.size()-1));
             }
 
         }
 
 
-//        rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-      //  rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+//        rightScrollPane.setVertiscalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        //  rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
     }
 
     void setListDisplay() {
-
-        ImageIcon fileIcon = new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\fileIcon.png");
-        ImageIcon folderIcon = new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\folderIcon.png");
-
-        String[][] data = {
-                {"Folder 1", "2019", "Folder", "200"},
-                {"Folder 2", "2019", "Folder", "210"},
-                {"Folder 3", "2019", "Folder", "220"},
-                {"Folder 4", "2019", "Folder", "230"},
-                {"Folder 5", "2019", "Folder", "240"},
-                {"File 1", "2019", "File", "200"},
-                {"Folder 1", "2019", "File", "200"},
-                {"Folder 1", "2019", "File", "200"},
-                {"Folder 1", "2019", "File", "200"},
-                {"Folder 1", "2019", "File", "200"},
-                {"Folder 1", "2019", "File", "200"},
-                {"Folder 6", "2019", "Folder", "200"},
-                {"Folder 7", "2019", "Folder", "200"},
+        FileTableModel model=new FileTableModel(new File(currentAddress));
+        JTable  table =new JTable(model);
 
 
-        };
+        rightSidePanel=new JPanel(new BorderLayout());
 
-        // Column Names
-        String[] columnNames = {"Name", "Date modified", "Type", "Size"};
-
-        // Initializing the JTable
-
-
-        JTable j = new JTable(data, columnNames);
-        // adding it to JScrollPane
-        JScrollPane sp = new JScrollPane(j);
-        j.setSize(rightSidePanel.getSize());
-
-        rightSidePanel.add(sp);
+        rightScrollPane=new JScrollPane(table);
+        rightSidePanel.add(rightScrollPane,BorderLayout.CENTER);
 
 
     }
+
+
+
 
     void makeLeftTree() {
         //Temporal nodes for Jtree
@@ -312,16 +293,28 @@ public class MainFrame extends JFrame {
     }
 
     void upgradeFiles() {
-        File f = new File(currentAddress);
-        //    System.out.println(files.exists());
+        try
+        {
+            File f = new File(currentAddress);
+            //    System.out.println(files.exists());
 
-        allFiles = f.listFiles();
+            if(f.isDirectory())
+                allFiles = f.listFiles();
+
+            else
+                throw new Exception("Address is not a directory");
 //
-//        for (int i = 0; i < allFiles.length; i++) {
+        }
+
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Starting address was set to desktop");
+            currentAddress="C:\\Users\\erfan\\Desktop";
+            upgradeFiles();
+        }
+
 //
-//            System.out.println(allFiles[i].getName());
-//
-//        }
     }
 
     public static void main(String[] args) throws Exception {
@@ -339,6 +332,58 @@ public class MainFrame extends JFrame {
 
 
         //  popupMenu2.show(null,200,300);
+    }
+
+}
+
+class FileTableModel extends AbstractTableModel{
+     File dir;
+    protected String[] filenames;
+
+    protected String [] columnNames = new String[] {"icon","name","size","last modified","type"};
+
+    protected  Class[] columnClassses= new Class[]{
+            String.class,Long.class, Date.class,Icon.class
+    };
+
+    public  int getColumnCount(){return 5;};
+    public int getRowCount(){return filenames.length;};
+
+    public FileTableModel(File dir){
+        this.dir=dir;
+        this.filenames=dir.list();
+    }
+
+    public String getColumnName(int col){
+        return columnNames[col];
+    }
+    public  Class getColumnsClass(int col){return columnClassses[col];}
+    //FileSystemView.getFileSystemView().getSystemIcon( File );
+    public Object getValueAt(int row,int col){
+        File f=new File(dir,filenames[row]);
+    //    {"icon","name","size","last modified","type"};
+        switch (col){
+            case 0:
+               // return FileSystemView.getFileSystemView().getSystemIcon(f);
+                return new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\fileIcon.png");
+            case 1:
+                return filenames[row];
+
+            case 2:
+                return f.length();
+
+
+            case 4:
+                if (f.isFile())
+                    return"File";
+
+                return "Folder";
+
+            case 3:return new Date(f.lastModified());
+
+            default:
+                return null;
+        }
     }
 
 }

@@ -1,16 +1,10 @@
 import javax.swing.*;
 
 public class GridFolderIcon extends GridIcon {
-    public GridFolderIcon(String text)
+    public GridFolderIcon(String text,Icon icon)
     {
-       this();
-       this.setText(text);
-    }
+        super(text,icon);
 
-    public GridFolderIcon()
-    {
-        super();
-        this.setIcon(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\folderIcon.png"));
 
     }
 
