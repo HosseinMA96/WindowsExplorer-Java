@@ -1,3 +1,4 @@
+import com.sun.deploy.trace.FileTraceListener;
 import com.sun.xml.internal.messaging.saaj.soap.ver1_1.BodyElement1_1Impl;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
@@ -5,12 +6,15 @@ import javafx.scene.layout.Pane;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
 public class MainFrame extends JFrame {
 
     JFrame frame =new JFrame("JFileManager");
+
+
 
 
 
@@ -74,8 +78,38 @@ public class MainFrame extends JFrame {
 
 
 
+
+
     public MainFrame()
     {
+        //Handle the tray
+        SystemTray tray = SystemTray.getSystemTray();
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Image image = toolkit.getImage("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\settingIcon.png");
+        PopupMenu menu = new PopupMenu();
+        MenuItem messageItem = new MenuItem("Show Message");
+        menu.add(messageItem);
+
+        MenuItem closeItem = new MenuItem("Close");
+        menu.add(closeItem);
+        TrayIcon icon = new TrayIcon(image, "SystemTray Demo", menu);
+        icon.setImageAutoSize(true);
+
+
+
+        icon.setImageAutoSize(true);
+
+        try{
+            tray.add(icon);
+        }
+
+        catch (Exception e)
+        {
+            System.err.println("TrayIcon could not be added.");
+        }
+
+
+
         //Set frame's layout
         frame.setLayout(new BorderLayout());
 
@@ -170,7 +204,7 @@ public class MainFrame extends JFrame {
 
         //Initialize scroll panes so that later we can scroll
         leftScrollPane=new JScrollPane(leftTree);
-       rightScrollPane=new JScrollPane(rightSidePanel);
+        rightScrollPane=new JScrollPane(rightSidePanel);
 
         rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -180,12 +214,12 @@ public class MainFrame extends JFrame {
         splitPane=new JSplitPane(SwingConstants.VERTICAL,leftScrollPane,rightScrollPane);
         frame.add(splitPane,BorderLayout.CENTER);
 
-        setGridDisplay();
-       // setListDisplay();
-       // rightScrollPane.setVerticalScrollBar();
+         setGridDisplay();
+      //  setListDisplay();
+        // rightScrollPane.setVerticalScrollBar();
 
-        
-      //  splitPane.setOrientation(SwingConstants.VERTICAL);
+
+        //  splitPane.setOrientation(SwingConstants.VERTICAL);
 
 
 
@@ -216,67 +250,63 @@ public class MainFrame extends JFrame {
 
     void setListDisplay()
     {
-        rightSidePanel.setLayout(new BorderLayout());
-        JPanel northPanel=new JPanel(new GridLayout(1,4));
 
-        JLabel name=new JLabel("Name");
-        JLabel dateModified=new JLabel("Date modified");
-        JLabel type=new JLabel("Type");
-        JLabel objectSize=new JLabel("Size");
+        ImageIcon fileIcon=new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\fileIcon.png");
+        ImageIcon folderIcon=new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\folderIcon.png");
 
-        northPanel.add(name);
-        northPanel.add(dateModified);
-        northPanel.add(type);
-        northPanel.add(objectSize);
-
-        rightSidePanel.add(northPanel,BorderLayout.NORTH);
-
-
-        JPanel objectsListPanel=new JPanel(new GridLayout(6,4));
-
-        for (int i=0;i<10;i++)
-        {
-            if(i%2==0)
-            objectsListPanel.add(new ListFileIcon());
-
-            else
-                objectsListPanel.add(new ListFolderIcon());
+       String[][] data = {
+               { "Folder 1", "2019", "Folder","200" },
+               { "Folder 2", "2019", "Folder","210" },
+               { "Folder 3", "2019", "Folder","220" },
+               { "Folder 4", "2019", "Folder","230" },
+               { "Folder 5", "2019", "Folder","240" },
+               { "File 1", "2019", "File","200" },
+               { "Folder 1", "2019", "File","200" },
+               { "Folder 1", "2019", "File","200" },
+               { "Folder 1", "2019", "File","200" },
+               { "Folder 1", "2019", "File","200" },
+               { "Folder 1", "2019", "File","200" },
+               { "Folder 6", "2019", "Folder","200" },
+               { "Folder 7", "2019", "Folder","200" },
 
 
-            objectsListPanel.add(new JLabel(2000+i+""));
-
-            if(i%2==0)
-                objectsListPanel.add(new JLabel("File"));
-
-            else
-            objectsListPanel.add(new JLabel("Folder"));
 
 
-            objectsListPanel.add(new JLabel(i*10+""));
+        };
+
+        // Column Names
+        String[] columnNames = { "Name", "Date modified", "Type","Size" };
+
+        // Initializing the JTable
 
 
-        }
+        JTable j = new JTable(data, columnNames);
+        // adding it to JScrollPane
+        JScrollPane sp = new JScrollPane(j);
+        j.setSize(rightSidePanel.getSize());
 
-        rightSidePanel.add(objectsListPanel,BorderLayout.CENTER);
+        rightSidePanel.add(sp);
 
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         new MainFrame();
-        new AboutMe();
-        new Help();
-        new ProgressBar(80,100);
-        new Settings();
+        //  new AboutMe();
+        //  new Help();
+        //     new ProgressBar(80,100);
+        //      new Settings();
 
-        new OptionPane("File","C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\upArrow.png",100000000,"6 Match 2018",0,0);
-        new OptionPane("Folder","C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\upArrow.png",100000000,"6 Match 2018",2,3);
+        //    new OptionPane("File","C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\upArrow.png",100000000,"6 Match 2018",0,0);
+        //    new OptionPane("Folder","C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\upArrow.png",100000000,"6 Match 2018",2,3);
 
-        JPopupMenu popupMenu1= new PopMenu(false);
-        JPopupMenu popupMenu2 =new PopMenu(true);
+        //    JPopupMenu popupMenu1= new PopMenu(false);
+        //  JPopupMenu popupMenu2 =new PopMenu(true);
 
 
-      //  popupMenu2.show(null,200,300);
+
+
+        //  popupMenu2.show(null,200,300);
     }
 
 }
