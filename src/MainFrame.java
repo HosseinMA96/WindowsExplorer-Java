@@ -6,44 +6,43 @@ import javafx.scene.layout.Pane;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Scanner;
 
 
 public class MainFrame extends JFrame {
 
-    JFrame frame =new JFrame("JFileManager");
-
-
-
+    JFrame frame = new JFrame("JFileManager");
 
 
     //Adress and Search Textfiled at top
-    JTextField addressTextField=new JTextField("Address",20);
-    JTextField searchTextField=new JTextField("Search",20);
+    JTextField addressTextField = new JTextField("Address", 20);
+    JTextField searchTextField = new JTextField("Search", 20);
 
     //Three arrows
-    JButton uppArrow=new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\upArrow.png"));
-    JButton leftArrow =new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\leftArrow.png"));
-    JButton rightArrow=new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\rightArrow.png"));
+    JButton uppArrow = new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\upArrow.png"));
+    JButton leftArrow = new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\leftArrow.png"));
+    JButton rightArrow = new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\rightArrow.png"));
 
     //Two View buttons (Grid and table) located on lower right part of the frame
-    JButton gridDisplay=new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\gridDisplay.png"));
-    JButton tableDisplay =new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\tableDisplay.png"));
+    JButton gridDisplay = new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\gridDisplay.png"));
+    JButton tableDisplay = new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\tableDisplay.png"));
 
     //Upper menu bar
-    JMenuBar upperMenuBar=new JMenuBar();
+    JMenuBar upperMenuBar = new JMenuBar();
 
     //Upper Menubar Items
-    JMenu file=new JMenu("File");
-    JMenu edit=new JMenu("Edit");
-    JMenu help=new JMenu("Help");
+    JMenu file = new JMenu("File");
+    JMenu edit = new JMenu("Edit");
+    JMenu help = new JMenu("Help");
 
     //File Menu items
     JMenuItem file_NewFile = new JMenuItem("New File");
-    JMenuItem  file_NewFolder = new JMenuItem("New Folder");
-    JMenuItem  file_Delete = new JMenuItem("Delete");
-    JMenuItem file_SetCurrentForSync= new JMenuItem("Set as Sync Path");
+    JMenuItem file_NewFolder = new JMenuItem("New Folder");
+    JMenuItem file_Delete = new JMenuItem("Delete");
+    JMenuItem file_SetCurrentForSync = new JMenuItem("Set as Sync Path");
 
     //Edit Menu Items
     JMenuItem edit_Rename = new JMenuItem("Rename ");
@@ -55,33 +54,36 @@ public class MainFrame extends JFrame {
     //Help Menu Items
     JMenuItem help_AboutMe = new JMenuItem("About me ");
     JMenuItem help_Properties = new JMenuItem("Properties");
-    JMenuItem  help_Help= new JMenuItem("Help");
+    JMenuItem help_Help = new JMenuItem("Help");
 
     //Number of Selected labels
-    JLabel numberOfSelectedLabel=new JLabel("Selecteds");
+    JLabel numberOfSelectedLabel = new JLabel("Selecteds");
 
 
     //Split Pane
-    JSplitPane splitPane=null;
+    JSplitPane splitPane = null;
 
     //Jtree for left side hierarchy
-    JTree leftTree=null;
+    JTree leftTree = null;
 
     //Right Side panel for folder and file display
-    JPanel rightSidePanel=new JPanel();
+    JPanel rightSidePanel = new JPanel();
 
     //Left scroll pane and right scroll pane for adding leftTree and rightSidePanel
-    JScrollPane leftScrollPane=null;
-    JScrollPane rightScrollPane=null;
+    JScrollPane leftScrollPane = null;
+    JScrollPane rightScrollPane = null;
+
+    //Starting pass
+    String currentAddress = "C:\\Users\\erfan\\Desktop";
+
+    //current file Holder
+    File[] allFiles;
+
+    //current GridIcons
+    ArrayList<GridIcon>gridIconArrayList;
 
 
-
-
-
-
-
-    public MainFrame()
-    {
+    public MainFrame() {
         //Handle the tray
         SystemTray tray = SystemTray.getSystemTray();
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -96,18 +98,13 @@ public class MainFrame extends JFrame {
         icon.setImageAutoSize(true);
 
 
-
         icon.setImageAutoSize(true);
 
-        try{
+        try {
             tray.add(icon);
-        }
-
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.err.println("TrayIcon could not be added.");
         }
-
 
 
         //Set frame's layout
@@ -117,12 +114,12 @@ public class MainFrame extends JFrame {
         frame.setIconImage(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\mainIcon.png").getImage());
 
         //Two panels for upper Panel
-        JPanel upperPanel =new JPanel(new BorderLayout());
-        JPanel upperPanel_FlowPanel=new JPanel(new FlowLayout());
+        JPanel upperPanel = new JPanel(new BorderLayout());
+        JPanel upperPanel_FlowPanel = new JPanel(new FlowLayout());
 
         //Panel for lower panel
-        JPanel lowerPanel=new JPanel(new BorderLayout());
-        JPanel lowerPanel_FlowPanel=new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel lowerPanel = new JPanel(new BorderLayout());
+        JPanel lowerPanel_FlowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
         //Add file Menu Items
         file.add(file_NewFile);
@@ -154,128 +151,138 @@ public class MainFrame extends JFrame {
         upperPanel_FlowPanel.add(uppArrow);
 
         //Adding upperPanel's Flow panel as Upper panel's west Panel
-        upperPanel.add(upperPanel_FlowPanel,BorderLayout.WEST);
+        upperPanel.add(upperPanel_FlowPanel, BorderLayout.WEST);
 
         //Adding Address textField as upper panel's center panel
-        upperPanel.add(addressTextField,BorderLayout.CENTER);
+        upperPanel.add(addressTextField, BorderLayout.CENTER);
 
         //Adding Address textField as upper panel's east panel
-        upperPanel.add(searchTextField,BorderLayout.EAST);
+        upperPanel.add(searchTextField, BorderLayout.EAST);
 
         //Setting arrow button's sizes
-        leftArrow.setPreferredSize(new Dimension(17,17));
-        rightArrow.setPreferredSize(new Dimension(17,17));
-        uppArrow.setPreferredSize(new Dimension(17,17));
+        leftArrow.setPreferredSize(new Dimension(17, 17));
+        rightArrow.setPreferredSize(new Dimension(17, 17));
+        uppArrow.setPreferredSize(new Dimension(17, 17));
 
         //Add Upper panel to frame's north section
-        frame.add(upperPanel,BorderLayout.NORTH);
+        frame.add(upperPanel, BorderLayout.NORTH);
 
         //Adding menu bar to frame
         frame.setJMenuBar(upperMenuBar);
 
         //Setting size of gridDisplay and tableDisplay buttons
-        gridDisplay.setPreferredSize(new Dimension(17,17));
-        tableDisplay.setPreferredSize(new Dimension(17,17));
+        gridDisplay.setPreferredSize(new Dimension(17, 17));
+        tableDisplay.setPreferredSize(new Dimension(17, 17));
 
         //Add grid Display and table Display to lowerPanel's flowPanel
         lowerPanel_FlowPanel.add(gridDisplay);
         lowerPanel_FlowPanel.add(tableDisplay);
 
         //Set lowerPanel's Flowpanel as lowerPanel's East
-        lowerPanel.add(lowerPanel_FlowPanel,BorderLayout.EAST);
+        lowerPanel.add(lowerPanel_FlowPanel, BorderLayout.EAST);
 
         //Set selectedLable as lowerPanel's East
-        lowerPanel.add(numberOfSelectedLabel,BorderLayout.WEST);
+        lowerPanel.add(numberOfSelectedLabel, BorderLayout.WEST);
 
         //Set LowerPanel as frame's lowerPanel
-        frame.add(lowerPanel,BorderLayout.SOUTH);
-
+        frame.add(lowerPanel, BorderLayout.SOUTH);
 
 
         //Temporal nodes for Jtree
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
-        DefaultMutableTreeNode vegetableNode = new DefaultMutableTreeNode("Vegetables");
-        DefaultMutableTreeNode fruitNode = new DefaultMutableTreeNode("Fruits");
-        root.add(vegetableNode);
-        root.add(fruitNode);
+//        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
+//        DefaultMutableTreeNode vegetableNode = new DefaultMutableTreeNode("Vegetables");
+//        DefaultMutableTreeNode fruitNode = new DefaultMutableTreeNode("Fruits");
+//        root.add(vegetableNode);
+//        root.add(fruitNode);
 
         //initialize Jtree for the temporal root
-        leftTree=new JTree(root,true);
+        //   leftTree = new JTree(root, true);
+        makeLeftTree();
+
+        setGridDisplay();
 
         //Initialize scroll panes so that later we can scroll
-        leftScrollPane=new JScrollPane(leftTree);
-        rightScrollPane=new JScrollPane(rightSidePanel);
+        leftScrollPane = new JScrollPane(leftTree);
+        rightScrollPane = new JScrollPane(rightSidePanel);
 
         rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
 
         //Make a split pane and put it in the frame's Center
-        splitPane=new JSplitPane(SwingConstants.VERTICAL,leftScrollPane,rightScrollPane);
-        frame.add(splitPane,BorderLayout.CENTER);
+        splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
+        frame.add(splitPane, BorderLayout.CENTER);
 
-         setGridDisplay();
-      //  setListDisplay();
+
+
+        // setListDisplay();
         // rightScrollPane.setVerticalScrollBar();
 
 
         //  splitPane.setOrientation(SwingConstants.VERTICAL);
 
 
-
-
-
-        frame.setLocation(400,400);
-        frame.setSize(800,500);
+        frame.setLocation(400, 400);
+        frame.setSize(1000, 700);
         frame.setVisible(true);
 
-
+        upgradeFiles();
     }
 
-    void setGridDisplay()
-    {
-        rightSidePanel.setLayout(new GridLayout(4,4));
+    void setGridDisplay() {
+        upgradeFiles();
 
-        for (int i=0;i<300;i++)
+        rightSidePanel = new JPanel(new GridLayout(40, 10));
+        gridIconArrayList=new ArrayList<>();
+
+       for (File f :allFiles)
         {
-            if(i%3==0)
-                rightSidePanel.add(new GridFileIcon("file"+i));
+            if(f.isFile()) {
 
-            else
-                rightSidePanel.add(new GridFolderIcon("folder"+i));
+                GridFileIcon fileIcon=new GridFileIcon(f.getName());
+                fileIcon.setPreferredSize(new Dimension(10,10));
+                fileIcon.setMaximumSize(new Dimension(20,20));
+                gridIconArrayList.add(fileIcon);
+                rightSidePanel.add(fileIcon);
+            }
+            else {
+                gridIconArrayList.add(new GridFolderIcon(f.getName()));
+                rightSidePanel.add(gridIconArrayList.get(gridIconArrayList.size()-1));
+            }
 
         }
 
+
+//        rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+      //  rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
     }
 
-    void setListDisplay()
-    {
+    void setListDisplay() {
 
-        ImageIcon fileIcon=new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\fileIcon.png");
-        ImageIcon folderIcon=new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\folderIcon.png");
+        ImageIcon fileIcon = new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\fileIcon.png");
+        ImageIcon folderIcon = new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\folderIcon.png");
 
-       String[][] data = {
-               { "Folder 1", "2019", "Folder","200" },
-               { "Folder 2", "2019", "Folder","210" },
-               { "Folder 3", "2019", "Folder","220" },
-               { "Folder 4", "2019", "Folder","230" },
-               { "Folder 5", "2019", "Folder","240" },
-               { "File 1", "2019", "File","200" },
-               { "Folder 1", "2019", "File","200" },
-               { "Folder 1", "2019", "File","200" },
-               { "Folder 1", "2019", "File","200" },
-               { "Folder 1", "2019", "File","200" },
-               { "Folder 1", "2019", "File","200" },
-               { "Folder 6", "2019", "Folder","200" },
-               { "Folder 7", "2019", "Folder","200" },
-
-
+        String[][] data = {
+                {"Folder 1", "2019", "Folder", "200"},
+                {"Folder 2", "2019", "Folder", "210"},
+                {"Folder 3", "2019", "Folder", "220"},
+                {"Folder 4", "2019", "Folder", "230"},
+                {"Folder 5", "2019", "Folder", "240"},
+                {"File 1", "2019", "File", "200"},
+                {"Folder 1", "2019", "File", "200"},
+                {"Folder 1", "2019", "File", "200"},
+                {"Folder 1", "2019", "File", "200"},
+                {"Folder 1", "2019", "File", "200"},
+                {"Folder 1", "2019", "File", "200"},
+                {"Folder 6", "2019", "Folder", "200"},
+                {"Folder 7", "2019", "Folder", "200"},
 
 
         };
 
         // Column Names
-        String[] columnNames = { "Name", "Date modified", "Type","Size" };
+        String[] columnNames = {"Name", "Date modified", "Type", "Size"};
 
         // Initializing the JTable
 
@@ -290,6 +297,33 @@ public class MainFrame extends JFrame {
 
     }
 
+    void makeLeftTree() {
+        //Temporal nodes for Jtree
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
+        DefaultMutableTreeNode vegetableNode = new DefaultMutableTreeNode("Vegetables");
+        DefaultMutableTreeNode fruitNode = new DefaultMutableTreeNode("Fruits");
+        root.add(vegetableNode);
+        root.add(fruitNode);
+
+        //initialize Jtree for the temporal root
+        this.leftTree = new JTree(root, true);
+        leftScrollPane = new JScrollPane();
+        leftScrollPane.add(leftTree);
+    }
+
+    void upgradeFiles() {
+        File f = new File(currentAddress);
+        //    System.out.println(files.exists());
+
+        allFiles = f.listFiles();
+//
+//        for (int i = 0; i < allFiles.length; i++) {
+//
+//            System.out.println(allFiles[i].getName());
+//
+//        }
+    }
+
     public static void main(String[] args) throws Exception {
         new MainFrame();
         //  new AboutMe();
@@ -302,8 +336,6 @@ public class MainFrame extends JFrame {
 
         //    JPopupMenu popupMenu1= new PopMenu(false);
         //  JPopupMenu popupMenu2 =new PopMenu(true);
-
-
 
 
         //  popupMenu2.show(null,200,300);
