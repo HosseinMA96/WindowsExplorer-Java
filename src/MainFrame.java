@@ -8,6 +8,8 @@ import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ import java.util.Scanner;
 
 
 public class MainFrame extends JFrame {
+
+    boolean hasPrevView=false;
 
     JFrame frame = new JFrame("JFileManager");
 
@@ -178,6 +182,9 @@ public class MainFrame extends JFrame {
         gridDisplay.setPreferredSize(new Dimension(17, 17));
         tableDisplay.setPreferredSize(new Dimension(17, 17));
 
+        gridDisplay.addActionListener(new GridListener());
+        tableDisplay.addActionListener(new ListListener());
+
         //Add grid Display and table Display to lowerPanel's flowPanel
         lowerPanel_FlowPanel.add(gridDisplay);
         lowerPanel_FlowPanel.add(tableDisplay);
@@ -204,19 +211,19 @@ public class MainFrame extends JFrame {
         makeLeftTree();
 
     //     setGridDisplay();
-        setListDisplay();
+     //   setListDisplay();
 
         //Initialize scroll panes so that later we can scroll
-        leftScrollPane = new JScrollPane(leftTree);
-        rightScrollPane = new JScrollPane(rightSidePanel);
+      //  leftScrollPane = new JScrollPane(leftTree);
+       // rightScrollPane = new JScrollPane(rightSidePanel);
 
-        rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+      //  rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+     //   rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
 
         //Make a split pane and put it in the frame's Center
-        splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
-        frame.add(splitPane, BorderLayout.CENTER);
+     //   splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
+     //   frame.add(splitPane, BorderLayout.CENTER);
 
 
 
@@ -227,16 +234,20 @@ public class MainFrame extends JFrame {
         //  splitPane.setOrientation(SwingConstants.VERTICAL);
 
 
+
         frame.setLocation(400, 400);
         frame.setSize(1000, 700);
         frame.setVisible(true);
 
-        upgradeFiles();
+
+
+        /////Add buttons
+
     }
 
     void setGridDisplay() {
         upgradeFiles();
-
+       // JOptionPane.showMessageDialog(null,"Grild Display");
         rightSidePanel = new JPanel(new GridLayout(40,6,2,2));
         gridIconArrayList=new ArrayList<>();
 
@@ -256,13 +267,29 @@ public class MainFrame extends JFrame {
 
         }
 
+        if(hasPrevView)
+            frame.remove(splitPane);
 
+        leftScrollPane = new JScrollPane(leftTree);
+        rightScrollPane = new JScrollPane(rightSidePanel);
+        splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
+
+        frame.add(splitPane);
+
+        rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+     //   frame.setLocation(400, 400);
+   //     frame.setSize(1000, 700);
+        frame.setVisible(true);
 //        rightScrollPane.setVertiscalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         //  rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
+        hasPrevView=true;
     }
 
     void setListDisplay() {
+        upgradeFiles();
+    //    frame.remove(rightScrollPane);
         FileTableModel model=new FileTableModel(new File(currentAddress));
         JTable  table =new JTable(model);
 
@@ -273,6 +300,22 @@ public class MainFrame extends JFrame {
         rightSidePanel.add(rightScrollPane,BorderLayout.CENTER);
 
 
+        leftScrollPane = new JScrollPane(leftTree);
+
+        if(hasPrevView)
+            frame.remove(splitPane);
+
+        splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
+
+
+        frame.add(splitPane);
+
+        rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        frame.setVisible(true);
+
+        hasPrevView=true;
     }
 
 
@@ -322,7 +365,7 @@ public class MainFrame extends JFrame {
         //  new AboutMe();
         //  new Help();
         //     new ProgressBar(80,100);
-        //      new Settings();
+             new Settings();
 
         //    new OptionPane("File","C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\upArrow.png",100000000,"6 Match 2018",0,0);
         //    new OptionPane("Folder","C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\upArrow.png",100000000,"6 Match 2018",2,3);
@@ -333,6 +376,21 @@ public class MainFrame extends JFrame {
 
         //  popupMenu2.show(null,200,300);
     }
+
+    class GridListener implements ActionListener{
+        public void actionPerformed(ActionEvent e)
+        {
+            setGridDisplay();
+        }
+    }
+
+    class ListListener implements ActionListener{
+        public void actionPerformed(ActionEvent e)
+        {
+            setListDisplay();
+        }
+    }
+
 
 }
 
@@ -387,3 +445,4 @@ class FileTableModel extends AbstractTableModel{
     }
 
 }
+
