@@ -1,12 +1,18 @@
+package View;
+
 import javax.swing.*;
+import java.awt.*;
 
 public class PopMenu extends  JPopupMenu
 {
     JPopupMenu popupMenu=new JPopupMenu();
     JMenuItem rename,open,delete,cut,copy,properties;
+    Component invoker;
 
-    public PopMenu(boolean singleChoice)
+    public PopMenu(boolean singleChoice, Component component)
     {
+        invoker=component;
+
         delete=new JMenuItem("Delete");
         cut=new JMenuItem("Cut");
         copy=new JMenuItem("Copy");
@@ -26,8 +32,15 @@ public class PopMenu extends  JPopupMenu
 
         }
 
-        popupMenu.show(null,200,200);
+        //  popupMenu.show(null,x,y);
+      //  System.out.println(x+","+y);
+    }
 
+    public void show(int x,int y)
+    {
+        JOptionPane.showMessageDialog(null,"Be shown MF!!!");
+        this.show(invoker,x,y);
+        this.setVisible(true);
     }
 
 }

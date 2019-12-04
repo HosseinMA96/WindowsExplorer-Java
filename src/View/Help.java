@@ -1,3 +1,5 @@
+package View;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,7 +10,7 @@ public class Help
 
     public Help()
     {
-        help=new JFrame("Help");
+        help=new JFrame("View.View.Help");
         help.setLayout(new FlowLayout(1));
         help.setSize(600,300);
         help.setLocation(500,400);

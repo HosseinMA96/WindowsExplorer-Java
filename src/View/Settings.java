@@ -1,3 +1,5 @@
+package View;
+
 import javafx.scene.control.CheckBox;
 
 import javax.swing.*;
@@ -31,7 +33,7 @@ public class Settings
     JLabel initialDisplayFormatLabel=new JLabel("Select initial display format:");
     JLabel syncIntervalLabel=new JLabel("Synchronizing interval:");
     JLabel flashBackLabel=new JLabel("Maximum number of flashbacks:");
-    JFrame frame=new JFrame("Settings");
+    JFrame frame=new JFrame("View.Settings");
     String []syncIntervals={ "never" ,"1 minute", "5 minutes", "30 minutes", "1 hour"},lookAndFeels={"default","CrossPlatform","Motif","System","WindowsClassic","Nimbus"};
     String [] flashBacks={"1","2","3","4","5","6","7","8","9","10"};
 

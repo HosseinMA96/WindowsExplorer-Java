@@ -1,6 +1,10 @@
+package View;
+
+import View.ListIcon;
+
 import javax.swing.*;
 
-public class ListFolderIcon extends  ListIcon {
+public class ListFolderIcon extends ListIcon {
     public ListFolderIcon(String text)
     {
         this();
