@@ -90,6 +90,7 @@ public class Settings
         incomingFileAddress.addActionListener(new ReceivedFileAddressListener());
         otherPCAddress.addActionListener(new RemoteComputerAddressListener());
         otherPCPort.addActionListener(new RemoteComputerPortListener());
+
         frame.setVisible(true);
     }
 

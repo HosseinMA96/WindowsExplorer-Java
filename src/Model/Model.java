@@ -2,7 +2,10 @@ package Model;
 
 import javax.swing.*;
 import java.io.*;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class Model {
 
@@ -31,6 +34,7 @@ public class Model {
 
     public void upgradeFiles() {
         try {
+
             File f = new File(currentAddress);
             //    System.out.println(files.exists());
 
@@ -52,10 +56,15 @@ public class Model {
 
     public void renameFile(String prevName, String newName) {
 
+        String dummy;
         File oldFile = new File(prevName);
-        File newFile = new File(newName);
 
-        oldFile.renameTo(newFile);
+        dummy = oldFile.getParentFile().getAbsolutePath() + "\\" + newName;
+        File newFile = new File(dummy);
+
+        if (!oldFile.renameTo(newFile))
+            JOptionPane.showMessageDialog(null, "Renaming failed. Either file is secured or current name already exists or new name is invalid.", "Eror", 3);
+
     }
 
     public void deleteFile(File f) {
@@ -65,21 +74,10 @@ public class Model {
 
     }
 
-    public void copyFile(File source, File dest) throws IOException {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(source);
-            os = new FileOutputStream(dest);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-        } finally {
-            is.close();
-            os.close();
-        }
+    public static void pasteFile(String from, String to) throws IOException{
+        Path src = Paths.get(from);
+        Path dest = Paths.get(to);
+        Files.copy(src, dest, StandardCopyOption.COPY_ATTRIBUTES);
     }
 
     public void cutFile(String sourcePath, String destPath) {
@@ -147,10 +145,32 @@ public class Model {
         File F = new File(currentAddress + "\\" + newFolderName);
 
         //try {
-        if(!F.mkdir())
-           JOptionPane.showMessageDialog(null,"Unable to create Folder","Eror",3);
-     //   } catch (Exception e) {
-      //      JOptionPane.showMessageDialog(null, "Unable to create File");
-      //  }
+        if (!F.mkdir())
+            JOptionPane.showMessageDialog(null, "Unable to create Folder", "Eror", 3);
+        //   } catch (Exception e) {
+        //      JOptionPane.showMessageDialog(null, "Unable to create File");
+        //  }
     }
+
+    public void goToParent() {
+        File f = new File(currentAddress);
+
+        try {
+
+            f = f.getParentFile();
+            currentAddress = f.getAbsolutePath();
+
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "No parent directory exists", "Error", 2);
+        }
+
+        finally {
+            upgradeFiles();
+        }
+
+
+    }
+
+
 }

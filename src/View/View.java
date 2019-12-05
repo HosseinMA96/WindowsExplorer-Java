@@ -5,7 +5,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class View extends JFrame {
     boolean hasPrevView = false;
 
     JFrame frame = new JFrame("APP.JFileManager");
-
+    String currentAddress;
 
     //Adress and Search Textfiled at top
     private JTextField addressTextField = new JTextField("Address", 20);
@@ -55,8 +55,8 @@ public class View extends JFrame {
 
     //View.View.Help Menu Items
     private JMenuItem help_AboutMe = new JMenuItem("About me ");
-    private JMenuItem help_Properties = new JMenuItem("Properties");
-    private JMenuItem help_Help = new JMenuItem("View.View.Help");
+    private JMenuItem help_Settings = new JMenuItem("Settings");
+    private JMenuItem help_Help = new JMenuItem("Help");
 
     //Number of Selected labels
     private JLabel numberOfSelectedLabel = new JLabel("Selecteds");
@@ -83,6 +83,7 @@ public class View extends JFrame {
 
     //current file Holder
 
+    JLayeredPane layeredPane;
 
     //current GridIcons
     private ArrayList<GridIcon> gridIconArrayList;
@@ -142,7 +143,7 @@ public class View extends JFrame {
         edit.add(edit_Synchronize);
 
         //Add View.View.Help Menu Items
-        help.add(help_Properties);
+        help.add(help_Settings);
         help.add(help_AboutMe);
         help.add(help_Help);
 
@@ -204,7 +205,7 @@ public class View extends JFrame {
 
         //initialize Jtree for the temporal root
         //   leftTree = new JTree(root, true);
-        makeLeftTree();
+        // makeLeftTree();
 
         //     setGridDisplay();
         //   setListDisplay();
@@ -226,10 +227,11 @@ public class View extends JFrame {
 
 
         //  splitPane.setOrientation(SwingConstants.VERTICAL);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+       // frame.setSize(screenSize.width, screenSize.height);
 
-
-        frame.setLocation(400, 400);
-        frame.setSize(1000, 700);
+        frame.setLocation(0, 0);
+        frame.setSize(1500, 1000);
         frame.setVisible(true);
 
 
@@ -242,41 +244,45 @@ public class View extends JFrame {
 
         //    drawRect = new DrawRect();
 
+        makeLeftTree();
+
         int numberOfIcons = currentDirectoryFiles.length;
         rightSidePanel = new DrawRect();
-        rightSidePanel = new JPanel(new GridLayout(numberOfIcons / 5 + 1, 1));
+        JPanel buttonsPanel = new JPanel(new GridLayout(numberOfIcons / 5 + 1, 1));
 
-        rightSidePanel.setBackground(new Color(0, 0, 0, 10));
-        rightSidePanel.setOpaque(false);
+        layeredPane = new JLayeredPane();
+
+
+        //  rightSidePanel.setBackground(new Color(0, 0, 0, 10));
+        //rightSidePanel.setOpaque(false);
 //add to the code
 
-        ;
 
         gridIconArrayList = new ArrayList<>();
 
         int temp = 0;
 
         ArrayList<JPanel> panels = new ArrayList<>();
-        JPanel dummyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel dummyPanel = new JPanel(new GridLayout(1, 5));
 
         for (File f : currentDirectoryFiles) {
             temp++;
 
             if (f.isFile()) {
 
-                GridFileIcon fileIcon = new GridFileIcon(f.getName(), FileSystemView.getFileSystemView().getSystemIcon(f),f.getAbsolutePath());
+                GridFileIcon fileIcon = new GridFileIcon(f.getName(), FileSystemView.getFileSystemView().getSystemIcon(f), f.getAbsolutePath());
                 gridIconArrayList.add(fileIcon);
                 dummyPanel.add(fileIcon);
             } else {
-                gridIconArrayList.add(new GridFolderIcon(f.getName(), FileSystemView.getFileSystemView().getSystemIcon(f),f.getAbsolutePath()));
+                gridIconArrayList.add(new GridFolderIcon(f.getName(), FileSystemView.getFileSystemView().getSystemIcon(f), f.getAbsolutePath()));
                 dummyPanel.add(gridIconArrayList.get(gridIconArrayList.size() - 1));
             }
 
             if (temp % 5 == 0) {
-                rightSidePanel.add(dummyPanel);
+                buttonsPanel.add(dummyPanel);
                 temp = 0;
                 panels.add(dummyPanel);
-                dummyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                dummyPanel = new JPanel(new GridLayout(1, 5));
             }
 
         }
@@ -284,12 +290,38 @@ public class View extends JFrame {
         if (hasPrevView)
             frame.remove(splitPane);
 
+
+        dummyPanel = new JPanel();
+        layeredPane.setLayout(new BorderLayout());
+
         leftScrollPane = new JScrollPane(leftTree);
-        rightScrollPane = new JScrollPane(rightSidePanel);
+        rightScrollPane = new JScrollPane(buttonsPanel);
+
         splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
 
-        //  rightScrollPane.add(drawRect);
         frame.add(splitPane);
+        frame.setVisible(true);
+
+        buttonsPanel.setBounds(rightScrollPane.getBounds());
+        rightSidePanel.setBounds(rightScrollPane.getBounds());
+
+
+        layeredPane.add(buttonsPanel, BorderLayout.CENTER, 1);
+        layeredPane.add(rightSidePanel, BorderLayout.CENTER, 0);
+
+
+        rightScrollPane = new JScrollPane(layeredPane);
+
+        frame.remove(splitPane);
+        splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
+        frame.add(splitPane);
+
+
+        //     rightScrollPane = new JScrollPane(rightSidePanel);
+
+
+        //  rightScrollPane.add(drawRect);
+
 
         rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -304,31 +336,31 @@ public class View extends JFrame {
 
     public void setListDisplay(String currentAddress) {
 
+        makeLeftTree();
         //    frame.remove(rightScrollPane);
         FileTableModel model = new FileTableModel(new File(currentAddress));
         File f = new File(currentAddress);
-        currentDirectoryFiles=f.listFiles();
+        currentDirectoryFiles = f.listFiles();
         JTable table = new JTable(model);
         //table.setCellSelectionEnabled(true);
 
-        ListSelectionModel cellSelectionModel=table.getSelectionModel();
+        ListSelectionModel cellSelectionModel = table.getSelectionModel();
         cellSelectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);//change Single selection to see effects
 
         cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                gridIconArrayList=new ArrayList<GridIcon>();
-     //           String selectedDate=null;
+                gridIconArrayList = new ArrayList<GridIcon>();
+                //           String selectedDate=null;
 
-                int [] selectedRow=table.getSelectedRows();
-                int [] selectedColumns=table.getSelectedColumns();//here has good table.get seelction staff
+                int[] selectedRow = table.getSelectedRows();
+                int[] selectedColumns = table.getSelectedColumns();//here has good table.get seelction staff
 
-                for (int i=0;i<selectedRow.length;i++)
-                {
-                   GridIcon gridIcon= new GridFileIcon("abcd",null,currentDirectoryFiles[selectedRow[i]].getAbsolutePath());
-                   gridIcon.setSetSelected(true);
+                for (int i = 0; i < selectedRow.length; i++) {
+                    GridIcon gridIcon = new GridFileIcon("abcd", null, currentDirectoryFiles[selectedRow[i]].getAbsolutePath());
+                    gridIcon.setSetSelected(true);
                     gridIconArrayList.add(gridIcon);
-              //      JOptionPane.showMessageDialog(null,currentDirectoryFiles[selectedRow[i]].getAbsolutePath()+"");
+                    //      JOptionPane.showMessageDialog(null,currentDirectoryFiles[selectedRow[i]].getAbsolutePath()+"");
                 }
 
             }
@@ -357,24 +389,145 @@ public class View extends JFrame {
         hasPrevView = true;
     }
 
-
-    void makeLeftTree() {
-        //Temporal nodes for Jtree
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
-        DefaultMutableTreeNode vegetableNode = new DefaultMutableTreeNode("Vegetables");
-        DefaultMutableTreeNode fruitNode = new DefaultMutableTreeNode("Fruits");
-        root.add(vegetableNode);
-        root.add(fruitNode);
-
-        //initialize Jtree for the temporal root
-        this.leftTree = new JTree(root, true);
-        leftScrollPane = new JScrollPane();
-        leftScrollPane.add(leftTree);
+    public JTextField getAddressTextField() {
+        return addressTextField;
     }
+
+    public JMenuItem getHelp_AboutMe() {
+        return help_AboutMe;
+    }
+
+    public JMenuItem getHelp_Settings() {
+        return help_Settings;
+    }
+
+    public JMenuItem getHelp_Help() {
+        return help_Help;
+    }
+
+    public void makeLeftTree() {
+//        //Temporal nodes for Jtree
+//        DefaultMutableTreeNode rootOfroot=new DefaultMutableTreeNode("Root of Root");
+//        DefaultMutableTreeNode vegetableNode = new DefaultMutableTreeNode("Vegetables");
+//        DefaultMutableTreeNode fruitNode = new DefaultMutableTreeNode("Fruits");
+//       root.add(vegetableNode);
+//       root.add(fruitNode);
+//
+//       rootOfroot.add(root);
+//
+//        //initialize Jtree for the temporal root
+//        this.leftTree = new JTree(rootOfroot, true);
+//        leftScrollPane = new JScrollPane();
+//        leftScrollPane.add(leftTree);
+
+        String temp = currentAddress;
+        boolean exit = false;
+        File f = new File(temp);
+        //     System.out.println(temp+" , "+f.getName());
+
+        DefaultMutableTreeNode thisDir = new DefaultMutableTreeNode(f.getName(), true);
+
+
+
+//        File f = new File(currentAddress);
+//        f = f.getParentFile();
+//        try {
+//            currentAddress = f.getAbsolutePath();
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(null, "No parent directory exists", "Error", 2);
+//        }
+
+        ArrayList<DefaultMutableTreeNode> nodes = new ArrayList<>();
+
+        //   System.out.println(currentDirectoryFiles.length);
+
+        for (int i = 0; i < currentDirectoryFiles.length; i++)
+            thisDir.add(new DefaultMutableTreeNode(currentDirectoryFiles[i].getName(), false));
+
+        //    System.out.println(thisDir.getChildCount());
+        nodes.add(thisDir);
+
+        leftTree = new JTree(thisDir, true);
+        leftScrollPane = new JScrollPane(leftTree);
+
+
+        while (!exit) {
+
+            try {
+                f = new File(temp);
+                f = f.getParentFile();
+                temp = f.getAbsolutePath();
+
+                DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode(f.getName() + "", true);
+                tempNode.add(nodes.get(nodes.size() - 1));
+
+                nodes.add(tempNode);
+
+
+            } catch (Exception e) {
+                exit = true;
+                break;
+            }
+        }
+
+        leftTree = new JTree(nodes.get(nodes.size() - 1), true);
+
+
+
+    //    TreePath treePath=new TreePath(nodes.get(nodes.size()-1));
+
+    //    for (int j=nodes.size()-2;j>=0;j--)
+   //         treePath.pathByAddingChild(nodes.get(j));
+
+    //    leftTree.expandPath(treePath);
+
+        for(int i=0;i<leftTree.getRowCount();i++)
+        {
+            leftTree.expandRow(i);
+        }
+
+  //      leftTree.setSelectionPath(treePath);
+
+     //   leftTree.select
+       //leftTree.scrollPathToVisible(//treePath);
+        //     leftTree.setSelectionRow(3);
+
+
+        leftScrollPane = new JScrollPane(leftTree);
+        leftTree.setPreferredSize(new Dimension(200,800));
+
+    }
+
 
     public JButton getGridDisplay() {
         return gridDisplay;
     }
+
+    public boolean isHasPrevView() {
+        return hasPrevView;
+    }
+
+    public JMenuItem getEdit_Rename() {
+        return edit_Rename;
+    }
+
+
+    public JMenuItem getEdit_Copy() {
+        return edit_Copy;
+    }
+
+    public JMenuItem getEdit_Cut() {
+        return edit_Cut;
+    }
+
+    public JMenuItem getEdit_Paste() {
+        return edit_Paste;
+    }
+
+    public JMenuItem getEdit_Synchronize() {
+        return edit_Synchronize;
+    }
+
 
     public JButton getTableDisplay() {
         return tableDisplay;
@@ -403,7 +556,7 @@ public class View extends JFrame {
     }
     */
     public JMenuItem getFile_NewFolder() {
-        return  file_NewFolder;
+        return file_NewFolder;
     }
 
     public JMenuItem getFile_NewFile() {
@@ -419,9 +572,28 @@ public class View extends JFrame {
     }
 
 
-
     public DrawRect getDrawRect() {
         return drawRect;
+    }
+
+    public JFrame getFrame() {
+        return frame;
+    }
+
+    public void setAddressTextField(String text) {
+        this.addressTextField.setText(text);
+    }
+
+    public JButton getUppArrow() {
+        return uppArrow;
+    }
+
+    public JButton getLeftArrow() {
+        return leftArrow;
+    }
+
+    public JButton getRightArrow() {
+        return rightArrow;
     }
 
     public JPanel getRightSidePanel() {
@@ -433,16 +605,33 @@ public class View extends JFrame {
         //System.out.println(this.currentDirectoryFiles.length);
     }
 
-    //  public void setCurrentAddress(String currentAddress) {
-    //    this.currentAddress = currentAddress;
-    // }
+    public void setCurrentAddress(String currentAddress) {
+        this.currentAddress = currentAddress;
+    }
 }
 
 class FileTableModel extends AbstractTableModel {
+
+    private long calculateSize(File f) {
+        int ans = 0;
+
+        if (f.isFile())
+            return f.length() / 1024;
+
+
+        else {
+            File[] temp = f.listFiles();
+            for (int j = 0; j < temp.length; j++)
+                ans += calculateSize(temp[j]);
+
+            return ans;
+        }
+    }
+
     File dir;
     protected String[] filenames;
 
-    protected String[] columnNames = new String[]{"icon", "name", "size", "last modified", "type"};
+    protected String[] columnNames = new String[]{"icon", "name", "size(KB)", "last modified", "type"};
 
     protected Class[] columnClassses = new Class[]{
             String.class, Long.class, Date.class, Icon.class
@@ -451,7 +640,6 @@ class FileTableModel extends AbstractTableModel {
     public int getColumnCount() {
         return 5;
     }
-
 
 
     public int getRowCount() {
@@ -478,13 +666,15 @@ class FileTableModel extends AbstractTableModel {
         //    {"icon","name","size","last modified","type"};
         switch (col) {
             case 0:
-                 return FileSystemView.getFileSystemView().getSystemIcon(f);
-             //   return new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\fileIcon.png");
+                return FileSystemView.getFileSystemView().getSystemIcon(f);
+            //   return new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\fileIcon.png");
             case 1:
                 return filenames[row];
 
             case 2:
-                return f.length();
+                if (f.isFile())
+                    return f.length();
+                //return calculateSize(f);
 
 
             case 4:

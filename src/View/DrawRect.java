@@ -25,7 +25,7 @@ public class DrawRect extends JPanel {
         singlePopMenu = new PopMenu(true, this);
         multPopMenu = new PopMenu(false, this);
         x = y = x2 = y2 = 0; //
-   //     JOptionPane.showMessageDialog(null,"This THis");
+        //     JOptionPane.showMessageDialog(null,"This THis");
         MyMouseListener listener = new MyMouseListener();
         addMouseListener(listener);
         addMouseMotionListener(listener);
