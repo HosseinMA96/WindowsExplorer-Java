@@ -5,16 +5,19 @@ import View.*;
 
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Controller {
     private Model model;
     private View view;
     private ArrayList<File> coppy;
     boolean cutPressed = false;
+    private ArrayList<File> selectedFiles;
+    private int currentStatus=0;
 
 
     public Controller(Model model, View view) {
@@ -41,6 +44,7 @@ public class Controller {
         view.getHelp_AboutMe().addActionListener(new AboutMeListener());
         view.getHelp_Help().addActionListener(new HelpListener());
 
+
         //implement a function for default start situation
         model.setGridDisplay(true);
         view.setCurrentDirectoryFiles(model.getAllFiles());
@@ -49,7 +53,7 @@ public class Controller {
         if (model.getGridDisplay()) {
             view.setGridDisplay();
         }
-  //      view.makeLeftTree();
+        //      view.makeLeftTree();
 
     }
 
@@ -84,19 +88,62 @@ public class Controller {
     class ListListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             view.setListDisplay(model.getCurrentAddress());
+            view.getTable().addMouseListener(new TableListener());
+
+            view.getTable().getTableHeader().addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+
+                    if(e.getClickCount()==1 && SwingUtilities.isLeftMouseButton(e))
+                    {
+                        int col = view.getTable().columnAtPoint(e.getPoint());
+                        String name = view.getTable().getColumnName(col);
+                        JOptionPane.showMessageDialog(null,"Single click " + col + " " + name);
+                      //  currentStatus=col;
+                  //      sort(currentStatus );
+
+                    }
+
+                    if(e.getClickCount()==2 && SwingUtilities.isLeftMouseButton(e) && !e.isConsumed())
+                    {
+                        e.consume();
+                        int col = view.getTable().columnAtPoint(e.getPoint());
+                        String name = view.getTable().getColumnName(col);
+                        JOptionPane.showMessageDialog(null,"Double click " + col + " " + name);
+                      //  currentStatus=col;
+                  //      sort(currentStatus);
+
+
+                        for (int i=0;i<model.getAllFiles().length/2;i++)
+                        {
+                            File temp=model.getAllFiles()[i];
+                            model.getAllFiles()[i]=model.getAllFiles()[model.getAllFiles().length-i-1];
+                            model.getAllFiles()[model.getAllFiles().length-i-1]=temp;
+                        }
+
+                    }
+
+                    view.setCurrentDirectoryFiles(model.getAllFiles());
+                    upgradeView();
+
+
+                }
+            });
+            //  view.getTable().addMouseListener(new MouseAdapter()
+
             model.setGridDisplay(false);
         }
     }
 
     class HelpListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-          Help help=new Help();
+            Help help = new Help();
         }
     }
 
     class AboutMeListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            AboutMe aboutMe=new AboutMe();
+            AboutMe aboutMe = new AboutMe();
         }
     }
 
@@ -107,11 +154,13 @@ public class Controller {
     }
 
     void upgradeView() {
+        if (currentStatus ==0){
 
         if (model.getGridDisplay()) {
             model.upgradeFiles();
             view.setCurrentDirectoryFiles(model.getAllFiles());
             view.setCurrentAddress(model.getCurrentAddress());
+
             view.setGridDisplay();
 
 
@@ -119,10 +168,19 @@ public class Controller {
             model.upgradeFiles();
             view.setCurrentAddress(model.getCurrentAddress());
             view.setListDisplay(model.getCurrentAddress());
+            view.getTable().addMouseListener(new TableListener());
 
         }
 
-        view.setAddressTextField(model.getCurrentAddress());
+        view.setAddressTextField(model.getCurrentAddress());}
+
+        else
+        {
+            currentStatus=0;
+            view.setListDisplay(model.getCurrentAddress());
+            view.getTable().addMouseListener(new TableListener());
+
+        }
     }
 
     class newFolderListener implements ActionListener {
@@ -180,7 +238,7 @@ public class Controller {
 
     class SettingsListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            Settings settings=new Settings();
+            Settings settings = new Settings();
 
         }
     }
@@ -260,6 +318,196 @@ public class Controller {
 
         }
     }
+
+    class TableListener implements MouseListener {
+
+        public void mousePressed(MouseEvent mouseEvent) {
+
+            Point point = mouseEvent.getPoint();
+            int row = view.getTable().rowAtPoint(point);
+            if (mouseEvent.getClickCount() == 2 && view.getTable().getSelectedRow() != -1 && SwingUtilities.isLeftMouseButton(mouseEvent) && !mouseEvent.isConsumed()) {
+                mouseEvent.isConsumed();
+                int[] selectedRow = view.getTable().getSelectedRows();
+
+
+                if (selectedRow.length == 1)
+                    open(model.getAllFiles()[selectedRow[0]]);
+
+            }
+
+            if (mouseEvent.getClickCount() == 1 && view.getTable().getSelectedRow() != -1 && SwingUtilities.isRightMouseButton(mouseEvent)) {
+                selectedFiles = new ArrayList<>();
+
+                for (int j = 0; j < view.getGridIconArrayList().size(); j++)
+                    if (view.getGridIconArrayList().get(j).isSetSelected() == true)
+                        selectedFiles.add(new File(view.getGridIconArrayList().get(j).getPath()));
+
+                PopMenu popMenu = null;
+                if (selectedFiles.size() == 1)
+                    popMenu = new PopMenu(true, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), view.getTable());
+
+
+                if (selectedFiles.size() > 1)
+
+                    popMenu = new PopMenu(true, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), view.getTable());
+
+                if (popMenu != null) {
+                    popMenu.getCopy().addActionListener(new CopyListener());
+                    popMenu.getCut().addActionListener(new CutListener());
+                    popMenu.getDelete().addActionListener(new Delete());
+                    popMenu.getRename().addActionListener(new RenameListener());
+                    popMenu.getOpen().addActionListener(new OpenListener());
+                    popMenu.getProperties().addActionListener(new PropertiesListener());
+
+                    //popMenu.getProperties()
+                }
+
+            }
+        }
+
+
+        public void mouseClicked(MouseEvent event) {
+        }
+
+        public void mouseReleased(MouseEvent event) {
+        }
+
+        public void mouseEntered(MouseEvent event) {
+        }
+
+        public void mouseExited(MouseEvent event) {
+        }
+
+    }
+
+
+    class OpenListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (selectedFiles != null)
+                for (int i = 0; i < selectedFiles.size(); i++)
+                    open(selectedFiles.get(i));
+
+            selectedFiles = null;
+
+
+        }
+    }
+
+    class PropertiesListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (selectedFiles != null && selectedFiles.size() == 1) {
+                File f = selectedFiles.get(0);
+                if (selectedFiles.get(0).isFile())
+                    new OptionPane("File", f.getAbsolutePath(), f.length(), new Date(f.lastModified()), 0, 0);
+
+                else {
+                    File[] temp = f.listFiles();
+                    int filesContained = 0;
+                    int foldersContained = 0;
+
+                    if (temp != null)
+                        for (int i = 0; i < temp.length; i++)
+                            if (temp[i].isFile())
+                                filesContained++;
+                            else
+                                foldersContained++;
+
+                    new OptionPane("File", f.getAbsolutePath(), f.length(), new Date(f.lastModified()), filesContained, foldersContained);
+
+                }
+
+            }
+
+
+        }
+    }
+
+    void open(File f) {
+
+        if (f.isFile()) {
+            if (!Desktop.isDesktopSupported()) {
+                JOptionPane.showMessageDialog(null, "Desktop is not available now", "Error", 1);
+                return;
+            }
+
+            Desktop desktop = Desktop.getDesktop();
+            if (f.exists()) {
+                try {
+                    desktop.open(f);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Unable to open file", "Error", 1);
+                }
+            }
+
+
+            //let's try to open PDF file
+//                            file = new File("/Users/pankaj/java.pdf");
+//                            if(file.exists()) desktop.open(file);
+        } else {
+
+            model.setCurrentAddress(f.getAbsolutePath());
+            upgradeView();
+
+        }
+    }
+
+    private void sort(int status)
+    {
+        ArrayList<File>dummy=new ArrayList<>();
+
+        for (int i=0;i<model.getAllFiles().length;i++)
+            dummy.add(model.getAllFiles()[i]);
+
+
+        int index=0;
+
+        for (int i=0;i<model.getAllFiles().length;i++)
+        {
+            for (int j=i;j<model.getAllFiles().length-i-1;j++)
+            {
+                if(compare(model.getAllFiles()[j+1],model.getAllFiles()[j],status))
+                {
+                    File F=model.getAllFiles()[j+1];
+                    model.getAllFiles()[j+1]=model.getAllFiles()[j];
+                    model.getAllFiles()[j]=F;
+                }
+
+            }
+        }
+    }
+
+    private boolean compare(File A,File B,int status)
+    {
+        /*
+        status=1:sort By name
+        status=2:sort By size
+        status=3:sort By Date
+        status=column number
+         */
+
+        switch (status)
+        {
+            case 0:
+                //if string a is les than b, a.copmareTo(b)is negative
+                String a=A.getName(),b=B.getName();
+
+                return (a.compareTo(b)>0);
+
+
+            case 1:
+                //For date, it is same. if A occurs before B A.compareTo(B) is <0
+                Date aa=new Date(A.lastModified()),bb=new Date(B.lastModified());
+                return (aa.compareTo(bb)>0);
+
+
+            case 2:
+                return (A.length()<B.length());
+
+        }
+        return false;
+
+    }
+
 }
 //
 //    class DrawRectRightClickListener extends MouseAdapter {

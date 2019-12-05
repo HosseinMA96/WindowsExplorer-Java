@@ -5,14 +5,14 @@ import java.awt.*;
 
 public class PopMenu extends  JPopupMenu
 {
-    JPopupMenu popupMenu=new JPopupMenu();
-    JMenuItem rename,open,delete,cut,copy,properties;
+   JPopupMenu popupMenu=new JPopupMenu();
+   private JMenuItem rename,open,delete,cut,copy,properties;
     Component invoker;
 
-    public PopMenu(boolean singleChoice, Component component)
+    public PopMenu(boolean singleChoice, int x,int y,Component invoker)
     {
-        invoker=component;
 
+        this.invoker=invoker;
         delete=new JMenuItem("Delete");
         cut=new JMenuItem("Cut");
         copy=new JMenuItem("Copy");
@@ -32,15 +32,34 @@ public class PopMenu extends  JPopupMenu
 
         }
 
-        //  popupMenu.show(null,x,y);
+
+        popupMenu.setVisible(true);
+        popupMenu.show(invoker,x,y);
+        popupMenu.setLocation(x,y);
       //  System.out.println(x+","+y);
     }
 
-    public void show(int x,int y)
-    {
-        JOptionPane.showMessageDialog(null,"Be shown MF!!!");
-        this.show(invoker,x,y);
-        this.setVisible(true);
+    public JMenuItem getRename() {
+        return rename;
     }
 
+    public JMenuItem getOpen() {
+        return open;
+    }
+
+    public JMenuItem getDelete() {
+        return delete;
+    }
+
+    public JMenuItem getCut() {
+        return cut;
+    }
+
+    public JMenuItem getCopy() {
+        return copy;
+    }
+
+    public JMenuItem getProperties() {
+        return properties;
+    }
 }

@@ -22,8 +22,8 @@ public class DrawRect extends JPanel {
 //    }
 
     public DrawRect() {
-        singlePopMenu = new PopMenu(true, this);
-        multPopMenu = new PopMenu(false, this);
+     //   singlePopMenu = new PopMenu(true, this);
+     //   multPopMenu = new PopMenu(false, this);
         x = y = x2 = y2 = 0; //
         //     JOptionPane.showMessageDialog(null,"This THis");
         MyMouseListener listener = new MyMouseListener();
@@ -73,7 +73,7 @@ public class DrawRect extends JPanel {
                 //        popMenu.setVisible(false);
                 //         popMenu=null;
                 //     }
-                singlePopMenu.show(e.getX(), e.getY());
+              //  singlePopMenu.show(e.getX(), e.getY());
                 leftClicked = false;
                 //     popMenu.show(null,e.getX(),e.getY());
                 JOptionPane.showMessageDialog(null, "Right Cl" + e.getX() + "," + e.getY());

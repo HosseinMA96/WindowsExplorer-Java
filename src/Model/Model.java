@@ -67,10 +67,18 @@ public class Model {
 
     }
 
+    //IDK why but deletion is not as robust as it should be ... it sometimes "misses" ....
     public void deleteFile(File f) {
 
-        if (!f.delete())
-            JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 3);
+        try {
+            if (!f.delete())
+                JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 1);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
 
     }
 
