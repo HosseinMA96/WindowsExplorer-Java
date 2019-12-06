@@ -6,16 +6,20 @@ import java.awt.*;
 public class PopMenu extends  JPopupMenu
 {
    JPopupMenu popupMenu=new JPopupMenu();
-   private JMenuItem rename,open,delete,cut,copy,properties;
+   private JMenuItem rename,open,delete,cut,copy,properties,paste,newFile,newFolder;
     Component invoker;
 
-    public PopMenu(boolean singleChoice, int x,int y,Component invoker)
+    public PopMenu(boolean singleChoice,boolean hasPaste, int x,int y,Component invoker)
     {
 
         this.invoker=invoker;
         delete=new JMenuItem("Delete");
+        paste=new JMenuItem("paste");
+
         cut=new JMenuItem("Cut");
         copy=new JMenuItem("Copy");
+        newFile=new JMenuItem("New File");
+        newFolder=new JMenuItem("New Folder");
         properties=new JMenuItem("Properties");
         rename=new JMenuItem("Rename");
         open=new JMenuItem("Open");
@@ -23,6 +27,8 @@ public class PopMenu extends  JPopupMenu
         popupMenu.add(copy);
         popupMenu.add(cut);
         popupMenu.add(delete);
+        popupMenu.add(newFolder);
+        popupMenu.add(newFile);
 
         if(singleChoice)
         {
@@ -31,6 +37,9 @@ public class PopMenu extends  JPopupMenu
             popupMenu.add(properties);
 
         }
+
+        if(hasPaste)
+            popupMenu.add(paste);
 
 
         popupMenu.setVisible(true);
@@ -61,5 +70,17 @@ public class PopMenu extends  JPopupMenu
 
     public JMenuItem getProperties() {
         return properties;
+    }
+
+    public JMenuItem getPaste() {
+        return paste;
+    }
+
+    public JMenuItem getNewFile() {
+        return newFile;
+    }
+
+    public JMenuItem getNewFolder() {
+        return newFolder;
     }
 }

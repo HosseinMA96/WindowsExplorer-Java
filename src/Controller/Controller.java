@@ -15,9 +15,9 @@ public class Controller {
     private Model model;
     private View view;
     private ArrayList<File> coppy;
-    boolean cutPressed = false;
+    boolean cutPressed = false, coppyPressed = false;
     private ArrayList<File> selectedFiles;
-    private int currentStatus=0;
+    private int currentStatus = 0;
 
 
     public Controller(Model model, View view) {
@@ -31,10 +31,10 @@ public class Controller {
         view.setAddressTextField(model.getCurrentAddress());
         view.getGridDisplay().addActionListener(new GridListener());
         view.getTableDisplay().addActionListener(new ListListener());
-        view.getFile_NewFile().addActionListener(new newFileListener());
+        view.getFile_NewFile().addActionListener(new NewFileListener());
         view.getFile_SetCurrentForSync().addActionListener(new SetAsSyncPathListener());
         view.getFile_Delete().addActionListener(new Delete());
-        view.getFile_NewFolder().addActionListener(new newFolderListener());
+        view.getFile_NewFolder().addActionListener(new NewFolderListener());
         view.getEdit_Rename().addActionListener(new RenameListener());
         view.getUppArrow().addActionListener(new GoUpListener());
         view.getEdit_Copy().addActionListener(new CopyListener());
@@ -94,31 +94,28 @@ public class Controller {
                 @Override
                 public void mouseClicked(MouseEvent e) {
 
-                    if(e.getClickCount()==1 && SwingUtilities.isLeftMouseButton(e))
-                    {
+                    if (e.getClickCount() == 1 && SwingUtilities.isLeftMouseButton(e)) {
                         int col = view.getTable().columnAtPoint(e.getPoint());
                         String name = view.getTable().getColumnName(col);
-                        JOptionPane.showMessageDialog(null,"Single click " + col + " " + name);
-                      //  currentStatus=col;
-                  //      sort(currentStatus );
+                        JOptionPane.showMessageDialog(null, "Single click " + col + " " + name);
+                        //  currentStatus=col;
+                        //      sort(currentStatus );
 
                     }
 
-                    if(e.getClickCount()==2 && SwingUtilities.isLeftMouseButton(e) && !e.isConsumed())
-                    {
+                    if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e) && !e.isConsumed()) {
                         e.consume();
                         int col = view.getTable().columnAtPoint(e.getPoint());
                         String name = view.getTable().getColumnName(col);
-                        JOptionPane.showMessageDialog(null,"Double click " + col + " " + name);
-                      //  currentStatus=col;
-                  //      sort(currentStatus);
+                        JOptionPane.showMessageDialog(null, "Double click " + col + " " + name);
+                        //  currentStatus=col;
+                        //      sort(currentStatus);
 
 
-                        for (int i=0;i<model.getAllFiles().length/2;i++)
-                        {
-                            File temp=model.getAllFiles()[i];
-                            model.getAllFiles()[i]=model.getAllFiles()[model.getAllFiles().length-i-1];
-                            model.getAllFiles()[model.getAllFiles().length-i-1]=temp;
+                        for (int i = 0; i < model.getAllFiles().length / 2; i++) {
+                            File temp = model.getAllFiles()[i];
+                            model.getAllFiles()[i] = model.getAllFiles()[model.getAllFiles().length - i - 1];
+                            model.getAllFiles()[model.getAllFiles().length - i - 1] = temp;
                         }
 
                     }
@@ -154,36 +151,38 @@ public class Controller {
     }
 
     void upgradeView() {
-        if (currentStatus ==0){
+        if (currentStatus == 0) {
 
-        if (model.getGridDisplay()) {
-            model.upgradeFiles();
-            view.setCurrentDirectoryFiles(model.getAllFiles());
-            view.setCurrentAddress(model.getCurrentAddress());
+            if (model.getGridDisplay()) {
+                model.upgradeFiles();
+                view.setCurrentDirectoryFiles(model.getAllFiles());
+                view.setCurrentAddress(model.getCurrentAddress());
 
-            view.setGridDisplay();
+                view.setGridDisplay();
 
 
-        } else {
-            model.upgradeFiles();
-            view.setCurrentAddress(model.getCurrentAddress());
-            view.setListDisplay(model.getCurrentAddress());
+            } else {
+                model.upgradeFiles();
+                view.setCurrentAddress(model.getCurrentAddress());
+                view.setListDisplay(model.getCurrentAddress());
+                view.getTable().addMouseListener(new TableListener());
+
+            }
+
+            view.setAddressTextField(model.getCurrentAddress());
             view.getTable().addMouseListener(new TableListener());
-
         }
 
-        view.setAddressTextField(model.getCurrentAddress());}
 
-        else
-        {
-            currentStatus=0;
+        if (currentStatus != 0) {
+            currentStatus = 0;
             view.setListDisplay(model.getCurrentAddress());
             view.getTable().addMouseListener(new TableListener());
 
         }
     }
 
-    class newFolderListener implements ActionListener {
+    class NewFolderListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             model.newFolder();
 
@@ -218,7 +217,7 @@ public class Controller {
     }
 
 
-    class newFileListener implements ActionListener {
+    class NewFileListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             model.newFile();
 
@@ -268,7 +267,9 @@ public class Controller {
             if (coppy.size() == 0) {
                 JOptionPane.showMessageDialog(null, "At least 1 file must be selected.", "Eror", 2);
                 coppy = null;
+                return;
             }
+            coppyPressed = true;
 
 
         }
@@ -285,11 +286,46 @@ public class Controller {
                     File[] temp = (new File(model.getCurrentAddress())).listFiles();
 
                     for (int j = 0; j < temp.length; j++) {
+
+                    //    System.out.println(j);
                         if (temp[j].getName().equals(newName)) {
-                            newName += "_copy";
-                            j = -1;
-                            continue;
+
+                            if (coppy.get(i).isDirectory()) {
+                                newName += "_copy";
+                                j = 0;
+                                continue;
+                            }
+
+                            else
+                            {
+                                    int dotOccurance=newName.length();
+                                    boolean hasDot=false;
+
+                                    for (int k=0;k<temp[j].getName().length();k++)
+                                        if(temp[j].getName().charAt(k)=='.')
+                                        {
+                                            dotOccurance=k;
+                                            hasDot=true;
+                                            break;
+                                        }
+
+                                    String dummy;
+
+                                    if(hasDot)
+                                    dummy=newName.substring(0,dotOccurance)+"_copy"+newName.substring(dotOccurance,newName.length());
+
+                                    else
+                                        dummy=newName.substring(0,dotOccurance)+"_copy";
+
+                                    newName=dummy;
+                                    j=0;
+                                    continue;
+
+
+
+                            }
                         }
+
                     }
 
                     try {
@@ -306,6 +342,7 @@ public class Controller {
 
                 if (cutPressed) {
                     cutPressed = false;
+                    coppyPressed = false;
 
                     for (int i = 0; i < coppy.size(); i++) {
                         model.deleteFile(coppy.get(i));
@@ -344,12 +381,12 @@ public class Controller {
 
                 PopMenu popMenu = null;
                 if (selectedFiles.size() == 1)
-                    popMenu = new PopMenu(true, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), view.getTable());
+                    popMenu = new PopMenu(true, coppyPressed, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), view.getTable());
 
 
                 if (selectedFiles.size() > 1)
 
-                    popMenu = new PopMenu(true, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), view.getTable());
+                    popMenu = new PopMenu(true, coppyPressed, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), view.getTable());
 
                 if (popMenu != null) {
                     popMenu.getCopy().addActionListener(new CopyListener());
@@ -358,6 +395,9 @@ public class Controller {
                     popMenu.getRename().addActionListener(new RenameListener());
                     popMenu.getOpen().addActionListener(new OpenListener());
                     popMenu.getProperties().addActionListener(new PropertiesListener());
+                    popMenu.getNewFile().addActionListener(new NewFileListener());
+                    popMenu.getNewFolder().addActionListener(new NewFolderListener());
+                    popMenu.getPaste().addActionListener(new PasteListener());
 
                     //popMenu.getProperties()
                 }
@@ -451,33 +491,28 @@ public class Controller {
         }
     }
 
-    private void sort(int status)
-    {
-        ArrayList<File>dummy=new ArrayList<>();
+    private void sort(int status) {
+        ArrayList<File> dummy = new ArrayList<>();
 
-        for (int i=0;i<model.getAllFiles().length;i++)
+        for (int i = 0; i < model.getAllFiles().length; i++)
             dummy.add(model.getAllFiles()[i]);
 
 
-        int index=0;
+        int index = 0;
 
-        for (int i=0;i<model.getAllFiles().length;i++)
-        {
-            for (int j=i;j<model.getAllFiles().length-i-1;j++)
-            {
-                if(compare(model.getAllFiles()[j+1],model.getAllFiles()[j],status))
-                {
-                    File F=model.getAllFiles()[j+1];
-                    model.getAllFiles()[j+1]=model.getAllFiles()[j];
-                    model.getAllFiles()[j]=F;
+        for (int i = 0; i < model.getAllFiles().length; i++) {
+            for (int j = i; j < model.getAllFiles().length - i - 1; j++) {
+                if (compare(model.getAllFiles()[j + 1], model.getAllFiles()[j], status)) {
+                    File F = model.getAllFiles()[j + 1];
+                    model.getAllFiles()[j + 1] = model.getAllFiles()[j];
+                    model.getAllFiles()[j] = F;
                 }
 
             }
         }
     }
 
-    private boolean compare(File A,File B,int status)
-    {
+    private boolean compare(File A, File B, int status) {
         /*
         status=1:sort By name
         status=2:sort By size
@@ -485,23 +520,22 @@ public class Controller {
         status=column number
          */
 
-        switch (status)
-        {
+        switch (status) {
             case 0:
                 //if string a is les than b, a.copmareTo(b)is negative
-                String a=A.getName(),b=B.getName();
+                String a = A.getName(), b = B.getName();
 
-                return (a.compareTo(b)>0);
+                return (a.compareTo(b) > 0);
 
 
             case 1:
                 //For date, it is same. if A occurs before B A.compareTo(B) is <0
-                Date aa=new Date(A.lastModified()),bb=new Date(B.lastModified());
-                return (aa.compareTo(bb)>0);
+                Date aa = new Date(A.lastModified()), bb = new Date(B.lastModified());
+                return (aa.compareTo(bb) > 0);
 
 
             case 2:
-                return (A.length()<B.length());
+                return (A.length() < B.length());
 
         }
         return false;
