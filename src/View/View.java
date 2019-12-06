@@ -20,6 +20,7 @@ public class View extends JFrame {
    private boolean localUpdate=false;
    private  FileTableModel model;
    private JTable table=new JTable();
+   private int status=0,feature=0;
 
 
     JFrame frame = new JFrame("APP.JFileManager");
@@ -349,7 +350,7 @@ public class View extends JFrame {
 
         makeLeftTree();
         //    frame.remove(rightScrollPane);
-      model = new FileTableModel(new File(currentAddress));
+      model = new FileTableModel(new File(currentAddress),this.status,this.feature);
         File f = new File(currentAddress);
         currentDirectoryFiles = f.listFiles();
          table = new JTable(model);
@@ -366,6 +367,42 @@ public class View extends JFrame {
 //                int col = table.columnAtPoint(e.getPoint());
 //                String name = table.getColumnName(col);
 //                JOptionPane.showMessageDialog(null,"Column index selected " + col + " " + name);
+//            }
+//        });
+
+//        table.getTableHeader().addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//
+//                if (e.getClickCount() == 1 && SwingUtilities.isLeftMouseButton(e) ) {
+//
+//                    status++;
+//                    int col = table.columnAtPoint(e.getPoint());
+//                    String name = table.getColumnName(col);
+//
+//                    if(status==1)
+//                    JOptionPane.showMessageDialog(null, "Single click " + col + " " + name);
+//
+//
+//                    else
+//                        JOptionPane.showMessageDialog(null, "double click " + col + " " + name);
+//
+//                    //  currentStatus=col;
+//                    //      sort(currentStatus );
+//
+//                    status%=2;
+//                    feature=col;
+//
+//                    setListDisplay(currentAddress);
+//
+//                }
+//
+//
+//
+////                view.setCurrentDirectoryFiles(model.getAllFiles());
+////                upgradeView();
+//
+//
 //            }
 //        });
 
@@ -610,6 +647,20 @@ public class View extends JFrame {
         return file_SetCurrentForSync;
     }
 
+    public void addStatus()
+    {
+        status++;
+        status%=2;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setFeature(int f)
+    {
+        feature=f;
+    }
 
     public DrawRect getDrawRect() {
         return drawRect;

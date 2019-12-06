@@ -73,19 +73,45 @@ public class Model {
         try {
             if (!f.delete())
                 JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 1);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
 
     }
 
-    public static void pasteFile(String from, String to) throws IOException{
+    public static void pasteFile(String from, String to) throws IOException {
         Path src = Paths.get(from);
         Path dest = Paths.get(to);
-        Files.copy(src, dest, StandardCopyOption.COPY_ATTRIBUTES);
+
+        File sourceFolder = new File(from);
+        File destinationFolder = new File(to);
+
+        if (sourceFolder.isDirectory()) {
+            //Verify if destinationFolder is already present; If not then create it
+            if (!destinationFolder.exists()) {
+                destinationFolder.mkdir();
+                //  System.out.println("Directory created :: " + destinationFolder);
+            }
+
+            //Get all files from source directory
+            String files[] = sourceFolder.list();
+
+            //Iterate over all files and copy them to destinationFolder one by one
+            for (String file : files) {
+                File srcFile = new File(sourceFolder, file);
+                File destFile = new File(destinationFolder, file);
+
+                //Recursive function call
+                pasteFile(srcFile.getAbsolutePath(), destFile.getAbsolutePath());
+            }
+        } else {
+            //Copy the file content from one place to another
+            Files.copy(sourceFolder.toPath(), destinationFolder.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            //    System.out.println("File copied :: " + destinationFolder);
+        }
+        //      Files.copy(src, dest, StandardCopyOption.COPY_ATTRIBUTES);
+
     }
 
     public void cutFile(String sourcePath, String destPath) {
@@ -171,9 +197,7 @@ public class Model {
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "No parent directory exists", "Error", 2);
-        }
-
-        finally {
+        } finally {
             upgradeFiles();
         }
 

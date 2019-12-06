@@ -43,6 +43,8 @@ public class Controller {
         view.getHelp_Settings().addActionListener(new SettingsListener());
         view.getHelp_AboutMe().addActionListener(new AboutMeListener());
         view.getHelp_Help().addActionListener(new HelpListener());
+        view.getTable().addMouseListener(new TableListener());
+        view.getTable().getTableHeader().addMouseListener(new TableHeaderListener());
 
 
         //implement a function for default start situation
@@ -62,6 +64,7 @@ public class Controller {
             view.setCurrentDirectoryFiles(model.getAllFiles());
             view.setGridDisplay();
             model.setGridDisplay(true);
+            upgradeView();
         }
     }
 
@@ -88,47 +91,49 @@ public class Controller {
     class ListListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             view.setListDisplay(model.getCurrentAddress());
-            view.getTable().addMouseListener(new TableListener());
 
-            view.getTable().getTableHeader().addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
+                    //  super.mousePressed((MouseEvent)e);
 
-                    if (e.getClickCount() == 1 && SwingUtilities.isLeftMouseButton(e)) {
-                        int col = view.getTable().columnAtPoint(e.getPoint());
-                        String name = view.getTable().getColumnName(col);
-                        JOptionPane.showMessageDialog(null, "Single click " + col + " " + name);
-                        //  currentStatus=col;
-                        //      sort(currentStatus );
+//            view.getTable().getTableHeader().addMouseListener(new MouseAdapter() {
+//                @Override
+//                public void mouseClicked(MouseEvent e) {
+//
+//                    if (e.getClickCount() == 1 && SwingUtilities.isLeftMouseButton(e)) {
+//                        int col = view.getTable().columnAtPoint(e.getPoint());
+//                        String name = view.getTable().getColumnName(col);
+//                        JOptionPane.showMessageDialog(null, "Single click " + col + " " + name);
+//                        //  currentStatus=col;
+//                        //      sort(currentStatus );
+//
+//                    }
+//
+//                    if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e) && !e.isConsumed()) {
+//                        e.consume();
+//                        int col = view.getTable().columnAtPoint(e.getPoint());
+//                        String name = view.getTable().getColumnName(col);
+//                        JOptionPane.showMessageDialog(null, "Double click " + col + " " + name);
+//                        //  currentStatus=col;
+//                        //      sort(currentStatus);
+//
+//
+//                        for (int i = 0; i < model.getAllFiles().length / 2; i++) {
+//                            File temp = model.getAllFiles()[i];
+//                            model.getAllFiles()[i] = model.getAllFiles()[model.getAllFiles().length - i - 1];
+//                            model.getAllFiles()[model.getAllFiles().length - i - 1] = temp;
+//                        }
+//
+//                    }
+//
+//                    view.setCurrentDirectoryFiles(model.getAllFiles());
+//                    upgradeView();
+//
+//
+//                }
+//            });
+                    //  view.getTable().addMouseListener(new MouseAdapter()
 
-                    }
-
-                    if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e) && !e.isConsumed()) {
-                        e.consume();
-                        int col = view.getTable().columnAtPoint(e.getPoint());
-                        String name = view.getTable().getColumnName(col);
-                        JOptionPane.showMessageDialog(null, "Double click " + col + " " + name);
-                        //  currentStatus=col;
-                        //      sort(currentStatus);
-
-
-                        for (int i = 0; i < model.getAllFiles().length / 2; i++) {
-                            File temp = model.getAllFiles()[i];
-                            model.getAllFiles()[i] = model.getAllFiles()[model.getAllFiles().length - i - 1];
-                            model.getAllFiles()[model.getAllFiles().length - i - 1] = temp;
-                        }
-
-                    }
-
-                    view.setCurrentDirectoryFiles(model.getAllFiles());
-                    upgradeView();
-
-
-                }
-            });
-            //  view.getTable().addMouseListener(new MouseAdapter()
-
-            model.setGridDisplay(false);
+                            model.setGridDisplay(false);
+                            upgradeView();
         }
     }
 
@@ -151,7 +156,7 @@ public class Controller {
     }
 
     void upgradeView() {
-        if (currentStatus == 0) {
+
 
             if (model.getGridDisplay()) {
                 model.upgradeFiles();
@@ -166,20 +171,15 @@ public class Controller {
                 view.setCurrentAddress(model.getCurrentAddress());
                 view.setListDisplay(model.getCurrentAddress());
                 view.getTable().addMouseListener(new TableListener());
+                view.getTable().getTableHeader().addMouseListener(new TableListener());
 
             }
 
             view.setAddressTextField(model.getCurrentAddress());
-            view.getTable().addMouseListener(new TableListener());
-        }
+          //  view.getTable().addMouseListener(new TableListener());
 
 
-        if (currentStatus != 0) {
-            currentStatus = 0;
-            view.setListDisplay(model.getCurrentAddress());
-            view.getTable().addMouseListener(new TableListener());
 
-        }
     }
 
     class NewFolderListener implements ActionListener {
@@ -287,40 +287,35 @@ public class Controller {
 
                     for (int j = 0; j < temp.length; j++) {
 
-                    //    System.out.println(j);
+                        System.out.println(j);
                         if (temp[j].getName().equals(newName)) {
 
                             if (coppy.get(i).isDirectory()) {
                                 newName += "_copy";
                                 j = 0;
                                 continue;
-                            }
+                            } else {
+                                int dotOccurance = newName.length();
+                                boolean hasDot = false;
 
-                            else
-                            {
-                                    int dotOccurance=newName.length();
-                                    boolean hasDot=false;
+                                for (int k = 0; k < temp[j].getName().length(); k++)
+                                    if (temp[j].getName().charAt(k) == '.') {
+                                        dotOccurance = k;
+                                        hasDot = true;
+                                        break;
+                                    }
 
-                                    for (int k=0;k<temp[j].getName().length();k++)
-                                        if(temp[j].getName().charAt(k)=='.')
-                                        {
-                                            dotOccurance=k;
-                                            hasDot=true;
-                                            break;
-                                        }
+                                String dummy;
 
-                                    String dummy;
+                                if (hasDot)
+                                    dummy = newName.substring(0, dotOccurance) + "_copy" + newName.substring(dotOccurance, newName.length());
 
-                                    if(hasDot)
-                                    dummy=newName.substring(0,dotOccurance)+"_copy"+newName.substring(dotOccurance,newName.length());
+                                else
+                                    dummy = newName.substring(0, dotOccurance) + "_copy";
 
-                                    else
-                                        dummy=newName.substring(0,dotOccurance)+"_copy";
-
-                                    newName=dummy;
-                                    j=0;
-                                    continue;
-
+                                newName = dummy;
+                                j = 0;
+                                continue;
 
 
                             }
@@ -359,7 +354,6 @@ public class Controller {
     class TableListener implements MouseListener {
 
         public void mousePressed(MouseEvent mouseEvent) {
-
             Point point = mouseEvent.getPoint();
             int row = view.getTable().rowAtPoint(point);
             if (mouseEvent.getClickCount() == 2 && view.getTable().getSelectedRow() != -1 && SwingUtilities.isLeftMouseButton(mouseEvent) && !mouseEvent.isConsumed()) {
@@ -418,6 +412,47 @@ public class Controller {
         public void mouseExited(MouseEvent event) {
         }
 
+
+    }
+
+    class TableHeaderListener extends MouseAdapter {
+
+
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+
+            if (e.getClickCount() == 1 && SwingUtilities.isLeftMouseButton(e)) {
+
+                view.addStatus();
+                int col = view.getTable().columnAtPoint(e.getPoint());
+                String name = view.getTable().getColumnName(col);
+
+                JOptionPane.showMessageDialog(null, " click " + col + " " + name);
+
+                if (view.getStatus() == 1)
+                    JOptionPane.showMessageDialog(null, "Single click " + col + " " + name);
+
+
+                else
+                    JOptionPane.showMessageDialog(null, "double click " + col + " " + name);
+
+                //  currentStatus=col;
+                //      sort(currentStatus );
+
+                view.setFeature(col);
+
+
+                view.setListDisplay(model.getCurrentAddress());
+
+            }
+
+
+//                view.setCurrentDirectoryFiles(model.getAllFiles());
+//                upgradeView();
+
+
+        }
     }
 
 
@@ -491,56 +526,6 @@ public class Controller {
         }
     }
 
-    private void sort(int status) {
-        ArrayList<File> dummy = new ArrayList<>();
-
-        for (int i = 0; i < model.getAllFiles().length; i++)
-            dummy.add(model.getAllFiles()[i]);
-
-
-        int index = 0;
-
-        for (int i = 0; i < model.getAllFiles().length; i++) {
-            for (int j = i; j < model.getAllFiles().length - i - 1; j++) {
-                if (compare(model.getAllFiles()[j + 1], model.getAllFiles()[j], status)) {
-                    File F = model.getAllFiles()[j + 1];
-                    model.getAllFiles()[j + 1] = model.getAllFiles()[j];
-                    model.getAllFiles()[j] = F;
-                }
-
-            }
-        }
-    }
-
-    private boolean compare(File A, File B, int status) {
-        /*
-        status=1:sort By name
-        status=2:sort By size
-        status=3:sort By Date
-        status=column number
-         */
-
-        switch (status) {
-            case 0:
-                //if string a is les than b, a.copmareTo(b)is negative
-                String a = A.getName(), b = B.getName();
-
-                return (a.compareTo(b) > 0);
-
-
-            case 1:
-                //For date, it is same. if A occurs before B A.compareTo(B) is <0
-                Date aa = new Date(A.lastModified()), bb = new Date(B.lastModified());
-                return (aa.compareTo(bb) > 0);
-
-
-            case 2:
-                return (A.length() < B.length());
-
-        }
-        return false;
-
-    }
 
 }
 //
