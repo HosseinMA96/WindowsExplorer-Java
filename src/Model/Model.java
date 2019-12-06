@@ -20,7 +20,6 @@ public class Model {
     }
 
     public File[] getAllFiles() {
-        upgradeFiles();
         return allFiles;
     }
 
@@ -69,12 +68,45 @@ public class Model {
 
     //IDK why but deletion is not as robust as it should be ... it sometimes "misses" ....
     public void deleteFile(File f) {
+           // JOptionPane.showMessageDialog(null,f.getAbsolutePath());
+//        try {
+//            if (!f.delete())
+//                JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 1);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
-        try {
-            if (!f.delete())
-                JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 1);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(f.isFile())
+        {
+            try
+            {
+                if(!f.delete())
+                    JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 1);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        if(f.isDirectory())
+        {
+            File [] temp=f.listFiles();
+
+            for (int i=0;i<temp.length;i++)
+                deleteFile(temp[i]);
+
+            try
+            {
+                if(!f.delete())
+                    JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 1);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
 

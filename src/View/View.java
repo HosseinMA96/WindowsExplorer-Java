@@ -20,7 +20,7 @@ public class View extends JFrame {
    private boolean localUpdate=false;
    private  FileTableModel model;
    private JTable table=new JTable();
-   private int status=0,feature=0;
+   private int status=0;
 
 
     JFrame frame = new JFrame("APP.JFileManager");
@@ -240,6 +240,7 @@ public class View extends JFrame {
         frame.setLocation(0, 0);
         frame.setSize(1500, 700);
         frame.setVisible(true);
+        frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
 
         /////Add buttons
@@ -345,14 +346,11 @@ public class View extends JFrame {
         return table;
     }
 
-    public void setListDisplay(String s) {
-        currentAddress=s;
+    public void setListDisplay() {
 
         makeLeftTree();
         //    frame.remove(rightScrollPane);
-      model = new FileTableModel(new File(currentAddress),this.status,this.feature);
-        File f = new File(currentAddress);
-        currentDirectoryFiles = f.listFiles();
+      model = new FileTableModel(currentDirectoryFiles);
          table = new JTable(model);
         //table.setCellSelectionEnabled(true);
 
@@ -406,29 +404,29 @@ public class View extends JFrame {
 //            }
 //        });
 
-        ListSelectionModel cellSelectionModel = table.getSelectionModel();
-        cellSelectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);//change Single selection to see effects
+   //     ListSelectionModel cellSelectionModel = table.getSelectionModel();
+   //     cellSelectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);//change Single selection to see effects
 
-
-        cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                gridIconArrayList = new ArrayList<GridIcon>();
-                //           String selectedDate=null;
-
-                int[] selectedRow = table.getSelectedRows();
-                int[] selectedColumns = table.getSelectedColumns();//here has good table.get seelction staff
-                numberOfSelectedLabel.setText("Number of items selected: " + selectedRow.length);
-
-                for (int i = 0; i < selectedRow.length; i++) {
-                    GridIcon gridIcon = new GridFileIcon("abcd", null, currentDirectoryFiles[selectedRow[i]].getAbsolutePath());
-                    gridIcon.setSetSelected(true);
-                    gridIconArrayList.add(gridIcon);
-                    //      JOptionPane.showMessageDialog(null,currentDirectoryFiles[selectedRow[i]].getAbsolutePath()+"");
-                }
-
-            }
-        });
+//
+//        cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
+//            @Override
+//            public void valueChanged(ListSelectionEvent e) {
+//                gridIconArrayList = new ArrayList<GridIcon>();
+//                //           String selectedDate=null;
+//
+//                int[] selectedRow = table.getSelectedRows();
+//                int[] selectedColumns = table.getSelectedColumns();//here has good table.get seelction staff
+//                numberOfSelectedLabel.setText("Number of items selected: " + selectedRow.length);
+//
+//                for (int i = 0; i < selectedRow.length; i++) {
+//                    GridIcon gridIcon = new GridFileIcon("abcd", null, currentDirectoryFiles[selectedRow[i]].getAbsolutePath());
+//                    gridIcon.setSetSelected(true);
+//                    gridIconArrayList.add(gridIcon);
+//                    //      JOptionPane.showMessageDialog(null,currentDirectoryFiles[selectedRow[i]].getAbsolutePath()+"");
+//                }
+//
+//            }
+//        });
         rightSidePanel = new JPanel(new BorderLayout());
 
         rightScrollPane = new JScrollPane(table);
@@ -573,6 +571,13 @@ public class View extends JFrame {
 
     }
 
+    public JTextField getSearchTextField() {
+        return searchTextField;
+    }
+
+    public JLabel getNumberOfSelectedLabel() {
+        return numberOfSelectedLabel;
+    }
 
     public JButton getGridDisplay() {
         return gridDisplay;
@@ -603,6 +608,9 @@ public class View extends JFrame {
         return edit_Synchronize;
     }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public JButton getTableDisplay() {
         return tableDisplay;
@@ -657,10 +665,6 @@ public class View extends JFrame {
         return status;
     }
 
-    public void setFeature(int f)
-    {
-        feature=f;
-    }
 
     public DrawRect getDrawRect() {
         return drawRect;
