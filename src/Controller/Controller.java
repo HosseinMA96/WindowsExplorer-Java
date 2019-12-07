@@ -2,6 +2,7 @@ package Controller;
 
 import Model.Model;
 import View.*;
+import org.omg.CORBA.portable.ValueInputStream;
 
 
 import javax.swing.*;
@@ -23,7 +24,9 @@ public class Controller {
     private ArrayList<File> selectedFiles;
     private int currentStatus = 0;
     private ArrayList<File> search = new ArrayList<>();
-    private int headerCol=0;
+    private int headerCol = 0;
+    private FrameKeyListener frameKeyListener;
+    private boolean controlPressed = false;
 
 
     public Controller(Model model, View view) {
@@ -31,9 +34,13 @@ public class Controller {
         this.view = view;
 
         model.upgradeFiles();
+
     }
 
     public void initController() {
+
+        handleFrameKeyListener();
+
         view.setAddressTextField(model.getCurrentAddress());
         view.getGridDisplay().addActionListener(new GridListener());
         view.getTableDisplay().addActionListener(new ListListener());
@@ -80,6 +87,19 @@ public class Controller {
         //   view.getTable().setSelectionModel(view.getTable().getSelectionModel().MULTIPLE_INTERVAL_SELECTION)
         view.getTable().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
+        view.getTable().addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                selectedFiles = null;
+                view.getNumberOfSelectedLabel().setText("Number of items selected: ");
+            }
+        });
+
         view.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -96,10 +116,29 @@ public class Controller {
                 }
 
             }
+
         });
 
+        handleFrameKeyListener();
         //  view.getTable().setCellSelectionEnabled(true);
 
+
+    }
+
+
+    void handleFrameKeyListener() {
+        view.getFrame().setFocusable(true);
+        view.getFrame().requestFocus();
+
+
+        if (frameKeyListener != null) {
+            view.getFrame().removeKeyListener(frameKeyListener);
+            frameKeyListener = new FrameKeyListener();
+            view.getFrame().addKeyListener(frameKeyListener);
+        } else {
+            frameKeyListener = new FrameKeyListener();
+            view.getFrame().addKeyListener(frameKeyListener);
+        }
 
     }
 
@@ -201,6 +240,7 @@ public class Controller {
 
     void upgradeView() {
 
+        handleFrameKeyListener();
 
         if (model.getGridDisplay()) {
             model.upgradeFiles();
@@ -286,9 +326,176 @@ public class Controller {
     class SettingsListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             Settings settings = new Settings();
+            handleSettingsListener(settings);
 
         }
     }
+
+    void handleSettingsListener(Settings settings) {
+        settings.getInitialAddressTextField().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.setInitialAddress(settings.getInitialAddressTextField().getText());
+                model.writeSettingsToFile();
+            }
+        });
+
+
+        settings.getReceivedFileAddress().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.setReceivedFileAddress(settings.getReceivedFileAddress().getText());
+                model.writeSettingsToFile();
+            }
+        });
+
+
+        settings.getRemoteComputerAddressTextField().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.setRemoteComputerAddress(settings.getRemoteComputerAddressTextField().getText());
+                model.writeSettingsToFile();
+            }
+        });
+
+        settings.getRemoteComputerPort().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.setRemoteComputerPort(settings.getRemoteComputerPort().getText());
+                model.writeSettingsToFile();
+            }
+        });
+
+        settings.getLookNFeel().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.setLookAndFeel(settings.getLookNFeel().getName());
+                model.writeSettingsToFile();
+            }
+        });
+
+        settings.getGridDisplayFormatCheckBox().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.setGridDisplay(true);
+                settings.getTableDisplayFormatCheckBox().setSelected(false);
+                settings.getGridDisplayFormatCheckBox().setSelected(true);
+                model.writeSettingsToFile();
+            }
+        });
+
+        settings.getTableDisplayFormatCheckBox().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.setGridDisplay(false);
+                settings.getGridDisplayFormatCheckBox().setSelected(false);
+                settings.getTableDisplayFormatCheckBox().setSelected(true);
+                model.writeSettingsToFile();
+            }
+        });
+
+        settings.getSyncInterval().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.setSyncInterval(settings.getSyncInterval().getName());
+                model.writeSettingsToFile();
+
+            }
+        });
+
+        settings.getMaxFlashbacks().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.setFlashBackNumber(settings.getMaxFlashbacks().getName());
+                model.writeSettingsToFile();
+            }
+        });
+
+//        this lousy thing does not work!!
+//        model.loadSettings();
+
+        settings.getInitialAddressTextField().setText(model.getInitialAddress());
+        settings.getReceivedFileAddress().setText(model.getReceivedFileAddress());
+        settings.getRemoteComputerAddressTextField().setText(model.getRemoteComputerAddress());
+        settings.getRemoteComputerPort().setText(model.getRemoteComputerPort());
+
+        //  settings.getLookNFeel().setSelectedItem(model.getLookAndFeel());
+
+        switch (model.getLookAndFeel()) {
+            case "Cross Platform":
+                settings.getLookNFeel().setSelectedIndex(1);
+        }
+
+        if (model.getGridDisplay()) {
+            settings.getTableDisplayFormatCheckBox().setSelected(false);
+            settings.getGridDisplayFormatCheckBox().setSelected(true);
+        } else {
+            settings.getTableDisplayFormatCheckBox().setSelected(true);
+            settings.getGridDisplayFormatCheckBox().setSelected(false);
+        }
+
+        settings.getSyncInterval().setSelectedItem(model.getSyncInterval());
+        settings.getMaxFlashbacks().setSelectedItem(model.getSyncInterval());
+    }
+
+
+    class SettingsInitialAddressListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            Settings settings = new Settings();
+
+        }
+    }
+
+
+    class SettingsReceivedFileAddressListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            Settings settings = new Settings();
+
+        }
+    }
+
+    class SettingsRemoteComputerAdressListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            Settings settings = new Settings();
+
+        }
+    }
+
+    class SettingsRemoteComputerPortListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            Settings settings = new Settings();
+
+        }
+    }
+
+    class SettingsLookAndFeelListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            Settings settings = new Settings();
+
+        }
+    }
+
+    class SettingsInitialDisplayListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            Settings settings = new Settings();
+
+        }
+    }
+
+    class SettingsSynchronizingIntervalListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            Settings settings = new Settings();
+
+        }
+    }
+
+    class SettingsNumberOfFlashBacksListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            Settings settings = new Settings();
+
+        }
+    }
+
 
     class CutListener extends CopyListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
@@ -329,74 +536,83 @@ public class Controller {
                 JOptionPane.showMessageDialog(null, "Nothing to paste", "Eror", 2);
 
             else {
-                for (int i = 0; i < coppy.size(); i++) {
-                    String newName = coppy.get(i).getName();
-                    File[] temp = (new File(model.getCurrentAddress())).listFiles();
-
-                    for (int j = 0; j < temp.length; j++) {
-
-                        //     System.out.println(j);
-                        if (temp[j].getName().equals(newName)) {
-
-                            if (coppy.get(i).isDirectory()) {
-                                newName += "_copy";
-                                j = 0;
-                                continue;
-                            } else {
-                                int dotOccurance = newName.length();
-                                boolean hasDot = false;
-
-                                for (int k = 0; k < temp[j].getName().length(); k++)
-                                    if (temp[j].getName().charAt(k) == '.') {
-                                        dotOccurance = k;
-                                        hasDot = true;
-                                        break;
-                                    }
-
-                                String dummy;
-
-                                if (hasDot)
-                                    dummy = newName.substring(0, dotOccurance) + "_copy" + newName.substring(dotOccurance, newName.length());
-
-                                else
-                                    dummy = newName.substring(0, dotOccurance) + "_copy";
-
-                                newName = dummy;
-                                j = 0;
-                                continue;
-
-
-                            }
-                        }
-
-                    }
-
+                ArrayList<String> newNames = findNewNames();
+                for (int i = 0; i < newNames.size(); i++)
                     try {
                         //  System.out.println("From "+coppy.get(i).getAbsolutePath()+" To "+model.getCurrentAddress()+"\\"+coppy.get(i).getName());
-                        Model.pasteFile(coppy.get(i).getAbsolutePath(), model.getCurrentAddress() + "\\" + newName);
+                        Model.pasteFile(coppy.get(i).getAbsolutePath(), model.getCurrentAddress() + "\\" + newNames.get(i));
                     } catch (Exception ex) {
                         //   JOptionPane.showMessageDialog(null,"Pasting failed\n"+ex.,"Error",2);
                         JOptionPane.showMessageDialog(null, "Failed to paste " + coppy.get(i).getAbsolutePath(), "Eror", 1);
                     }
 
-                    upgradeView();
-
-                }
-
-                if (cutPressed) {
-                    cutPressed = false;
-                    coppyPressed = false;
-
-                    for (int i = 0; i < coppy.size(); i++) {
-                        model.deleteFile(coppy.get(i));
-                    }
-                    upgradeView();
-                }
+                upgradeView();
 
             }
 
+            if (cutPressed) {
+                cutPressed = false;
+                coppyPressed = false;
+
+                for (int i = 0; i < coppy.size(); i++) {
+                    model.deleteFile(coppy.get(i));
+                }
+                upgradeView();
+            }
 
         }
+
+
+    }
+
+
+    ArrayList<String> findNewNames() {
+        ArrayList<String> ans = new ArrayList<String>();
+
+        for (int i = 0; i < coppy.size(); i++) {
+            String newName = coppy.get(i).getName();
+            File[] temp = (new File(model.getCurrentAddress())).listFiles();
+
+            for (int j = 0; j < temp.length; j++) {
+
+                //     System.out.println(j);
+                if (temp[j].getName().equals(newName)) {
+
+                    if (coppy.get(i).isDirectory()) {
+                        newName += "_copy";
+                        j = 0;
+                        continue;
+                    } else {
+                        int dotOccurance = newName.length();
+                        boolean hasDot = false;
+
+                        for (int k = 0; k < temp[j].getName().length(); k++)
+                            if (temp[j].getName().charAt(k) == '.') {
+                                dotOccurance = k;
+                                hasDot = true;
+                                break;
+                            }
+
+                        String dummy;
+
+                        if (hasDot)
+                            dummy = newName.substring(0, dotOccurance) + "_copy" + newName.substring(dotOccurance, newName.length());
+
+                        else
+                            dummy = newName.substring(0, dotOccurance) + "_copy";
+
+                        newName = dummy;
+                        j = 0;
+                        continue;
+
+
+                    }
+                }
+
+            }
+            ans.add(newName);
+        }
+        return ans;
     }
 
     class TableListener implements MouseListener {
@@ -427,41 +643,49 @@ public class Controller {
 
 
                 PopMenu popMenu = null;
-                if (selectedFiles.size() == 1)
-                    popMenu = new PopMenu(true, coppyPressed, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), view.getTable());
 
+                if (selectedFiles != null)
+                    if (selectedFiles.size() == 1)
+                        popMenu = new PopMenu(true, coppyPressed, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), view.getTable());
 
-                if (selectedFiles.size() > 1)
-                    popMenu = new PopMenu(false, coppyPressed, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), view.getTable());
+                if (selectedFiles != null)
+                    if (selectedFiles.size() > 1)
+                        popMenu = new PopMenu(false, coppyPressed, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), view.getTable());
 
-                if (popMenu != null) {
-                    popMenu.getCopy().addActionListener(new CopyListener());
-                    popMenu.getCut().addActionListener(new CutListener());
-                    popMenu.getDelete().addActionListener(new DeleteListener());
-                    popMenu.getRename().addActionListener(new RenameListener());
-                    popMenu.getOpen().addActionListener(new OpenListener());
-                    popMenu.getProperties().addActionListener(new PropertiesListener());
-                    popMenu.getNewFile().addActionListener(new NewFileListener());
-                    popMenu.getNewFolder().addActionListener(new NewFolderListener());
-                    popMenu.getPaste().addActionListener(new PasteListener());
+                if (selectedFiles != null)
+                    if (popMenu != null) {
+                        popMenu.getCopy().addActionListener(new CopyListener());
+                        popMenu.getCut().addActionListener(new CutListener());
+                        popMenu.getDelete().addActionListener(new DeleteListener());
+                        popMenu.getRename().addActionListener(new RenameListener());
+                        popMenu.getOpen().addActionListener(new OpenListener());
+                        popMenu.getProperties().addActionListener(new PropertiesListener());
+                        popMenu.getNewFile().addActionListener(new NewFileListener());
+                        popMenu.getNewFolder().addActionListener(new NewFolderListener());
+                        popMenu.getPaste().addActionListener(new PasteListener());
 
-                    //popMenu.getProperties()
-                }
+                        //popMenu.getProperties()
+                    }
 
             }
+            handleFrameKeyListener();
         }
 
 
         public void mouseClicked(MouseEvent event) {
+            handleFrameKeyListener();
         }
 
         public void mouseReleased(MouseEvent event) {
+            handleFrameKeyListener();
         }
 
         public void mouseEntered(MouseEvent event) {
+            handleFrameKeyListener();
         }
 
         public void mouseExited(MouseEvent event) {
+            handleFrameKeyListener();
         }
 
 
@@ -479,25 +703,24 @@ public class Controller {
                 view.addStatus();
 
 
-
                 int col = view.getTable().columnAtPoint(e.getPoint());
 
-                if(headerCol!=col)
+                if (headerCol != col)
                     view.setStatus(0);
 
-                headerCol=col;
+                headerCol = col;
 
                 String name = view.getTable().getColumnName(col);
 
-             //   JOptionPane.showMessageDialog(null,"status : "+view.getStatus()+" , col : "+col);
+                //   JOptionPane.showMessageDialog(null,"status : "+view.getStatus()+" , col : "+col);
 
 
                 if (view.getStatus() == 1)
-                sort(1,col);
+                    sort(1, col);
 
 
                 else
-                    sort(0,col);
+                    sort(0, col);
 
                 //  currentStatus=col;
                 //      sort(currentStatus );
@@ -513,7 +736,7 @@ public class Controller {
 //                view.setCurrentDirectoryFiles(model.getAllFiles());
 //                upgradeView();
 
-
+            handleFrameKeyListener();
         }
     }
 
@@ -627,8 +850,7 @@ public class Controller {
         view.getSearchTextField().getDocument().addDocumentListener(new DocumentListener() {
             private void upgradeLocally() {
 
-                if(view.getSearchTextField().getText().length()!=0)
-                {
+                if (view.getSearchTextField().getText().length() != 0) {
                     File[] F = new File[search.size()];
                     for (int i = 0; i < search.size(); i++)
                         F[i] = search.get(i);
@@ -638,15 +860,14 @@ public class Controller {
                 }
 
 
-            //    JOptionPane.showMessageDialog(null,F.length);
+                //    JOptionPane.showMessageDialog(null,F.length);
 
-                if(view.getSearchTextField().getText().length()==0)
-                {
+                if (view.getSearchTextField().getText().length() == 0) {
                     view.setCurrentDirectoryFiles(model.getAllFiles());
-             //       view.getSearchTextField().setText("Search");
+                    //       view.getSearchTextField().setText("Search");
                 }
 
-                if(model.getGridDisplay())
+                if (model.getGridDisplay())
                     view.setGridDisplay();
 
                 else
@@ -658,7 +879,7 @@ public class Controller {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 // JOptionPane.showMessageDialog(null,view.getSearchTextField().getDocument()+"");
-         //       JOptionPane.showMessageDialog(null,view.getSearchTextField().getDocument() + "");
+                //       JOptionPane.showMessageDialog(null,view.getSearchTextField().getDocument() + "");
                 search = new ArrayList<>();
                 massiveSearch(new File(model.getCurrentAddress()), view.getSearchTextField().getText());
                 upgradeLocally();
@@ -666,20 +887,20 @@ public class Controller {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-             //         JOptionPane.showMessageDialog(null,view.getSearchTextField().getText());
+                //         JOptionPane.showMessageDialog(null,view.getSearchTextField().getText());
                 search = new ArrayList<>();
-                massiveSearch(new File(model.getCurrentAddress()),  view.getSearchTextField().getText());
+                massiveSearch(new File(model.getCurrentAddress()), view.getSearchTextField().getText());
                 upgradeLocally();
-          //      JOptionPane.showMessageDialog(null,view.getSearchTextField().getText());
+                //      JOptionPane.showMessageDialog(null,view.getSearchTextField().getText());
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
                 // JOptionPane.showMessageDialog(null,view.getSearchTextField().getDocument()+"");
                 search = new ArrayList<>();
-                massiveSearch(new File(model.getCurrentAddress()),  view.getSearchTextField().getText());
+                massiveSearch(new File(model.getCurrentAddress()), view.getSearchTextField().getText());
                 upgradeLocally();
-         //      JOptionPane.showMessageDialog(null,view.getSearchTextField().getText());
+                //      JOptionPane.showMessageDialog(null,view.getSearchTextField().getText());
 
 
             }
@@ -688,23 +909,21 @@ public class Controller {
 
 
     private void massiveSearch(File dir, String name) {
-        if(name==null || name.length()==0)
+        if (name == null || name.length() == 0)
             return;
 
-        if(dir.exists() && dir.isFile())
-        {
-            if(dir.getName().contains(name))
+        if (dir.exists() && dir.isFile()) {
+            if (dir.getName().contains(name))
                 search.add(new File(dir.getAbsolutePath()));
         }
 
-        if(dir.exists() && dir.isDirectory())
-        {
-            File [] temp=dir.listFiles();
+        if (dir.exists() && dir.isDirectory()) {
+            File[] temp = dir.listFiles();
 
-            for (int i=0;i<temp.length;i++)
-                massiveSearch(temp[i],name);
+            for (int i = 0; i < temp.length; i++)
+                massiveSearch(temp[i], name);
 
-            if(dir.getName().contains(name))
+            if (dir.getName().contains(name))
                 search.add(new File(dir.getAbsolutePath()));
         }
 
@@ -713,19 +932,19 @@ public class Controller {
 
     private void sort(int order, int feature) {
 
-        if(feature==0 )
+        if (feature == 0)
             return;
 
         int index = 0;
 
-        File [] F=new File[model.getAllFiles().length];
+        File[] F = new File[model.getAllFiles().length];
 
-        for (int i=0;i<model.getAllFiles().length;i++)
-            F[i]=new File(model.getAllFiles()[i].getAbsolutePath());
+        for (int i = 0; i < model.getAllFiles().length; i++)
+            F[i] = new File(model.getAllFiles()[i].getAbsolutePath());
 
 
         for (int i = 0; i < F.length; i++) {
-            for (int j = 1; j < F.length- i; j++) {
+            for (int j = 1; j < F.length - i; j++) {
                 if (compare(F[j - 1], F[j], feature)) {
                     String S = F[j - 1].getAbsolutePath();
 
@@ -777,6 +996,181 @@ public class Controller {
 
         }
         return false;
+
+    }
+
+    class FrameKeyListener implements KeyListener {
+        @Override
+        public void keyTyped(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            {
+                if (e.getKeyCode() == KeyEvent.VK_DELETE && !controlPressed) {
+                    if (selectedFiles != null)
+                        for (int i = 0; i < selectedFiles.size(); i++)
+                            model.deleteFile(selectedFiles.get(i));
+
+                    selectedFiles = null;
+
+                    //       JOptionPane.showMessageDialog(null, "DELL");
+                    upgradeView();
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && !controlPressed) {
+                    for (int i = 0; i < selectedFiles.size(); i++)
+                        if (selectedFiles.get(i).isFile())
+                            open(selectedFiles.get(i));
+
+                    //      JOptionPane.showMessageDialog(null, "Enter");
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_UP && !controlPressed) {
+                    ///////////IMPEMENT FOR GRID
+
+                    if (model.getGridDisplay() == false) {
+                        int row = view.getTable().getSelectedRow();
+
+
+                        if (row != 0)
+                            view.getTable().setRowSelectionInterval(row - 1, row - 1);
+
+                        else
+                            view.getTable().setRowSelectionInterval(model.getAllFiles().length - 1, model.getAllFiles().length - 1);
+
+                        //  JOptionPane.showMessageDialog(null, "Arrow UP");
+                        view.getTable().scrollRectToVisible(view.getTable().getCellRect(view.getTable().getSelectedRow(), 0, true));
+                    }
+                }
+
+
+                if (e.getKeyCode() == KeyEvent.VK_DOWN && !controlPressed) {
+                    ///////////IMPEMENT FOR GRID
+
+                    if (model.getGridDisplay() == false) {
+
+                        int[] selectedRows = view.getTable().getSelectedRows();
+                        int row = selectedRows[selectedRows.length - 1];
+
+
+                        if (row != model.getAllFiles().length - 1)
+                            view.getTable().setRowSelectionInterval(row + 1, row + 1);
+
+
+                        else
+                            view.getTable().setRowSelectionInterval(0, 0);
+
+                        //       JOptionPane.showMessageDialog(null, "Arrow Down");
+                        view.getTable().scrollRectToVisible(view.getTable().getCellRect(view.getTable().getSelectedRow(), 0, true));
+                    }
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE && !controlPressed) {
+                    model.goToParent();
+                    upgradeView();
+
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
+                    controlPressed = true;
+                    //   JOptionPane.showMessageDialog(null,"control pressed");
+
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_C && controlPressed) {
+                    coppy = new ArrayList<>();
+                    //    JOptionPane.showMessageDialog(null, "C pressed");
+                    for (int i = 0; i < selectedFiles.size(); i++)
+                        coppy.add(selectedFiles.get(i));
+
+
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_V && controlPressed) {
+
+                    //   JOptionPane.showMessageDialog(null, "V pressed");
+
+                    if (coppy != null) {
+
+                        ArrayList<String> newNames = findNewNames();
+                        for (int i = 0; i < newNames.size(); i++) {
+                            try {
+                                Model.pasteFile(coppy.get(i).getAbsolutePath(), model.getCurrentAddress() + "\\" + newNames.get(i));
+                            } catch (Exception f) {
+                                JOptionPane.showMessageDialog(null, "Unable to paste");
+                            }
+
+
+                        }
+
+                        if (cutPressed) {
+                            for (int i = 0; i < coppy.size(); i++)
+                                model.deleteFile(coppy.get(i));
+
+                            coppy = null;
+
+                        }
+                        upgradeView();
+                    }
+
+
+                }
+
+
+                if (e.getKeyCode() == KeyEvent.VK_X && controlPressed) {
+                    coppy = new ArrayList<>();
+                    cutPressed = true;
+
+                    for (int i = 0; i < selectedFiles.size(); i++)
+                        coppy.add(selectedFiles.get(i));
+
+
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_F2 && !controlPressed) {
+
+                    switch (selectedFiles.size()) {
+                        default:
+                            JOptionPane.showMessageDialog(null, "Exactly file must be selected", "Eror", 3);
+                            break;
+
+
+                        case 1:
+                            String newName = JOptionPane.showInputDialog(null, "Enter new name:", "Enter name", 2);
+                            model.renameFile(selectedFiles.get(0).getPath(), newName);
+                            upgradeView();
+
+                            break;
+
+                    }
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_F && controlPressed) {
+                    model.newFile();
+                    upgradeView();
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_N && controlPressed) {
+                    model.newFolder();
+                    upgradeView();
+                }
+
+
+
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
+                controlPressed = false;
+                //     JOptionPane.showMessageDialog(null, "control released");
+
+            }
+
+        }
 
     }
 

@@ -7,20 +7,47 @@ import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
 
-public class View extends JFrame {
+public class View extends JFrame implements  FocusListener{
+
+    @Override
+    public void focusLost(FocusEvent fe){
+        this.setAutoRequestFocus(true);
+        this.requestFocus();}
+    @Override
+    public void focusGained(FocusEvent fe){}
+
+
+//
+//    public void keyPressed(KeyEvent e) {
+//        JOptionPane.showMessageDialog(this,e.getKeyCode()+" Pressed");
+//    }
+//
+//    public void keyReleased(KeyEvent e) {
+//        if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+//            JOptionPane.showMessageDialog(this,e.getKeyCode());
+//
+//
+//
+//    }
+//
+//    public void keyTyped(KeyEvent e) {
+//        System.out.println("keyTyped");
+//    }
+
+
+
 
     private boolean hasPrevView = false;
-   private boolean localUpdate=false;
-   private  FileTableModel model;
-   private JTable table=new JTable();
-   private int status=0;
+    private boolean localUpdate=false;
+    private  FileTableModel model;
+    private JTable table=new JTable();
+    private int status=0;
 
 
     JFrame frame = new JFrame("APP.JFileManager");
@@ -86,7 +113,7 @@ public class View extends JFrame {
     //   String currentAddress;
 
     //Starting pass
-
+    private Robot val;
 
     //current file Holder
 
@@ -98,6 +125,11 @@ public class View extends JFrame {
     private DrawRect drawRect;
 
     public View() {
+
+        this.setAlwaysOnTop (true);
+        this.setAutoRequestFocus(true);
+
+      //  addKeyListener(this);
         //Handle the tray
         SystemTray tray = SystemTray.getSystemTray();
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -251,78 +283,94 @@ public class View extends JFrame {
         // JOptionPane.showMessageDialog(null,"Grild Display");
 
         //    drawRect = new DrawRect();
+        if(hasPrevView)
+            frame.remove(splitPane);
 
         makeLeftTree();
 
-        int numberOfIcons = currentDirectoryFiles.length;
-        rightSidePanel = new DrawRect();
-        JPanel buttonsPanel = new JPanel(new GridLayout(numberOfIcons / 5 + 1, 1));
+//        int numberOfIcons = currentDirectoryFiles.length;
+//        rightSidePanel = new DrawRect();
+//        JPanel buttonsPanel = new JPanel(new GridLayout(numberOfIcons / 5 + 1, 1));
+//
+//        layeredPane = new JLayeredPane();
+//
+//
+//        //  rightSidePanel.setBackground(new Color(0, 0, 0, 10));
+//        //rightSidePanel.setOpaque(false);
+////add to the code
+//
+//
+//        gridIconArrayList = new ArrayList<>();
+//
+//        int temp = 0;
+//
+//        ArrayList<JPanel> panels = new ArrayList<>();
+//        JPanel dummyPanel = new JPanel(new GridLayout(1, 5));
+//
+//        for (File f : currentDirectoryFiles) {
+//            temp++;
+//
+//            if (f.isFile()) {
+//
+//                GridFileIcon fileIcon = new GridFileIcon(f.getName(), FileSystemView.getFileSystemView().getSystemIcon(f), f.getAbsolutePath());
+//                gridIconArrayList.add(fileIcon);
+//                dummyPanel.add(fileIcon);
+//            } else {
+//                gridIconArrayList.add(new GridFolderIcon(f.getName(), FileSystemView.getFileSystemView().getSystemIcon(f), f.getAbsolutePath()));
+//                dummyPanel.add(gridIconArrayList.get(gridIconArrayList.size() - 1));
+//            }
+//
+//            if (temp % 5 == 0) {
+//                buttonsPanel.add(dummyPanel);
+//                temp = 0;
+//                panels.add(dummyPanel);
+//                dummyPanel = new JPanel(new GridLayout(1, 5));
+//            }
+//
+//        }
 
-        layeredPane = new JLayeredPane();
+//        if (hasPrevView)
+//            frame.remove(splitPane);
 
 
-        //  rightSidePanel.setBackground(new Color(0, 0, 0, 10));
-        //rightSidePanel.setOpaque(false);
-//add to the code
 
 
-        gridIconArrayList = new ArrayList<>();
+    //    rightSidePanel.add(buttonsPanel);
+  //      buttonsPanel.add(rightSidePanel);
 
-        int temp = 0;
+//        JPanel comboPanel=new JPanel(new BorderLayout());
+//
+//        comboPanel.add(buttonsPanel,BorderLayout.CENTER);
+//        comboPanel.add(rightSidePanel,BorderLayout.CENTER);
+//        rightScrollPane=new JScrollPane(comboPanel);
+        DrawRect drawRect=new DrawRect(currentDirectoryFiles);
 
-        ArrayList<JPanel> panels = new ArrayList<>();
-        JPanel dummyPanel = new JPanel(new GridLayout(1, 5));
-
-        for (File f : currentDirectoryFiles) {
-            temp++;
-
-            if (f.isFile()) {
-
-                GridFileIcon fileIcon = new GridFileIcon(f.getName(), FileSystemView.getFileSystemView().getSystemIcon(f), f.getAbsolutePath());
-                gridIconArrayList.add(fileIcon);
-                dummyPanel.add(fileIcon);
-            } else {
-                gridIconArrayList.add(new GridFolderIcon(f.getName(), FileSystemView.getFileSystemView().getSystemIcon(f), f.getAbsolutePath()));
-                dummyPanel.add(gridIconArrayList.get(gridIconArrayList.size() - 1));
-            }
-
-            if (temp % 5 == 0) {
-                buttonsPanel.add(dummyPanel);
-                temp = 0;
-                panels.add(dummyPanel);
-                dummyPanel = new JPanel(new GridLayout(1, 5));
-            }
-
-        }
-
-        if (hasPrevView)
-            frame.remove(splitPane);
-
-
-        dummyPanel = new JPanel();
-        layeredPane.setLayout(new BorderLayout());
+        rightScrollPane=new JScrollPane(drawRect);
 
         leftScrollPane = new JScrollPane(leftTree);
-        rightScrollPane = new JScrollPane(buttonsPanel);
+
+        rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+      //  rightScrollPane = new JScrollPane(buttonsPanel);
 
         splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
 
         frame.add(splitPane);
         frame.setVisible(true);
 
-        buttonsPanel.setBounds(rightScrollPane.getBounds());
-        rightSidePanel.setBounds(rightScrollPane.getBounds());
+    //    buttonsPanel.setBounds(rightScrollPane.getBounds());
+     //   rightSidePanel.setBounds(rightScrollPane.getBounds());
+//
+
+     //   layeredPane.add(buttonsPanel, BorderLayout.CENTER, 1);
+     //   layeredPane.add(rightSidePanel, BorderLayout.CENTER, 0);
 
 
-        layeredPane.add(buttonsPanel, BorderLayout.CENTER, 1);
-        layeredPane.add(rightSidePanel, BorderLayout.CENTER, 0);
+      //  rightScrollPane = new JScrollPane(layeredPane);
 
-
-        rightScrollPane = new JScrollPane(layeredPane);
-
-        frame.remove(splitPane);
-        splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
-        frame.add(splitPane);
+      //  frame.remove(splitPane);
+      //  splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
+       // frame.add(splitPane);
 
 
         //     rightScrollPane = new JScrollPane(rightSidePanel);
@@ -331,12 +379,11 @@ public class View extends JFrame {
         //  rightScrollPane.add(drawRect);
 
 
-        rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
 
         //   frame.setLocation(400, 400);
         //     frame.setSize(1000, 700);
-        frame.setVisible(true);
+     //   frame.setVisible(true);
 //        rightScrollPane.setVertiscalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         //  rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         hasPrevView = true;
@@ -350,8 +397,8 @@ public class View extends JFrame {
 
         makeLeftTree();
         //    frame.remove(rightScrollPane);
-      model = new FileTableModel(currentDirectoryFiles);
-         table = new JTable(model);
+        model = new FileTableModel(currentDirectoryFiles);
+        table = new JTable(model);
         //table.setCellSelectionEnabled(true);
 
         table.setRowHeight(25);
@@ -404,8 +451,8 @@ public class View extends JFrame {
 //            }
 //        });
 
-   //     ListSelectionModel cellSelectionModel = table.getSelectionModel();
-   //     cellSelectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);//change Single selection to see effects
+        //     ListSelectionModel cellSelectionModel = table.getSelectionModel();
+        //     cellSelectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);//change Single selection to see effects
 
 //
 //        cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
@@ -545,7 +592,7 @@ public class View extends JFrame {
 
         leftTree = new JTree(nodes.get(nodes.size() - 1), true);
 
-     //   Icon icon= FileSystemView.getFileSystemView().getSystemIcon(currentDirectoryFiles);
+        //   Icon icon= FileSystemView.getFileSystemView().getSystemIcon(currentDirectoryFiles);
 
 
         //    TreePath treePath=new TreePath(nodes.get(nodes.size()-1));
@@ -702,6 +749,8 @@ public class View extends JFrame {
     public void setCurrentAddress(String currentAddress) {
         this.currentAddress = currentAddress;
     }
+
+
 
 }
 

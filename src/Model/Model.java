@@ -1,11 +1,14 @@
 package Model;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Scanner;
 
 public class Model {
 
@@ -13,6 +16,7 @@ public class Model {
     private String currentAddress = "C:\\Users\\erfan\\Desktop";
     private String syncPath;
     private boolean isGridDisplay;
+    private String initialAddress, receivedFileAddress, remoteComputerAddress, remoteComputerPort, lookAndFeel, displayFormat, syncInterval, flashBackNumber;
 
 
     public void setAllFiles(File[] allFiles) {
@@ -68,7 +72,7 @@ public class Model {
 
     //IDK why but deletion is not as robust as it should be ... it sometimes "misses" ....
     public void deleteFile(File f) {
-           // JOptionPane.showMessageDialog(null,f.getAbsolutePath());
+        // JOptionPane.showMessageDialog(null,f.getAbsolutePath());
 //        try {
 //            if (!f.delete())
 //                JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 1);
@@ -76,40 +80,188 @@ public class Model {
 //            e.printStackTrace();
 //        }
 
-        if(f.isFile())
-        {
-            try
-            {
-                if(!f.delete())
+        if (f.isFile()) {
+            try {
+                if (!f.delete())
                     JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 1);
 
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
 
             }
         }
 
-        if(f.isDirectory())
-        {
-            File [] temp=f.listFiles();
+        if (f.isDirectory()) {
+            File[] temp = f.listFiles();
 
-            for (int i=0;i<temp.length;i++)
+            for (int i = 0; i < temp.length; i++)
                 deleteFile(temp[i]);
 
-            try
-            {
-                if(!f.delete())
+            try {
+                if (!f.delete())
                     JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 1);
 
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
 
             }
         }
 
 
+    }
+
+    public void loadSettings() {
+        int i = 0;
+        try {
+            Scanner scan = new Scanner(new File("JFileManager_Settings.txt"));
+            while (scan.hasNextLine() && i < 8) {
+                String line = scan.nextLine();
+
+                switch (i) {
+                    case 0:
+                        initialAddress = new String(line);
+                        break;
+
+                    case 1:
+                        receivedFileAddress = new String(line);
+                        break;
+
+                    case 2:
+                        remoteComputerAddress = new String(line);
+                        break;
+
+                    case 3:
+                        remoteComputerPort = new String(line);
+                        break;
+
+                    case 4:
+                        lookAndFeel = new String(line);
+                        break;
+
+                    case 5:
+                        isGridDisplay = Boolean.parseBoolean(line);
+                        break;
+
+                    case 6:
+                        syncInterval = new String(line);
+                        break;
+
+
+                    case 7:
+                        flashBackNumber = new String(line);
+                        break;
+
+
+                }
+                i++;
+                //Here you can manipulate the string the way you want
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Unable to save settings", "Eror", 0);
+        }
+    }
+
+
+    public void writeSettingsToFile() {
+        try {
+
+            File f = new File("JFileManager_Settings.txt");
+
+            if (new File(f.getAbsolutePath()).exists())
+                deleteFile(new File(f.getAbsolutePath()));
+
+            FileWriter fw = new FileWriter("JFileManager_Settings.txt");
+
+
+            fw.write(initialAddress + "\n");
+            fw.write(receivedFileAddress + "\n");
+            fw.write(remoteComputerAddress + "\n");
+            fw.write(remoteComputerPort + "\n");
+            fw.write(lookAndFeel + "\n");
+            fw.write(isGridDisplay + "\n");
+            fw.write(syncInterval + "\n");
+            fw.write(flashBackNumber + "\n");
+
+            fw.close();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Unable to save settings.", "Eror", 0);
+        }
+
+
+    }
+
+    public void setSyncPath(String syncPath) {
+        this.syncPath = syncPath;
+    }
+
+    public void setInitialAddress(String initialAddress) {
+        this.initialAddress = initialAddress;
+    }
+
+    public void setReceivedFileAddress(String receivedFileAddress) {
+        this.receivedFileAddress = receivedFileAddress;
+    }
+
+    public void setRemoteComputerAddress(String remoteComputerAddress) {
+        this.remoteComputerAddress = remoteComputerAddress;
+    }
+
+    public void setRemoteComputerPort(String remoteComputerPort) {
+        this.remoteComputerPort = remoteComputerPort;
+    }
+
+    public void setLookAndFeel(String lookAndFeel) {
+        this.lookAndFeel = lookAndFeel;
+    }
+
+    public void setDisplayFormat(String displayFormat) {
+        this.displayFormat = displayFormat;
+    }
+
+    public void setSyncInterval(String syncInterval) {
+        this.syncInterval = syncInterval;
+    }
+
+    public void setFlashBackNumber(String flashBackNumber) {
+        this.flashBackNumber = flashBackNumber;
+    }
+
+    public String getSyncPath() {
+        return syncPath;
+    }
+
+    public boolean isGridDisplay() {
+        return isGridDisplay;
+    }
+
+    public String getInitialAddress() {
+        return initialAddress;
+    }
+
+    public String getReceivedFileAddress() {
+        return receivedFileAddress;
+    }
+
+    public String getRemoteComputerAddress() {
+        return remoteComputerAddress;
+    }
+
+    public String getRemoteComputerPort() {
+        return remoteComputerPort;
+    }
+
+    public String getLookAndFeel() {
+        return lookAndFeel;
+    }
+
+    public String getDisplayFormat() {
+        return displayFormat;
+    }
+
+    public String getSyncInterval() {
+        return syncInterval;
+    }
+
+    public String getFlashBackNumber() {
+        return flashBackNumber;
     }
 
     public static void pasteFile(String from, String to) throws IOException {
@@ -232,7 +384,6 @@ public class Model {
         } finally {
             upgradeFiles();
         }
-
 
     }
 

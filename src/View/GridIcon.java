@@ -6,25 +6,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 abstract public class GridIcon extends JButton {
-    private  Color pressedBackgroundColor=Color.blue;
+    private Color pressedBackgroundColor = Color.blue;
     private String shortenedName;
     private String path;
-    private boolean setSelected=false;
+    private boolean setSelected = false;
 
 
-    public GridIcon(String text,Icon icon,String path)
-    {
+    public GridIcon(String text, Icon icon, String path) {
         this.addActionListener(new ButtonListener());
-        this.path=path;
+        this.path = path;
 
-        if(text.length()>9)
-        {
-            shortenedName=text.substring(0,9);
-            shortenedName+="...";
-        }
-
-        else
-            shortenedName=text;
+        if (text.length() > 9) {
+            shortenedName = text.substring(0, 9);
+            shortenedName += "...";
+        } else
+            shortenedName = text;
 
         this.setIcon(icon);
         this.setText(shortenedName);
@@ -33,15 +29,14 @@ abstract public class GridIcon extends JButton {
 
         this.setVerticalTextPosition(SwingConstants.BOTTOM);
         this.setHorizontalTextPosition(SwingConstants.CENTER);
-          super.setOpaque(false);
+        super.setOpaque(false);
         super.setContentAreaFilled(false);
-       super.setBorderPainted(false);
+        super.setBorderPainted(false);
         super.setBorder(null);
+        this.setBackground(new Color(0, 0, 0, 0));
 
 
-
-
-      //  super.setPreferredSize(new Dimension(60,60));
+        //  super.setPreferredSize(new Dimension(60,60));
 
     }
 
@@ -49,7 +44,7 @@ abstract public class GridIcon extends JButton {
     protected void paintComponent(Graphics g) {
         if (getModel().isPressed() || setSelected) {
             g.setColor(pressedBackgroundColor);
-        }  else {
+        } else {
             g.setColor(getBackground());
         }
         g.fillRect(0, 0, getWidth(), getHeight());
@@ -73,9 +68,8 @@ abstract public class GridIcon extends JButton {
         this.pressedBackgroundColor = pressedBackgroundColor;
     }
 
-    public void setSetSelected(boolean isSelected)
-    {
-        setSelected=isSelected;
+    public void setSetSelected(boolean isSelected) {
+        setSelected = isSelected;
     }
 
     public boolean isSetSelected() {
@@ -84,15 +78,14 @@ abstract public class GridIcon extends JButton {
 
     class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-           if(setSelected)
-               setSelected=false;
+            if (setSelected)
+                setSelected = false;
 
-           else
-               setSelected=true;
+            else
+                setSelected = true;
 
         }
     }
-
 
 
 }
