@@ -267,8 +267,11 @@ public class Model {
     public static void pasteFile(String from, String to) throws IOException {
         Path src = Paths.get(from);
         Path dest = Paths.get(to);
+     //   JOptionPane.showMessageDialog(null,to);
 
         File sourceFolder = new File(from);
+
+
         File destinationFolder = new File(to);
 
         if (sourceFolder.isDirectory()) {
@@ -291,6 +294,7 @@ public class Model {
             }
         } else {
             //Copy the file content from one place to another
+       //     JOptionPane.showMessageDialog(null,destinationFolder.getName());
             Files.copy(sourceFolder.toPath(), destinationFolder.toPath(), StandardCopyOption.REPLACE_EXISTING);
             //    System.out.println("File copied :: " + destinationFolder);
         }

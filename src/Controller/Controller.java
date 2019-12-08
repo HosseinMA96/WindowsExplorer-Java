@@ -2,7 +2,6 @@ package Controller;
 
 import Model.Model;
 import View.*;
-import org.omg.CORBA.portable.ValueInputStream;
 
 
 import javax.swing.*;
@@ -11,6 +10,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class Controller {
     private int headerCol = 0;
     private FrameKeyListener frameKeyListener;
     private boolean controlPressed = false;
+   // private MyDragDropListener myDragDropListener;
 
 
     public Controller(Model model, View view) {
@@ -74,6 +76,10 @@ public class Controller {
         //      view.makeLeftTree();
 
         handleSearchFieldListener();
+
+
+      //  MyDragDropListener myDragDropListener=new MyDragDropListener();
+      //  new DropTarget(view.getFrame(),myDragDropListener);
 
     }
 
@@ -139,6 +145,84 @@ public class Controller {
             frameKeyListener = new FrameKeyListener();
             view.getFrame().addKeyListener(frameKeyListener);
         }
+
+
+        new DropTarget(view.getFrame(), new DropTargetListener() {
+            @Override
+            public void drop(DropTargetDropEvent event) {
+
+                // Accept copy drops
+                event.acceptDrop(DnDConstants.ACTION_COPY);
+
+
+                try{
+                    java.util.List list=(java.util.List) event.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+
+                    File file=(File)list.get(0);
+                   // JOptionPane.showMessageDialog(null,list.size());
+                   // JOptionPane.showMessageDialog(null,file.getAbsolutePath());
+
+                    ArrayList<File>temp=new ArrayList<>();
+
+                    boolean copyisEmpty=(coppy==null || coppy.size()==0);
+
+                    if(!copyisEmpty)
+                    for (int i=0;i<coppy.size();i++)
+                        temp.add(new File(coppy.get(i).getAbsolutePath()));
+
+                    coppy=new ArrayList<>();
+                    coppy.add(new File(file.getAbsolutePath()));
+
+                    ArrayList<String> newName=findNewNames();
+                //    JOptionPane.showMessageDialog(null,newName.get(0));
+
+                    Model.pasteFile(file.getAbsolutePath(),model.getCurrentAddress()+"\\"+newName.get(0));
+
+                    coppy=new ArrayList<>();
+
+                    if(!copyisEmpty)
+                    for (int i=0;i<temp.size();i++)
+                        coppy.add(new File(temp.get(i).getAbsolutePath()));
+
+                    else
+                        coppy=new ArrayList<>();
+
+                    temp=null;
+
+                }
+
+                catch (Exception e)
+                {
+                    JOptionPane.showMessageDialog(null,"Unable to perform drag and drop");
+                }
+
+
+
+
+
+
+                // Inform that the drop is complete
+                event.dropComplete(true);
+
+            }
+
+            @Override
+            public void dragEnter(DropTargetDragEvent event) {
+            }
+
+            @Override
+            public void dragExit(DropTargetEvent event) {
+            }
+
+            @Override
+            public void dragOver(DropTargetDragEvent event) {
+            }
+
+            @Override
+            public void dropActionChanged(DropTargetDragEvent event) {
+            }
+        });
+
 
     }
 
