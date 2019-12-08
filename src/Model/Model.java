@@ -18,6 +18,7 @@ public class Model {
     private String syncPath;
     private boolean isGridDisplay;
     private String initialAddress, receivedFileAddress, remoteComputerAddress, remoteComputerPort, lookAndFeel, displayFormat, syncInterval, flashBackNumber;
+    boolean firsTimeAddressLoad=true;
 
 
     public void setAllFiles(File[] allFiles) {
@@ -40,6 +41,7 @@ public class Model {
         try {
 
             File f = new File(currentAddress);
+        //    JOptionPane.showMessageDialog(null,"curr add: "+currentAddress);
             //    System.out.println(files.exists());
 
             if (f.isDirectory()) {
@@ -116,16 +118,26 @@ public class Model {
 //               // System.out.println(line);
 //                JOptionPane.showMessageDialog(null,line);
 //            }
-            this.setCurrentAddress(allLines.get(0));
+
+            if(firsTimeAddressLoad)
+            {
+                this.setCurrentAddress(allLines.get(0));
+
+                try {
+                    isGridDisplay = Boolean.parseBoolean(allLines.get(5));
+
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Error in finding the initial display mode. Was set to list display");
+                    isGridDisplay = false;
+                }
+
+                firsTimeAddressLoad=false;
+
+            }
+
             //   JOptionPane.showMessageDialog(null,this.getCurrentAddress());
 
-            try {
-                isGridDisplay = Boolean.parseBoolean(allLines.get(5));
 
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Error in finding the initial display mode. Was set to list display");
-                isGridDisplay = false;
-            }
 
 
         } catch (IOException e) {
@@ -390,6 +402,8 @@ public class Model {
         try {
 
             f = f.getParentFile();
+
+            if(f.exists())
             currentAddress = f.getAbsolutePath();
 
 

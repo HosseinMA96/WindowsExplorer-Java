@@ -13,14 +13,17 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
-public class View extends JFrame implements  FocusListener{
+public class View extends JFrame implements FocusListener {
 
     @Override
-    public void focusLost(FocusEvent fe){
+    public void focusLost(FocusEvent fe) {
         this.setAutoRequestFocus(true);
-        this.requestFocus();}
+        this.requestFocus();
+    }
+
     @Override
-    public void focusGained(FocusEvent fe){}
+    public void focusGained(FocusEvent fe) {
+    }
 
 
 //
@@ -41,13 +44,11 @@ public class View extends JFrame implements  FocusListener{
 //    }
 
 
-
-
     private boolean hasPrevView = false;
-    private boolean localUpdate=false;
-    private  FileTableModel model;
-    private JTable table=new JTable();
-    private int status=0;
+    private boolean localUpdate = false;
+    private FileTableModel model;
+    private JTable table = new JTable();
+    private int status = 0;
 
 
     JFrame frame = new JFrame("APP.JFileManager");
@@ -126,10 +127,10 @@ public class View extends JFrame implements  FocusListener{
 
     public View() {
 
-        this.setAlwaysOnTop (true);
+        this.setAlwaysOnTop(true);
         this.setAutoRequestFocus(true);
 
-      //  addKeyListener(this);
+        //  addKeyListener(this);
         //Handle the tray
         SystemTray tray = SystemTray.getSystemTray();
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -283,7 +284,7 @@ public class View extends JFrame implements  FocusListener{
         // JOptionPane.showMessageDialog(null,"Grild Display");
 
         //    drawRect = new DrawRect();
-        if(hasPrevView)
+        if (hasPrevView)
             frame.remove(splitPane);
 
         makeLeftTree();
@@ -333,44 +334,42 @@ public class View extends JFrame implements  FocusListener{
 //            frame.remove(splitPane);
 
 
-
-
-    //    rightSidePanel.add(buttonsPanel);
-  //      buttonsPanel.add(rightSidePanel);
+        //    rightSidePanel.add(buttonsPanel);
+        //      buttonsPanel.add(rightSidePanel);
 
 //        JPanel comboPanel=new JPanel(new BorderLayout());
 //
 //        comboPanel.add(buttonsPanel,BorderLayout.CENTER);
 //        comboPanel.add(rightSidePanel,BorderLayout.CENTER);
 //        rightScrollPane=new JScrollPane(comboPanel);
-        DrawRect drawRect=new DrawRect(currentDirectoryFiles);
+        DrawRect drawRect = new DrawRect(currentDirectoryFiles);
 
-        rightScrollPane=new JScrollPane(drawRect);
+        rightScrollPane = new JScrollPane(drawRect);
 
         leftScrollPane = new JScrollPane(leftTree);
 
         rightScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-      //  rightScrollPane = new JScrollPane(buttonsPanel);
+        //  rightScrollPane = new JScrollPane(buttonsPanel);
 
         splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
 
         frame.add(splitPane);
         frame.setVisible(true);
 
-    //    buttonsPanel.setBounds(rightScrollPane.getBounds());
-     //   rightSidePanel.setBounds(rightScrollPane.getBounds());
+        //    buttonsPanel.setBounds(rightScrollPane.getBounds());
+        //   rightSidePanel.setBounds(rightScrollPane.getBounds());
 //
 
-     //   layeredPane.add(buttonsPanel, BorderLayout.CENTER, 1);
-     //   layeredPane.add(rightSidePanel, BorderLayout.CENTER, 0);
+        //   layeredPane.add(buttonsPanel, BorderLayout.CENTER, 1);
+        //   layeredPane.add(rightSidePanel, BorderLayout.CENTER, 0);
 
 
-      //  rightScrollPane = new JScrollPane(layeredPane);
+        //  rightScrollPane = new JScrollPane(layeredPane);
 
-      //  frame.remove(splitPane);
-      //  splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
-       // frame.add(splitPane);
+        //  frame.remove(splitPane);
+        //  splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
+        // frame.add(splitPane);
 
 
         //     rightScrollPane = new JScrollPane(rightSidePanel);
@@ -379,11 +378,9 @@ public class View extends JFrame implements  FocusListener{
         //  rightScrollPane.add(drawRect);
 
 
-
-
         //   frame.setLocation(400, 400);
         //     frame.setSize(1000, 700);
-     //   frame.setVisible(true);
+        //   frame.setVisible(true);
 //        rightScrollPane.setVertiscalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         //  rightScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         hasPrevView = true;
@@ -550,8 +547,6 @@ public class View extends JFrame implements  FocusListener{
         //   System.out.println(currentDirectoryFiles.length);
 
 
-
-
         for (int i = 0; i < currentDirectoryFiles.length; i++) {
             if (currentDirectoryFiles[i].isFile())
 
@@ -702,10 +697,9 @@ public class View extends JFrame implements  FocusListener{
         return file_SetCurrentForSync;
     }
 
-    public void addStatus()
-    {
+    public void addStatus() {
         status++;
-        status%=2;
+        status %= 2;
     }
 
     public int getStatus() {
@@ -750,8 +744,68 @@ public class View extends JFrame implements  FocusListener{
         this.currentAddress = currentAddress;
     }
 
+    public void setLookAndFeel(String LF) {
+//        try {
+//            // Set System L&F
+//           // UIManager.setLookAndFeel(
+//             //       UIManager.getSystemLookAndFeelClassName());
+//            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+//        }
+//        catch (UnsupportedLookAndFeelException e) {
+//            // handle exception
+//        }
+//        catch (ClassNotFoundException e) {
+//            // handle exception
+//        }
+//        catch (InstantiationException e) {
+//            // handle exception
+//        }
+//        catch (IllegalAccessException e) {
+//            // handle exception
+//        }
 
+        switch (LF) {
+
+            case "Motif":
+                try {
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, LF + " Look and feel is not available");
+                }
+                break;
+
+            case "System":
+                try {
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, LF + " Look and feel is not available");
+                }
+                break;
+
+            case "WindowsClassic":
+                try {
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, LF + " Look and feel is not available");
+                }
+                break;
+
+            case "Nimbus":
+                try {
+                    UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, LF + " Look and feel is not available");
+                }
+                break;
+
+
+        }
+
+
+    }
 
 }
+
+
 
 

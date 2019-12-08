@@ -324,6 +324,7 @@ public class Controller {
 
     void upgradeView() {
 
+
         handleFrameKeyListener();
 
         if (model.getGridDisplay()) {
@@ -409,8 +410,11 @@ public class Controller {
 
     class SettingsListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+       //     JOptionPane.showMessageDialog(null,"Before "+model.getCurrentAddress());
             Settings settings = new Settings();
+      //      JOptionPane.showMessageDialog(null,"mid "+model.getCurrentAddress());
             model.loadSettings();
+      //      JOptionPane.showMessageDialog(null,"after "+model.getCurrentAddress());
             handleSettingsListener(settings);
 
 
@@ -455,7 +459,11 @@ public class Controller {
         settings.getLookNFeel().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+             //   JOptionPane.showMessageDialog(null,"address before LF : "+model.getCurrentAddress());
                 model.setLookAndFeel(settings.getLookNFeel().getSelectedItem() + "");
+                view.setLookAndFeel(model.getLookAndFeel());
+
+                upgradeView();
                 model.writeSettingsToFile();
             }
         });
@@ -505,12 +513,7 @@ public class Controller {
         settings.getRemoteComputerAddressTextField().setText(model.getRemoteComputerAddress());
         settings.getRemoteComputerPort().setText(model.getRemoteComputerPort());
 
-        //  settings.getLookNFeel().setSelectedItem(model.getLookAndFeel());
 
-//        switch (model.getLookAndFeel()) {
-//            case "Cross Platform":
-//                settings.getLookNFeel().setSelectedIndex(1);
-//        }
 
         if (model.getGridDisplay()) {
             settings.getTableDisplayFormatCheckBox().setSelected(false);
@@ -525,62 +528,6 @@ public class Controller {
     }
 
 
-    class SettingsInitialAddressListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            Settings settings = new Settings();
-
-        }
-    }
-
-
-    class SettingsReceivedFileAddressListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            Settings settings = new Settings();
-
-        }
-    }
-
-    class SettingsRemoteComputerAdressListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            Settings settings = new Settings();
-
-        }
-    }
-
-    class SettingsRemoteComputerPortListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            Settings settings = new Settings();
-
-        }
-    }
-
-    class SettingsLookAndFeelListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            Settings settings = new Settings();
-
-        }
-    }
-
-    class SettingsInitialDisplayListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            Settings settings = new Settings();
-
-        }
-    }
-
-    class SettingsSynchronizingIntervalListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            Settings settings = new Settings();
-
-        }
-    }
-
-    class SettingsNumberOfFlashBacksListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            Settings settings = new Settings();
-
-        }
-    }
 
 
     class CutListener extends CopyListener implements ActionListener {

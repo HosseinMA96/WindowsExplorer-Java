@@ -15,6 +15,8 @@ public class JFileManager {
     public static void main(String[] args) {
          model=new Model();
         initializeModelWithDefaultSettings();
+
+     //   JOptionPane.showMessageDialog(null,"In main, CA is "+ model.getCurrentAddress());
          view=new View();
         Controller controller=new Controller(model,view);
         controller.initController();

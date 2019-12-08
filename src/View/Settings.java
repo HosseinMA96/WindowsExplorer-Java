@@ -31,7 +31,7 @@ public class Settings {
     private JLabel syncIntervalLabel = new JLabel("Synchronizing interval:");
     private JLabel flashBackLabel = new JLabel("Maximum number of flashbacks:");
     private JFrame frame = new JFrame("View.Settings");
-    private String[] syncIntervals = {"never", "1 minute", "5 minutes", "30 minutes", "1 hour"}, lookAndFeels = {"default", "CrossPlatform", "Motif", "System", "WindowsClassic", "Nimbus"};
+    private String[] syncIntervals = {"never", "1 minute", "5 minutes", "30 minutes", "1 hour"}, lookAndFeels = {"default","Motif", "System", "WindowsClassic", "Nimbus"};
     private String[] flashBacks = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
 
     private JComboBox lookNFeel = new JComboBox(lookAndFeels);
@@ -193,8 +193,7 @@ public class Settings {
         String lookAndFeelString;
     }
 
-    void read() {
-
+    public JFrame getFrame() {
+        return frame;
     }
-
 }
