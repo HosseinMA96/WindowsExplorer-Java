@@ -8,12 +8,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Scanner;
 
 public class Model {
 
     private File[] allFiles;
-    private String currentAddress = "C:\\Users\\erfan\\Desktop";
+    private String currentAddress = "";
     private String syncPath;
     private boolean isGridDisplay;
     private String initialAddress, receivedFileAddress, remoteComputerAddress, remoteComputerPort, lookAndFeel, displayFormat, syncInterval, flashBackNumber;
@@ -48,8 +49,7 @@ public class Model {
                 throw new Exception("Address is not a directory");
 //
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Current address is not a directory.\nCurrent address was set to be desktop.");
-            currentAddress = "C:\\Users\\erfan\\Desktop";
+            JOptionPane.showMessageDialog(null, "Current address is not a directory");
             upgradeFiles();
         }
 
@@ -109,53 +109,27 @@ public class Model {
     }
 
     public void loadSettings() {
-        int i = 0;
+
         try {
-            Scanner scan = new Scanner(new File("JFileManager_Settings.txt"));
-            while (scan.hasNextLine() && i < 8) {
-                String line = scan.nextLine();
+            List<String> allLines = Files.readAllLines(Paths.get("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\JFileManager_Settings.txt"));
+//            for (String line : allLines) {
+//               // System.out.println(line);
+//                JOptionPane.showMessageDialog(null,line);
+//            }
+            this.setCurrentAddress(allLines.get(0));
+            //   JOptionPane.showMessageDialog(null,this.getCurrentAddress());
 
-                switch (i) {
-                    case 0:
-                        initialAddress = new String(line);
-                        break;
+            try {
+                isGridDisplay = Boolean.parseBoolean(allLines.get(5));
 
-                    case 1:
-                        receivedFileAddress = new String(line);
-                        break;
-
-                    case 2:
-                        remoteComputerAddress = new String(line);
-                        break;
-
-                    case 3:
-                        remoteComputerPort = new String(line);
-                        break;
-
-                    case 4:
-                        lookAndFeel = new String(line);
-                        break;
-
-                    case 5:
-                        isGridDisplay = Boolean.parseBoolean(line);
-                        break;
-
-                    case 6:
-                        syncInterval = new String(line);
-                        break;
-
-
-                    case 7:
-                        flashBackNumber = new String(line);
-                        break;
-
-
-                }
-                i++;
-                //Here you can manipulate the string the way you want
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error in finding the initial display mode. Was set to list display");
+                isGridDisplay = false;
             }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Unable to save settings", "Eror", 0);
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -163,26 +137,62 @@ public class Model {
     public void writeSettingsToFile() {
         try {
 
-            File f = new File("JFileManager_Settings.txt");
+            File f = new File("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\JFileManager_Settings.txt");
+            //   JOptionPane.showMessageDialog(null,"in settings");
 
             if (new File(f.getAbsolutePath()).exists())
                 deleteFile(new File(f.getAbsolutePath()));
 
-            FileWriter fw = new FileWriter("JFileManager_Settings.txt");
+//      //      FileWriter fw = new FileWriter("JFileManager_Settings.txt");
+//
+//      //      File fout = new File("out.txt");
+//            FileOutputStream fos = new FileOutputStream(f);
+//
+//            BufferedWriter fw = new BufferedWriter(new OutputStreamWriter(fos));
+
+            FileWriter fw = new FileWriter("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\JFileManager_Settings.txt");
+            //System.getProperty("line.separator");
+
+            // String.format("")
 
 
-            fw.write(initialAddress + "\n");
-            fw.write(receivedFileAddress + "\n");
-            fw.write(remoteComputerAddress + "\n");
-            fw.write(remoteComputerPort + "\n");
-            fw.write(lookAndFeel + "\n");
-            fw.write(isGridDisplay + "\n");
-            fw.write(syncInterval + "\n");
-            fw.write(flashBackNumber + "\n");
+//            for (int i = 0; i < 10; i++) {
+//                fw.write(i+""+"\r\n");
+//            //    fw.write("\r");
+//            }
+
+
+            fw.write(initialAddress + "\r\n");
+            System.out.println(initialAddress);
+
+            fw.write(receivedFileAddress + "\r\n");
+            System.out.println(receivedFileAddress);
+
+            fw.write(remoteComputerAddress + "\r\n");
+            System.out.println(remoteComputerAddress);
+
+            fw.write(remoteComputerPort + "\r\n");
+            System.out.println(remoteComputerPort);
+
+            fw.write(lookAndFeel + "\r\n");
+            System.out.println(lookAndFeel);
+
+            fw.write(isGridDisplay + "\r\n");
+            System.out.println(isGridDisplay);
+
+            fw.write(syncInterval + "\r\n");
+            System.out.println(syncInterval);
+
+            fw.write(flashBackNumber + "\r\n");
+            System.out.println(flashBackNumber);
+
+            System.out.println("\n\n\n");
+
 
             fw.close();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Unable to save settings.", "Eror", 0);
+            ex.printStackTrace();
         }
 
 
@@ -267,7 +277,7 @@ public class Model {
     public static void pasteFile(String from, String to) throws IOException {
         Path src = Paths.get(from);
         Path dest = Paths.get(to);
-     //   JOptionPane.showMessageDialog(null,to);
+        //   JOptionPane.showMessageDialog(null,to);
 
         File sourceFolder = new File(from);
 
@@ -294,7 +304,7 @@ public class Model {
             }
         } else {
             //Copy the file content from one place to another
-       //     JOptionPane.showMessageDialog(null,destinationFolder.getName());
+            //     JOptionPane.showMessageDialog(null,destinationFolder.getName());
             Files.copy(sourceFolder.toPath(), destinationFolder.toPath(), StandardCopyOption.REPLACE_EXISTING);
             //    System.out.println("File copied :: " + destinationFolder);
         }

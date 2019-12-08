@@ -4,6 +4,7 @@ import Model.Model;
 import View.*;
 
 
+import javax.print.attribute.standard.Finishings;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -28,11 +29,12 @@ public class Controller {
     private int headerCol = 0;
     private FrameKeyListener frameKeyListener;
     private boolean controlPressed = false;
-   // private MyDragDropListener myDragDropListener;
+    // private MyDragDropListener myDragDropListener;
 
 
     public Controller(Model model, View view) {
         this.model = model;
+
         this.view = view;
 
         model.upgradeFiles();
@@ -41,7 +43,12 @@ public class Controller {
 
     public void initController() {
 
+
+
         handleFrameKeyListener();
+
+
+
 
         view.setAddressTextField(model.getCurrentAddress());
         view.getGridDisplay().addActionListener(new GridListener());
@@ -66,22 +73,22 @@ public class Controller {
 
 
         //implement a function for default start situation
-        model.setGridDisplay(true);
-        view.setCurrentDirectoryFiles(model.getAllFiles());
-        view.setCurrentAddress(model.getCurrentAddress());
+        //     model.setGridDisplay(true);
+        //   view.setCurrentDirectoryFiles(model.getAllFiles());
+        //   view.setCurrentAddress(model.getCurrentAddress());
 
-        if (model.getGridDisplay()) {
-            view.setGridDisplay();
-        }
+
         //      view.makeLeftTree();
 
         handleSearchFieldListener();
+        upgradeView();
 
 
-      //  MyDragDropListener myDragDropListener=new MyDragDropListener();
-      //  new DropTarget(view.getFrame(),myDragDropListener);
+        //  MyDragDropListener myDragDropListener=new MyDragDropListener();
+        //  new DropTarget(view.getFrame(),myDragDropListener);
 
     }
+
 
     void initializeTable() {
         view.getTable().addMouseListener(new TableListener());
@@ -155,50 +162,43 @@ public class Controller {
                 event.acceptDrop(DnDConstants.ACTION_COPY);
 
 
-                try{
-                    java.util.List list=(java.util.List) event.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                try {
+                    java.util.List list = (java.util.List) event.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
 
-                    File file=(File)list.get(0);
-                   // JOptionPane.showMessageDialog(null,list.size());
-                   // JOptionPane.showMessageDialog(null,file.getAbsolutePath());
+                    File file = (File) list.get(0);
+                    // JOptionPane.showMessageDialog(null,list.size());
+                    // JOptionPane.showMessageDialog(null,file.getAbsolutePath());
 
-                    ArrayList<File>temp=new ArrayList<>();
+                    ArrayList<File> temp = new ArrayList<>();
 
-                    boolean copyisEmpty=(coppy==null || coppy.size()==0);
+                    boolean copyisEmpty = (coppy == null || coppy.size() == 0);
 
-                    if(!copyisEmpty)
-                    for (int i=0;i<coppy.size();i++)
-                        temp.add(new File(coppy.get(i).getAbsolutePath()));
+                    if (!copyisEmpty)
+                        for (int i = 0; i < coppy.size(); i++)
+                            temp.add(new File(coppy.get(i).getAbsolutePath()));
 
-                    coppy=new ArrayList<>();
+                    coppy = new ArrayList<>();
                     coppy.add(new File(file.getAbsolutePath()));
 
-                    ArrayList<String> newName=findNewNames();
-                //    JOptionPane.showMessageDialog(null,newName.get(0));
+                    ArrayList<String> newName = findNewNames();
+                    //    JOptionPane.showMessageDialog(null,newName.get(0));
 
-                    Model.pasteFile(file.getAbsolutePath(),model.getCurrentAddress()+"\\"+newName.get(0));
+                    Model.pasteFile(file.getAbsolutePath(), model.getCurrentAddress() + "\\" + newName.get(0));
 
-                    coppy=new ArrayList<>();
+                    coppy = new ArrayList<>();
 
-                    if(!copyisEmpty)
-                    for (int i=0;i<temp.size();i++)
-                        coppy.add(new File(temp.get(i).getAbsolutePath()));
+                    if (!copyisEmpty)
+                        for (int i = 0; i < temp.size(); i++)
+                            coppy.add(new File(temp.get(i).getAbsolutePath()));
 
                     else
-                        coppy=new ArrayList<>();
+                        coppy = new ArrayList<>();
 
-                    temp=null;
+                    temp = null;
 
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Unable to perform drag and drop");
                 }
-
-                catch (Exception e)
-                {
-                    JOptionPane.showMessageDialog(null,"Unable to perform drag and drop");
-                }
-
-
-
-
 
 
                 // Inform that the drop is complete
@@ -410,7 +410,9 @@ public class Controller {
     class SettingsListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             Settings settings = new Settings();
+            model.loadSettings();
             handleSettingsListener(settings);
+
 
         }
     }
@@ -453,7 +455,7 @@ public class Controller {
         settings.getLookNFeel().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                model.setLookAndFeel(settings.getLookNFeel().getName());
+                model.setLookAndFeel(settings.getLookNFeel().getSelectedItem() + "");
                 model.writeSettingsToFile();
             }
         });
@@ -481,7 +483,7 @@ public class Controller {
         settings.getSyncInterval().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                model.setSyncInterval(settings.getSyncInterval().getName());
+                model.setSyncInterval(settings.getSyncInterval().getSelectedItem() + "");
                 model.writeSettingsToFile();
 
             }
@@ -490,7 +492,7 @@ public class Controller {
         settings.getMaxFlashbacks().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                model.setFlashBackNumber(settings.getMaxFlashbacks().getName());
+                model.setFlashBackNumber(settings.getMaxFlashbacks().getSelectedItem() + "");
                 model.writeSettingsToFile();
             }
         });
@@ -505,10 +507,10 @@ public class Controller {
 
         //  settings.getLookNFeel().setSelectedItem(model.getLookAndFeel());
 
-        switch (model.getLookAndFeel()) {
-            case "Cross Platform":
-                settings.getLookNFeel().setSelectedIndex(1);
-        }
+//        switch (model.getLookAndFeel()) {
+//            case "Cross Platform":
+//                settings.getLookNFeel().setSelectedIndex(1);
+//        }
 
         if (model.getGridDisplay()) {
             settings.getTableDisplayFormatCheckBox().setSelected(false);
@@ -1108,6 +1110,9 @@ public class Controller {
                         if (selectedFiles.get(i).isFile())
                             open(selectedFiles.get(i));
 
+
+                        if(selectedFiles.size()==1 && selectedFiles.get(0).isDirectory())
+                            open(selectedFiles.get(0));
                     //      JOptionPane.showMessageDialog(null, "Enter");
                 }
 
@@ -1240,7 +1245,6 @@ public class Controller {
                     model.newFolder();
                     upgradeView();
                 }
-
 
 
             }
