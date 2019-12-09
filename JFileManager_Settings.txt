@@ -1,8 +1,8 @@
-C:\KMPlayer\Language
 null
 null
 null
-WindowsClassic
+null
+null
 true
 null
 null

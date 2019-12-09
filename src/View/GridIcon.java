@@ -32,11 +32,10 @@ abstract public class GridIcon extends JButton {
         super.setOpaque(false);
         super.setContentAreaFilled(false);
         super.setBorderPainted(false);
-        super.setBorder(null);
-        this.setBackground(new Color(0, 0, 0, 0));
 
 
-        //  super.setPreferredSize(new Dimension(60,60));
+
+
 
     }
 
@@ -45,9 +44,12 @@ abstract public class GridIcon extends JButton {
         if (getModel().isPressed() || setSelected) {
             g.setColor(pressedBackgroundColor);
         } else {
-            g.setColor(getBackground());
+            Color color=new Color(0,0,0,0);
+         //   g.setColor(getBackground());
+            g.setColor(color);
         }
         g.fillRect(0, 0, getWidth(), getHeight());
+
         super.paintComponent(g);
     }
 
@@ -85,6 +87,15 @@ abstract public class GridIcon extends JButton {
                 setSelected = true;
 
         }
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        setContentAreaFilled(false);
+        setFocusPainted(false);
+        setOpaque(false);
+       // setForeground(Color.WHITE);
     }
 
 

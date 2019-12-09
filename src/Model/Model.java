@@ -175,30 +175,30 @@ public class Model {
 
 
             fw.write(initialAddress + "\r\n");
-            System.out.println(initialAddress);
+      //      System.out.println(initialAddress);
 
             fw.write(receivedFileAddress + "\r\n");
-            System.out.println(receivedFileAddress);
+       //     System.out.println(receivedFileAddress);
 
             fw.write(remoteComputerAddress + "\r\n");
-            System.out.println(remoteComputerAddress);
+        //    System.out.println(remoteComputerAddress);
 
             fw.write(remoteComputerPort + "\r\n");
-            System.out.println(remoteComputerPort);
+       //     System.out.println(remoteComputerPort);
 
             fw.write(lookAndFeel + "\r\n");
-            System.out.println(lookAndFeel);
+        //    System.out.println(lookAndFeel);
 
             fw.write(isGridDisplay + "\r\n");
-            System.out.println(isGridDisplay);
+         //   System.out.println(isGridDisplay);
 
             fw.write(syncInterval + "\r\n");
-            System.out.println(syncInterval);
+       //     System.out.println(syncInterval);
 
             fw.write(flashBackNumber + "\r\n");
-            System.out.println(flashBackNumber);
+          //  System.out.println(flashBackNumber);
 
-            System.out.println("\n\n\n");
+      //      System.out.println("\n\n\n");
 
 
             fw.close();

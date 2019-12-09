@@ -12,6 +12,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static java.lang.System.exit;
+
 
 public class View extends JFrame implements FocusListener {
 
@@ -132,26 +134,37 @@ public class View extends JFrame implements FocusListener {
 
         //  addKeyListener(this);
         //Handle the tray
-        SystemTray tray = SystemTray.getSystemTray();
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Image image = toolkit.getImage("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\settingIcon.png");
-        PopupMenu menu = new PopupMenu();
-        MenuItem messageItem = new MenuItem("Show Message");
-        menu.add(messageItem);
+//        SystemTray tray = SystemTray.getSystemTray();
+//        Toolkit toolkit = Toolkit.getDefaultToolkit();
+//        Image image = toolkit.getImage("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\settingIcon.png");
+//        PopupMenu menu = new PopupMenu();
+//        MenuItem messageItem = new MenuItem("Show");
+//        menu.add(messageItem);
+//
+//        MenuItem closeItem = new MenuItem("Close");
+//        menu.add(closeItem);
+//        TrayIcon icon = new TrayIcon(image, "SystemTray Demo", menu);
+//        icon.setImageAutoSize(true);
+//
+//
+//        icon.setImageAutoSize(true);
+//
+//        try {
+//            tray.add(icon);
+//        } catch (Exception e) {
+//            System.err.println("TrayIcon could not be added.");
+//        }
+//
+//        closeItem.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                JOptionPane.showMessageDialog(null,"exit");
+//                exit(0);
+//            }
+//        });
+//
 
-        MenuItem closeItem = new MenuItem("Close");
-        menu.add(closeItem);
-        TrayIcon icon = new TrayIcon(image, "SystemTray Demo", menu);
-        icon.setImageAutoSize(true);
 
-
-        icon.setImageAutoSize(true);
-
-        try {
-            tray.add(icon);
-        } catch (Exception e) {
-            System.err.println("TrayIcon could not be added.");
-        }
 
 
         //Set frame's layout

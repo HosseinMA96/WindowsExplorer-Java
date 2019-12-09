@@ -15,9 +15,10 @@ public class DrawRect extends JPanel {
     private boolean singleChoice = true, leftClicked = false;
     PopMenu popMenu;
     private PopMenu singlePopMenu, multPopMenu;
-    private ArrayList<GridIcon>gridIcons;
+    private ArrayList<GridIcon> gridIcons;
     private File[] files;
-
+    private DrawRectChild opaqueDrawRectPanel;
+    private boolean childAdded=false;
 
 
 //    public static void main(String[] args) {
@@ -32,42 +33,36 @@ public class DrawRect extends JPanel {
         this.files = files;
     }
 
+    public DrawRect() {
+    //    this.add()
+    }
 
     public DrawRect(File[] F) {
-     //   singlePopMenu = new PopMenu(true, this);
-     //   multPopMenu = new PopMenu(false, this);
+
         x = y = x2 = y2 = 0; //
-        //     JOptionPane.showMessageDialog(null,"This THis");
-        MyMouseListener listener = new MyMouseListener();
-        addMouseListener(listener);
-        addMouseMotionListener(listener);
-        files=F;
-       // super.setOpaque(false);
+
+        files = F;
+
         addButtons();
+        handleMouseListeners();
+        opaqueDrawRectPanel=new DrawRectChild();
+        opaqueDrawRectPanel.setOpaque(false);
+        opaqueDrawRectPanel.setBackground(new Color(0,0,0,0));
+        opaqueDrawRectPanel.setForeground(new Color(0,0,0,0));
+
 
     }
 
-    void addButtons()
-    {
+    void addButtons() {
         int numberOfIcons = files.length;
-    //    rightSidePanel = new DrawRect();
-        this.setLayout((new GridLayout(numberOfIcons / 5 + 1, 1)));
 
-   //     layeredPane = new JLayeredPane();
-
-
-        //  rightSidePanel.setBackground(new Color(0, 0, 0, 10));
-        //rightSidePanel.setOpaque(false);
-//add to the code
-
-
+      //  GridLayout gridLayout=new GridLayout(20,1);
+        this.setLayout((new GridLayout(20, 1)));
         gridIcons = new ArrayList<>();
-
         int temp = 0;
 
-      //  ArrayList<JPanel> panels = new ArrayList<>();
-        JPanel dummyPanel = new JPanel(new GridLayout(1, 5));
 
+        JPanel dummyPanel = new JPanel(new GridLayout(1, 5));
 
 
         for (File f : files) {
@@ -84,10 +79,10 @@ public class DrawRect extends JPanel {
             }
 
             if (temp % 5 == 0) {
-        //        buttonsPanel.add(dummyPanel);
+                //
                 this.add(dummyPanel);
                 temp = 0;
-             //   panels.add(dummyPanel);
+
                 dummyPanel = new JPanel(new GridLayout(1, 5));
             }
 
@@ -114,64 +109,146 @@ public class DrawRect extends JPanel {
 
     }
 
-    class MyMouseListener extends MouseAdapter {
+    public void handleMouseListeners()
 
-        @Override
-        public void mousePressed(MouseEvent e) {
-            if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
-                setStartPoint(e.getX(), e.getY());
-                leftClicked = true;
+    {
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
+                    setStartPoint(e.getX(), e.getY());
+                    //     JOptionPane.showMessageDialog(null,"click"+e.getX()+" "+e.getY());
+                    leftClicked = true;
 
-         //       JOptionPane.showMessageDialog(null,"Click on panel");
+                    //       JOptionPane.showMessageDialog(null,"Click on panel");
 
-                if (popMenu != null) {
-                    popMenu.setVisible(false);
-                    popMenu = null;
+                    if (popMenu != null) {
+                        popMenu.setVisible(false);
+                        popMenu = null;
+                    }
                 }
-            }
 
-            if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
+                if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
 
-                //      if(popMenu!=null)
-                //    {
-                //        popMenu.setVisible(false);
-                //         popMenu=null;
-                //     }
-              //  singlePopMenu.show(e.getX(), e.getY());
-                leftClicked = false;
-                //     popMenu.show(null,e.getX(),e.getY());
-     //           JOptionPane.showMessageDialog(null, "Right Cl" + e.getX() + "," + e.getY());
-                //    popMenu.setVisible(true);
-            }
-
-        }
-        @Override
-        public void mouseDragged(MouseEvent e) {
-
-     //       JOptionPane.showMessageDialog(null,"Dragged");
-            if (leftClicked) {
-                setEndPoint(e.getX(), e.getY());
-                repaint();
-            }
-
-        }
-        @Override
-        public void mouseReleased(MouseEvent e) {
-      //      JOptionPane.showMessageDialog(null,"Released");
-            if (leftClicked) {
-                setEndPoint(e.getX(), e.getY());
-
-                x=0;
-                y=0;
-                x2=0;
-                y2=0;
-
-                repaint();
-                leftClicked = false;
+                    //      if(popMenu!=null)
+                    //    {
+                    //        popMenu.setVisible(false);
+                    //         popMenu=null;
+                    //     }
+                    //  singlePopMenu.show(e.getX(), e.getY());
+                    leftClicked = false;
+                    //     popMenu.show(null,e.getX(),e.getY());
+                    //           JOptionPane.showMessageDialog(null, "Right Cl" + e.getX() + "," + e.getY());
+                    //    popMenu.setVisible(true);
+                }
 
             }
 
-        }
+//            @Override
+//            public void mouseDragged(MouseEvent e) {
+//
+//                //       JOptionPane.showMessageDialog(null,"Dragged");
+//                if (leftClicked) {
+//                    setEndPoint(e.getX(), e.getY());
+//                    repaint();
+//                }
+//                JOptionPane.showMessageDialog(null,"drag"+e.getX()+" "+e.getY());
+//            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                //      JOptionPane.showMessageDialog(null,"Released");
+                if (leftClicked) {
+                    setEndPoint(e.getX(), e.getY());
+
+                    x = 0;
+                    y = 0;
+                    x2 = 0;
+                    y2 = 0;
+                    //   JOptionPane.showMessageDialog(null,"rel"+e.getX()+" "+e.getY());
+                    repaint();
+                    leftClicked = false;
+
+
+
+                }
+
+            }
+        });
+
+        ///////////////////////////
+
+
+        this.addMouseMotionListener(new MouseAdapter() {
+//            @Override
+//            public void mousePressed(MouseEvent e) {
+//                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
+//                    setStartPoint(e.getX(), e.getY());
+//                    //     JOptionPane.showMessageDialog(null,"click"+e.getX()+" "+e.getY());
+//                    leftClicked = true;
+//
+//                    //       JOptionPane.showMessageDialog(null,"Click on panel");
+//
+//                    if (popMenu != null) {
+//                        popMenu.setVisible(false);
+//                        popMenu = null;
+//                    }
+//                }
+
+//                if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
+//
+//                    //      if(popMenu!=null)
+//                    //    {
+//                    //        popMenu.setVisible(false);
+//                    //         popMenu=null;
+//                    //     }
+//                    //  singlePopMenu.show(e.getX(), e.getY());
+//                    leftClicked = false;
+//                    //     popMenu.show(null,e.getX(),e.getY());
+//                    //           JOptionPane.showMessageDialog(null, "Right Cl" + e.getX() + "," + e.getY());
+//                    //    popMenu.setVisible(true);
+//                }
+//
+//            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+
+                //       JOptionPane.showMessageDialog(null,"Dragged");
+                if (leftClicked) {
+                    setEndPoint(e.getX(), e.getY());
+                    repaint();
+
+                    childAdded=true;
+
+
+
+
+
+                }
+                //    JOptionPane.showMessageDialog(null,"drag"+e.getX()+" "+e.getY());
+            }
+//
+//            @Override
+//            public void mouseReleased(MouseEvent e) {
+//                //      JOptionPane.showMessageDialog(null,"Released");
+//                if (leftClicked) {
+//                    setEndPoint(e.getX(), e.getY());
+//
+//                    x = 0;
+//                    y = 0;
+//                    x2 = 0;
+//                    y2 = 0;
+//                    JOptionPane.showMessageDialog(null,"rel"+e.getX()+" "+e.getY());
+//                    repaint();
+//                    leftClicked = false;
+//
+//                }
+//
+//            }
+        });
+
+
     }
 
     @Override
@@ -182,35 +259,8 @@ public class DrawRect extends JPanel {
         Color myColour = new Color(0, 0, 200, 50);
         g.setColor(myColour);
         drawPerfectRect(g, x, y, x2, y2);
-
-
-
-
-
-
-
-
     }
 
-
-//    class rightClickListener implements org.w3c.dom.events.MouseEvent{
-//         public void mouseClicked(MouseEvent e) {
-//       int x=e.getX();
-//       int y=e.getY();
-//
-//        if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
-//            if(singleChoice)
-//            {
-//                new View.View.PopMenu(true,x,y);
-//            }
-//
-//            else
-//            {
-//                new View.View.PopMenu(true,x,y);
-//            }
-//            // whatever
-//        }
-//    }
 
     public void setSingleChoice(boolean singleChoice) {
         this.singleChoice = singleChoice;
