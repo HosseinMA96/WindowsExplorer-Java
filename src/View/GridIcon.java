@@ -4,16 +4,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 
 abstract public class GridIcon extends JButton {
     private Color pressedBackgroundColor = Color.blue;
     private String shortenedName;
     private String path;
     private boolean setSelected = false;
+    private long time;
 
 
     public GridIcon(String text, Icon icon, String path) {
-        this.addActionListener(new ButtonListener());
+        addListener();
         this.path = path;
 
         if (text.length() > 9) {
@@ -34,21 +36,22 @@ abstract public class GridIcon extends JButton {
         super.setBorderPainted(false);
 
 
-
+        this.setPreferredSize(new Dimension(40, 40));
+        this.setMaximumSize(new Dimension(40, 40));
 
 
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    public void paint(Graphics g) {
         if (getModel().isPressed() || setSelected) {
             g.setColor(pressedBackgroundColor);
         } else {
-            Color color=new Color(0,0,0,0);
-         //   g.setColor(getBackground());
+            Color color = new Color(0, 0, 0, 0);
+            //   g.setColor(getBackground());
             g.setColor(color);
         }
-        g.fillRect(0, 0, getWidth(), getHeight());
+        g.fillRect(0 + getWidth() / 2 - 2 * this.getIcon().getIconWidth() - 10, 0 + getHeight() / 2 - this.getIcon().getIconHeight() - 20, this.getWidth() / 2, this.getHeight() + 20);
 
         super.paintComponent(g);
     }
@@ -74,28 +77,48 @@ abstract public class GridIcon extends JButton {
         setSelected = isSelected;
     }
 
+
     public boolean isSetSelected() {
         return setSelected;
     }
 
-    class ButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            if (setSelected)
-                setSelected = false;
 
-            else
-                setSelected = true;
+    void addListener() {
+        this.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (setSelected)
+                {
+                    setSelected = false;
 
-        }
+                    long temp=new Date().getTime();
+
+                    if(temp-time<500)
+                        JOptionPane.showMessageDialog(null,"Double click");
+                }
+
+
+                else {
+
+                    setSelected = true;
+                    time=new Date().getTime();
+
+                    //     JOptionPane.showMessageDialog(null,"button cord :  x= "+getXMid()+" ,y= "+getYMid());
+                }
+            }
+        });
     }
 
-    @Override
-    public void updateUI() {
-        super.updateUI();
-        setContentAreaFilled(false);
-        setFocusPainted(false);
-        setOpaque(false);
-       // setForeground(Color.WHITE);
+
+    double getXMid() {
+        //  return this.getX()+this.getWidth()/2;
+        return this.getLocationOnScreen().getX() + getHeight() / 2;
+
+    }
+
+    double getYMid() {
+        //  return this.getX()+this.getHeight()/2;
+        return this.getLocationOnScreen().getY() + getWidth() / 2;
     }
 
 
