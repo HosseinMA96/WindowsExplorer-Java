@@ -19,18 +19,19 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Controller {
-    private  Model myModel;
+    private Model myModel;
     private View view;
     private ArrayList<File> coppy;
     boolean cutPressed = false, coppyPressed = false;
     private ArrayList<File> selectedFiles;
-    private int currentStatus = 0;
+    private int currentGridIconRow, currentGridIconColumn;
     private ArrayList<File> search = new ArrayList<>();
     private int headerCol = 0;
     private FrameKeyListener frameKeyListener;
     private boolean controlPressed = false;
     private DrawRect drawRect;
-    private  ArrayList<GridIcon> gridIcons;
+    private ArrayList<GridIcon> gridIcons;
+
 
     // private MyDragDropListener myDragDropListener;
 
@@ -133,31 +134,27 @@ public class Controller {
 
         });
 
-        if(view.getRightScrollPane()==null)
+        if (view.getRightScrollPane() == null)
             view.setRightScrollPane(new JScrollPane());
 
         view.getRightScrollPane().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(SwingUtilities.isRightMouseButton(e))
-                {
-                 //   JOptionPane.showMessageDialog(null,"Right click on panel");
-                    GridEmptySpacePopMenu gridEmptySpacePopMenu=new GridEmptySpacePopMenu(coppyPressed,e.getXOnScreen(),e.getYOnScreen(),view.getRightScrollPane());
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    //   JOptionPane.showMessageDialog(null,"Right click on panel");
+                    GridEmptySpacePopMenu gridEmptySpacePopMenu = new GridEmptySpacePopMenu(coppyPressed, e.getXOnScreen(), e.getYOnScreen(), view.getRightScrollPane());
                     gridEmptySpacePopMenu.getPaste().addActionListener(new PasteListener());
                     gridEmptySpacePopMenu.getNewFolder().addActionListener(new NewFolderListener());
                     gridEmptySpacePopMenu.getNewFile().addActionListener(new NewFileListener());
 
-                    selectedFiles=new ArrayList<>();
+                    selectedFiles = new ArrayList<>();
                     selectedFiles.add(new File(myModel.getCurrentAddress()));
                     gridEmptySpacePopMenu.getProperties().addActionListener(new PropertiesListener());
-                    selectedFiles=null;
+                    selectedFiles = null;
                     view.getNumberOfSelectedLabel().setText("number of items selected:");
                     //Overlord
-                }
-
-                else
-                {
-                    selectedFiles=null;
+                } else {
+                    selectedFiles = null;
                     view.getNumberOfSelectedLabel().setText("number of items selected:");
 
                 }
@@ -263,9 +260,8 @@ public class Controller {
         public void actionPerformed(ActionEvent e) {
             view.setCurrentDirectoryFiles(myModel.getAllFiles());
             view.setCurrentAddress(myModel.getCurrentAddress());
-            if(myModel.getGridDisplay()==false)
-            {
-                selectedFiles=null;
+            if (myModel.getGridDisplay() == false) {
+                selectedFiles = null;
                 view.getNumberOfSelectedLabel().setText("number of items selected:");
             }
             myModel.setGridDisplay(true);
@@ -295,9 +291,8 @@ public class Controller {
 
     class ListListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            if(myModel.getGridDisplay()==true)
-            {
-                selectedFiles=null;
+            if (myModel.getGridDisplay() == true) {
+                selectedFiles = null;
                 view.getNumberOfSelectedLabel().setText("number of items selected:");
             }
 
@@ -325,7 +320,7 @@ public class Controller {
         }
     }
 
-    void upgradeView() {
+    public void upgradeView() {
 
 
         handleFrameKeyListener();
@@ -355,8 +350,6 @@ public class Controller {
             view.getFrame().setVisible(true);
 
 
-
-
         } else {
 //            myModel.setCurrentAddress(f.getAbsolutePath());
 //            myModel.upgradeFiles();
@@ -374,6 +367,13 @@ public class Controller {
         }
 
         view.setAddressTextField(myModel.getCurrentAddress());
+
+
+        if (selectedFiles == null)
+            view.getNumberOfSelectedLabel().setText("number of items selected: ");
+
+        else
+            view.getNumberOfSelectedLabel().setText("number of items selected: " + selectedFiles.size());
         //  view.getTable().addMouseListener(new TableListener());
 
 
@@ -396,6 +396,24 @@ public class Controller {
 
             upgradeView();
         }
+    }
+
+    public void upgradeSelectedFiles() {
+        if (gridIcons == null)
+            return;
+
+        selectedFiles = new ArrayList<>();
+
+        for (int i = 0; i < gridIcons.size(); i++)
+            if (gridIcons.get(i).isSetSelected())
+                selectedFiles.add(new File(gridIcons.get(i).path));
+
+        if (selectedFiles == null)
+            view.getNumberOfSelectedLabel().setText("number of items selected: ");
+
+        else
+            view.getNumberOfSelectedLabel().setText("number of items selected: " + selectedFiles.size());
+
     }
 
     ///Only works for grid display!!
@@ -564,6 +582,7 @@ public class Controller {
 
             if (selectedFiles == null || selectedFiles.size() == 0) {
                 JOptionPane.showMessageDialog(null, "At least 1 file must be selected.", "Eror", 2);
+                return;
             }
 
             coppy = new ArrayList<>();
@@ -789,9 +808,12 @@ public class Controller {
                 //  currentStatus=col;
                 //      sort(currentStatus );
 
+                try {
+                    view.setListDisplay();
+                    initializeTable();
+                } catch (Exception b) {
 
-                view.setListDisplay();
-                initializeTable();
+                }
 
 
             }
@@ -855,7 +877,6 @@ public class Controller {
             }
 
 
-
             Desktop desktop = Desktop.getDesktop();
             if (f.exists()) {
                 try {
@@ -880,7 +901,7 @@ public class Controller {
 
         }
 
-        selectedFiles=null;
+        selectedFiles = null;
     }
 
 
@@ -927,9 +948,10 @@ public class Controller {
     void handleSearchFieldListener() {
         view.getSearchTextField().getDocument().addDocumentListener(new DocumentListener() {
             private void upgradeLocally() {
+                File[] F=null;
 
                 if (view.getSearchTextField().getText().length() != 0) {
-                    File[] F = new File[search.size()];
+                     F = new File[search.size()];
                     for (int i = 0; i < search.size(); i++)
                         F[i] = search.get(i);
 
@@ -942,14 +964,23 @@ public class Controller {
 
                 if (view.getSearchTextField().getText().length() == 0) {
                     view.setCurrentDirectoryFiles(myModel.getAllFiles());
+                    upgradeView();
+                    return;
                     //       view.getSearchTextField().setText("Search");
                 }
 
                 if (myModel.getGridDisplay())
+                {
+                    drawRect.setFiles(F);
                     view.setGridDisplay();
+                }
+
 
                 else
                     view.setListDisplay();
+
+
+                upgradeView();
 
 
             }
@@ -998,11 +1029,13 @@ public class Controller {
         if (dir.exists() && dir.isDirectory()) {
             File[] temp = dir.listFiles();
 
-            for (int i = 0; i < temp.length; i++)
-                massiveSearch(temp[i], name);
+            if (temp != null)
+                for (int i = 0; i < temp.length; i++)
+                    massiveSearch(temp[i], name);
 
-            if (dir.getName().contains(name))
-                search.add(new File(dir.getAbsolutePath()));
+            if (temp != null)
+                if (dir.getName().contains(name))
+                    search.add(new File(dir.getAbsolutePath()));
         }
 
 
@@ -1043,6 +1076,35 @@ public class Controller {
         }
 
         view.setCurrentDirectoryFiles(F);
+    }
+
+    void calcRowAndColumn() {
+        upgradeSelectedFiles();
+
+        if (selectedFiles == null || selectedFiles.size() == 0) {
+            currentGridIconRow = 0;
+            currentGridIconColumn = 0;
+            return;
+        }
+
+        File[] temp = myModel.getAllFiles();
+
+
+        int index = 0;
+        File f = selectedFiles.get(0);
+
+        for (int i = 0; i < temp.length; i++)
+            if (temp[i].getAbsolutePath().equals(f.getAbsolutePath())) {
+                index = i;
+                break;
+            }
+
+        currentGridIconColumn = index % 5;
+        currentGridIconRow = index / 5;
+
+        return;
+
+
     }
 
     private boolean compare(File A, File B, int feature) {
@@ -1109,6 +1171,8 @@ public class Controller {
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_UP && !controlPressed) {
+                    if (myModel.getAllFiles() == null)
+                        return;
                     ///////////IMPEMENT FOR GRID
 
                     if (myModel.getGridDisplay() == false) {
@@ -1123,19 +1187,117 @@ public class Controller {
 
                         //  JOptionPane.showMessageDialog(null, "Arrow UP");
                         view.getTable().scrollRectToVisible(view.getTable().getCellRect(view.getTable().getSelectedRow(), 0, true));
-                    }
+                    } else {
+                        // JOptionPane.showMessageDialog(null,"Grid up"+currentGridIconRow+","+currentGridIconColumn);
+                        calcRowAndColumn();
 
-                    else
-                    {
+                        if (myModel.getAllFiles() != null) {
+                            int l = myModel.getAllFiles().length;
+                            if (currentGridIconRow == 0)
+                                currentGridIconRow = 0;
+
+
+                            else
+                                currentGridIconRow--;
+
+                            File next = myModel.getAllFiles()[currentGridIconRow * 5 + currentGridIconColumn];
+
+                            for (int i = 0; i < gridIcons.size(); i++)
+                                if (!gridIcons.get(i).getPath().equals(next.getAbsolutePath())) {
+                                    gridIcons.get(i).setSetSelected(false);
+                                    gridIcons.get(i).repaint();
+                                } else {
+                                    gridIcons.get(i).setSetSelected(true);
+
+                                    gridIcons.get(i).repaint();
+
+                                }
+
+                            upgradeSelectedFiles();
+
+
+                        }
+
+
+                    }
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT && !controlPressed) {
+                    if (myModel.getAllFiles() == null)
+                        return;
+
+                    if (myModel.getGridDisplay() && myModel.getAllFiles() != null) {
+                        calcRowAndColumn();
+                        int l = myModel.getAllFiles().length;
+                        if (currentGridIconColumn == 4 || (currentGridIconRow == l / 5 && l % 5 - 1 == currentGridIconColumn))
+                            currentGridIconColumn = 0;
+
+
+                        else
+                            currentGridIconColumn++;
+
+
+                        File next = myModel.getAllFiles()[currentGridIconRow * 5 + currentGridIconColumn];
+
+                        for (int i = 0; i < gridIcons.size(); i++)
+                            if (!gridIcons.get(i).getPath().equals(next.getAbsolutePath())) {
+                                gridIcons.get(i).setSetSelected(false);
+                                gridIcons.get(i).repaint();
+                            } else {
+                                gridIcons.get(i).setSetSelected(true);
+
+                                gridIcons.get(i).repaint();
+
+                            }
+
+                        upgradeSelectedFiles();
+
+                    }
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_LEFT && !controlPressed) {
+                    if (myModel.getAllFiles() == null)
+                        return;
+
+                    if (myModel.getGridDisplay() && myModel.getAllFiles() != null) {
+                        calcRowAndColumn();
+                        int l = myModel.getAllFiles().length;
+                        if (currentGridIconColumn == 0) {
+                            if (currentGridIconRow == l / 5)
+                                currentGridIconColumn = l % 5 - 1;
+
+                            else
+                                currentGridIconColumn = 4;
+                        } else
+                            currentGridIconColumn--;
+
+
+                        File next = myModel.getAllFiles()[currentGridIconRow * 5 + currentGridIconColumn];
+
+                        for (int i = 0; i < gridIcons.size(); i++)
+                            if (!gridIcons.get(i).getPath().equals(next.getAbsolutePath())) {
+                                gridIcons.get(i).setSetSelected(false);
+                                gridIcons.get(i).repaint();
+                            } else {
+                                gridIcons.get(i).setSetSelected(true);
+
+                                gridIcons.get(i).repaint();
+
+                            }
+
+                        upgradeSelectedFiles();
 
                     }
                 }
 
 
                 if (e.getKeyCode() == KeyEvent.VK_DOWN && !controlPressed) {
+                    if (myModel.getAllFiles() == null)
+                        return;
                     ///////////IMPEMENT FOR GRID
 
                     if (myModel.getGridDisplay() == false) {
+
 
                         int[] selectedRows = view.getTable().getSelectedRows();
                         int row = selectedRows[selectedRows.length - 1];
@@ -1150,6 +1312,36 @@ public class Controller {
 
                         //       JOptionPane.showMessageDialog(null, "Arrow Down");
                         view.getTable().scrollRectToVisible(view.getTable().getCellRect(view.getTable().getSelectedRow(), 0, true));
+                    } else if (myModel.getAllFiles() != null) {
+                        calcRowAndColumn();
+                        int l = myModel.getAllFiles().length;
+                        if (currentGridIconRow == l / 5)
+                            return;
+
+                        if (currentGridIconRow == l / 5 - 1) {
+                            currentGridIconRow = l / 5;
+
+                            int lastCol = l % 5;
+                            if (currentGridIconColumn >= lastCol)
+                                currentGridIconColumn = lastCol - 1;
+                        } else if (currentGridIconRow != l / 5)
+                            currentGridIconRow++;
+
+
+                        File next = myModel.getAllFiles()[currentGridIconRow * 5 + currentGridIconColumn];
+
+                        for (int i = 0; i < gridIcons.size(); i++)
+                            if (!gridIcons.get(i).getPath().equals(next.getAbsolutePath())) {
+                                gridIcons.get(i).setSetSelected(false);
+                                gridIcons.get(i).repaint();
+                            } else {
+                                gridIcons.get(i).setSetSelected(true);
+
+                                gridIcons.get(i).repaint();
+
+                            }
+
+                        upgradeSelectedFiles();
                     }
                 }
 
@@ -1167,9 +1359,17 @@ public class Controller {
 
                 if (e.getKeyCode() == KeyEvent.VK_C && controlPressed) {
                     coppy = new ArrayList<>();
-                    //    JOptionPane.showMessageDialog(null, "C pressed");
-                    for (int i = 0; i < selectedFiles.size(); i++)
-                        coppy.add(selectedFiles.get(i));
+                    //      JOptionPane.showMessageDialog(null, "ctrl + C pressed");
+                    if (selectedFiles != null)
+                        for (int i = 0; i < selectedFiles.size(); i++)
+                            coppy.add(new File(selectedFiles.get(i).getAbsolutePath()));
+
+                    coppyPressed = true;
+                    if (coppy != null)
+                        JOptionPane.showMessageDialog(null, "Ncoppy : " + coppy.size());
+
+                    else
+                        JOptionPane.showMessageDialog(null, "Ncoppy : " + 0);
 
 
                 }
@@ -1216,21 +1416,17 @@ public class Controller {
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_F2 && !controlPressed) {
-
-                    switch (selectedFiles.size()) {
-                        default:
-                            JOptionPane.showMessageDialog(null, "Exactly file must be selected", "Eror", 3);
-                            break;
-
-
-                        case 1:
-                            String newName = JOptionPane.showInputDialog(null, "Enter new name:", "Enter name", 2);
-                            myModel.renameFile(selectedFiles.get(0).getPath(), newName);
-                            upgradeView();
-
-                            break;
-
+                    if (selectedFiles == null || selectedFiles.size() > 1 || selectedFiles.size() == 0) {
+                        JOptionPane.showMessageDialog(null, "Exactly file must be selected", "Eror", 0);
+                        return;
                     }
+
+
+                    String newName = JOptionPane.showInputDialog(null, "Enter new name:", "Enter name", 2);
+                    myModel.renameFile(selectedFiles.get(0).getPath(), newName);
+                    upgradeView();
+
+
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_F && controlPressed) {
@@ -1265,6 +1461,7 @@ public class Controller {
         private String path;
         private boolean setSelected = false;
         private long time;
+        private boolean previouslySelected = false;
 
 
         public GridIcon(String text, Icon icon, String path) {
@@ -1281,6 +1478,8 @@ public class Controller {
             this.setText(shortenedName);
             this.setFocusable(false);
 
+            generateTooltip();
+
 
             this.setVerticalTextPosition(SwingConstants.BOTTOM);
             this.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -1291,32 +1490,64 @@ public class Controller {
 
             this.setPreferredSize(new Dimension(40, 40));
             this.setMaximumSize(new Dimension(40, 40));
-           this.setVisible(true);
+            this.setVisible(true);
             addListener();
 
 
+        }
+
+        private void generateTooltip() {
+            File f = new File(path);
+
+
+            if (f.isFile()) {
+                this.setToolTipText("<html>" + "Date created:\t" + new Date(f.lastModified()) + "<br>" + "Size(Kb):\t" + f.length() / 1024 + "</html>");
+            } else {
+                String first3Files = "Files contained:\t", first3Folders = "";
+                File[] F = f.listFiles();
+                int fileCounter = 0, folderCounter = 0;
+
+                if (F != null)
+                    for (int i = 0; i < F.length; i++) {
+                        if (F[i].isFile() & fileCounter < 3) {
+                            first3Files += F[i].getName();
+                            fileCounter++;
+
+                            if (fileCounter != 2)
+                                first3Files += ",";
+                        }
+
+                        if (F[i].isDirectory() && folderCounter < 3) {
+                            first3Folders += F[i].getName();
+                            folderCounter++;
+
+                            if (folderCounter != 2)
+                                first3Folders += ",";
+                        }
+
+                    }
+
+                this.setToolTipText("<html>" + "Date created:\t" + new Date(f.lastModified()) + "<br>" + "Size(kb):\t" + f.length() / 1024 + "<br>" + first3Files + "<br>" + first3Folders + "</html>");
+            }
+        }
+
+
+        public boolean isPreviouslySelected() {
+            return previouslySelected;
+        }
+
+        public void setPreviouslySelected(boolean b) {
+            previouslySelected = b;
         }
 
         void addListener() {
             this.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    setSelected=true;
+                    if (SwingUtilities.isRightMouseButton(e)) {
 
-                    if(selectedFiles ==null)
-                    selectedFiles=new ArrayList<>();
-
-                    else
-                        selectedFiles.add(new File(path));
-
-                    repaint();
-
-                    if(SwingUtilities.isRightMouseButton(e))
-                    {
-
-                        if(selectedFiles.size()==1)
-                        {
-                            PopMenu popMenu=new PopMenu(true,false,e.getXOnScreen(),e.getYOnScreen(),drawRect);
+                        if (selectedFiles == null || selectedFiles.size() == 1) {
+                            PopMenu popMenu = new PopMenu(true, false, e.getXOnScreen(), e.getYOnScreen(), drawRect);
                             popMenu.getRename().addActionListener(new RenameListener());
                             popMenu.getOpen().addActionListener(new OpenListener());
                             popMenu.getDelete().addActionListener(new DeleteListener());
@@ -1324,11 +1555,8 @@ public class Controller {
                             popMenu.getCopy().addActionListener(new CopyListener());
                             popMenu.getProperties().addActionListener(new PropertiesListener());
 
-                        }
-
-                        else
-                        {
-                            PopMenu popMenu=new PopMenu(false,false,e.getXOnScreen(),e.getYOnScreen(),drawRect);
+                        } else {
+                            PopMenu popMenu = new PopMenu(false, false, e.getXOnScreen(), e.getYOnScreen(), drawRect);
                             popMenu.getDelete().addActionListener(new DeleteListener());
                             popMenu.getCut().addActionListener(new CutListener());
                             popMenu.getCopy().addActionListener(new CopyListener());
@@ -1336,6 +1564,43 @@ public class Controller {
                         }
 
 
+                    }
+
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+
+                        if (setSelected) {
+                            setSelected = false;
+
+                            long temp = new Date().getTime();
+
+                            if (temp - time < 500) {
+
+                                //  JOptionPane.showMessageDialog(null, "Double click");
+                                open(new File(path));
+
+                            }
+
+
+                        } else {
+
+
+                            if (!controlPressed) {
+                                for (int i = 0; i < gridIcons.size(); i++) {
+                                    gridIcons.get(i).setSetSelected(false);
+                                    gridIcons.get(i).repaint();
+                                }
+                            }
+
+
+                            setSelected = true;
+                            upgradeSelectedFiles();
+                            repaint();
+
+
+                            time = new Date().getTime();
+
+
+                        }
 
                     }
                 }
@@ -1355,65 +1620,70 @@ public class Controller {
                     super.mouseMoved(e);
                 }
             });
-            this.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (setSelected) {
-                        setSelected = false;
-
-                        long temp = new Date().getTime();
-
-                        if (temp - time < 500) {
-
-                          //  JOptionPane.showMessageDialog(null, "Double click");
-                            open(new File(path));
-
-                        }
-
-
-                    } else {
-
-
-                        if(!controlPressed)
-                        {
-                            for (int i=0;i<gridIcons.size();i++)
-                            {
-                                gridIcons.get(i).setSetSelected(false);
-                                gridIcons.get(i).repaint();
-                            }
-
-
-                 //           drawRect.repaint();
-
-                       //     JOptionPane.showMessageDialog(null,"Control not selected");
-                      //      JOptionPane.showMessageDialog(null,gridIcons.size());
-
-                        }
-
-
-                     //   drawRect.repaint();
-
-                        setSelected = true;
-                        repaint();
-
-                        if(selectedFiles!=null && selectedFiles.size()!=0)
-                        selectedFiles.add(new File(path));
-
-                        else
-                        {
-                            selectedFiles=new ArrayList<>();
-                            selectedFiles.add(new File(path));
-                        }
-
-
-                        time = new Date().getTime();
-
-
-
-                        //     JOptionPane.showMessageDialog(null,"button cord :  x= "+getXMid()+" ,y= "+getYMid());
-                    }
-                }
-            });
+//            this.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    if (setSelected) {
+//                        setSelected = false;
+//
+//                        long temp = new Date().getTime();
+//
+//                        if (temp - time < 500) {
+//
+//                            //  JOptionPane.showMessageDialog(null, "Double click");
+//                            open(new File(path));
+//
+//                        }
+//
+//
+//                    } else {
+//
+//
+//                        if (!controlPressed) {
+//                            for (int i = 0; i < gridIcons.size(); i++) {
+//                                gridIcons.get(i).setSetSelected(false);
+//                                gridIcons.get(i).repaint();
+//                            }
+//
+//
+//                            //           drawRect.repaint();
+//
+//                            //     JOptionPane.showMessageDialog(null,"Control not selected");
+//                            //      JOptionPane.showMessageDialog(null,gridIcons.size());
+//
+//                        }
+//
+//
+//                        setSelected = true;
+//
+//
+//                        repaint();
+//
+//                        if (selectedFiles != null && selectedFiles.size() != 0)
+//                            selectedFiles.add(new File(path));
+//
+//                        else {
+//                            selectedFiles = new ArrayList<>();
+//                            selectedFiles.add(new File(path));
+//                        }
+//
+//
+//                        time = new Date().getTime();
+//
+//
+//                        //     JOptionPane.showMessageDialog(null,"button cord :  x= "+getXMid()+" ,y= "+getYMid());
+//                    }
+//
+//                    int temp = 0;
+//                    if (selectedFiles == null)
+//                        temp = 0;
+//
+//                    else
+//                        temp = selectedFiles.size();
+//
+//                    view.getNumberOfSelectedLabel().setText("number of items selected: " + temp);
+//                }
+//            });
         }
 
 
@@ -1451,33 +1721,25 @@ public class Controller {
 
         public void setSetSelected(boolean isSelected) {
             setSelected = isSelected;
+//
+//            if (isSelected) {
+//                if (selectedFiles != null && selectedFiles.size() > 0) {
+//                    selectedFiles.add(new File(path));
+//                } else {
+//                    selectedFiles = new ArrayList<>();
+//                    selectedFiles.add(new File(path));
+//                }
+//            } else {
+//                if (selectedFiles != null) {
+//                    for (int i = 0; i < selectedFiles.size(); i++)
+//                        if (selectedFiles.get(i).getAbsolutePath().equals(path)) {
+//                            selectedFiles.remove(i);
+//                            return;
+//                        }
+//                }
+//            }
 
-            if(isSelected)
-            {
-                if(selectedFiles!= null && selectedFiles.size()>0)
-                {
-                    selectedFiles.add(new File(path));
-                }
-
-                else
-                {
-                    selectedFiles=new ArrayList<>();
-                    selectedFiles.add(new File(path));
-                }
-            }
-
-            else
-            {
-                if(selectedFiles != null)
-                {
-                    for (int i=0;i<selectedFiles.size();i++)
-                        if(selectedFiles.get(i).getAbsolutePath().equals(path))
-                        {
-                            selectedFiles.remove(i);
-                            return;
-                        }
-                }
-            }
+            upgradeSelectedFiles();
         }
 
 
@@ -1517,12 +1779,12 @@ public class Controller {
 
         public void setFiles(File[] files) {
             this.files = files;
+            addButtons();
+            handleMouseListeners();
         }
 
 
         public DrawRect(File[] F) {
-
-       //     JOptionPane.showMessageDialog(null, F.length);
             x = y = x2 = y2 = 0; //
 
             files = F;
@@ -1556,7 +1818,7 @@ public class Controller {
                     helper = 0;
                 }
                 temp++;
-
+                //error
                 if (f.isFile()) {
 
                     GridIcon fileIcon = new GridIcon(f.getName(), FileSystemView.getFileSystemView().getSystemIcon(f), f.getAbsolutePath());
@@ -1581,15 +1843,14 @@ public class Controller {
 
             }
 
-            if(temp % 5 !=0)
-                while(temp %5 >0)
-                {
+            if (temp % 5 != 0)
+                while (temp % 5 > 0) {
                     temp++;
                     dummyPanel.add(new JPanel());
                 }
-                this.add(dummyPanel);
+            this.add(dummyPanel);
 
-                this.revalidate();
+            this.revalidate();
         }
 
         public void setStartPoint(int x, int y) {
@@ -1619,20 +1880,25 @@ public class Controller {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     //  JOptionPane.showMessageDialog(null,"click");
-                    for (int i = 0; i < gridIcons.size(); i++)
-                        gridIcons.get(i).setSetSelected(false);
-                    repaint();
+                    if (!controlPressed) {
+                        for (int i = 0; i < gridIcons.size(); i++)
+                            gridIcons.get(i).setSetSelected(false);
 
-                    if(SwingUtilities.isRightMouseButton((e)))
-                    {
+                        upgradeSelectedFiles();
+                        selectedFiles = null;
+                        view.getNumberOfSelectedLabel().setText("number of items selected :");
+                        repaint();
+                    }
 
-                        GridEmptySpacePopMenu gridEmptySpacePopMenu=null;
+                    if (SwingUtilities.isRightMouseButton((e))) {
 
-                        if(coppyPressed)
-                            gridEmptySpacePopMenu=new GridEmptySpacePopMenu(true,e.getXOnScreen(),e.getYOnScreen(),drawRect);
+                        GridEmptySpacePopMenu gridEmptySpacePopMenu = null;
+
+                        if (coppy == null || coppy.size() == 0)
+                            gridEmptySpacePopMenu = new GridEmptySpacePopMenu(false, e.getXOnScreen(), e.getYOnScreen(), drawRect);
 
                         else
-                            gridEmptySpacePopMenu=new GridEmptySpacePopMenu(false,e.getXOnScreen(),e.getYOnScreen(),drawRect);
+                            gridEmptySpacePopMenu = new GridEmptySpacePopMenu(true, e.getXOnScreen(), e.getYOnScreen(), drawRect);
 
                         gridEmptySpacePopMenu.getNewFile().addActionListener(new ActionListener() {
                             @Override
@@ -1650,15 +1916,14 @@ public class Controller {
 
                         gridEmptySpacePopMenu.getPaste().addActionListener(new PasteListener());
                         gridEmptySpacePopMenu.getProperties().addActionListener(new ActionListener() {
-                            PropertiesListener propertiesListener=new PropertiesListener();
+                            PropertiesListener propertiesListener = new PropertiesListener();
 
                             @Override
-                            public void actionPerformed(ActionEvent e)
-                            {
-                                selectedFiles=new ArrayList<>();
+                            public void actionPerformed(ActionEvent e) {
+                                selectedFiles = new ArrayList<>();
                                 selectedFiles.add(new File(myModel.getCurrentAddress()));
                                 propertiesListener.actionPerformed(e);
-                                selectedFiles=null;
+                                selectedFiles = null;
                             }
                         });
 
@@ -1675,16 +1940,6 @@ public class Controller {
                         yOnScreen1 = e.getYOnScreen();
 
                         leftClicked = true;
-
-
-                        if (popMenu != null) {
-                            popMenu.setVisible(false);
-                            popMenu = null;
-                        }
-
-                        //        JOptionPane.showMessageDialog(null,"Boom in press");
-
-
                     }
 
                     if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
@@ -1743,6 +1998,13 @@ public class Controller {
 
 
                         checkButtonsContained(Math.min(xOnScreen1, xOnScreen2), Math.min(yOnScreen1, yOnScreen2), Math.max(xOnScreen1, xOnScreen2), Math.max(yOnScreen1, yOnScreen2));
+
+
+                        if (selectedFiles == null)
+                            view.getNumberOfSelectedLabel().setText("number of items selected: ");
+
+                        else
+                            view.getNumberOfSelectedLabel().setText("number of items selected: " + selectedFiles.size());
                         repaint();
 
 
@@ -1771,29 +2033,57 @@ public class Controller {
                 //      checkButtonsContained(Math.min(xOnScreen1, xOnScreen2), Math.min(yOnScreen1, yOnScreen2), Math.max(xOnScreen1, xOnScreen2), Math.max(yOnScreen1, yOnScreen2));
             } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Bingo");
+                //   JOptionPane.showMessageDialog(null, "Bingo");
             }
 
         }
 
         void checkButtonsContained(int xmin, int ymin, int xmax, int ymax) {
             if (gridIcons != null) {
-                selectedFiles=null;
+
+                if (!controlPressed)
+                    selectedFiles = new ArrayList<>();
+
+                else
+                    for (int i = 0; i < gridIcons.size(); i++)
+                        if (gridIcons.get(i).isSetSelected())
+                            gridIcons.get(i).setPreviouslySelected(true);
+
+
+                {
+                    ArrayList<GridIcon> previouslySelecte = new ArrayList<>();
+                    for (int i = 0; i < gridIcons.size(); i++)
+                        previouslySelecte.add(gridIcons.get(i));
+                }
                 for (int i = 0; i < gridIcons.size(); i++) {
                     if ((gridIcons.get(i).getXMid() >= xmin && gridIcons.get(i).getXMid() <= xmax) && (gridIcons.get(i).getYMid() >= ymin && gridIcons.get(i).getYMid() <= ymax)) {
                         gridIcons.get(i).setSetSelected(true);
                         selectedFiles.add(new File(gridIcons.get(i).getPath()));
 
+                    } else {
+
+                        if (!controlPressed || (coppyPressed && gridIcons.get(i).isPreviouslySelected() == false))
+                            gridIcons.get(i).setSetSelected(false);
+
                     }
 
-                    else
-                        gridIcons.get(i).setSetSelected(false);
 
                 }
-                view.setNumberOfSelectedLabel(new JLabel("number of items selected: "+selectedFiles.size()));
+
+//                int temp;
+//
+//                if (selectedFiles == null)
+//                    temp = 0;
+//
+//                else
+//                    temp = selectedFiles.size();
+//
+//                view.getNumberOfSelectedLabel().setText("number of items selected: " + temp);
                 //  repaint();
             }
 
+            for (int i = 0; i < gridIcons.size(); i++)
+                gridIcons.get(i).setPreviouslySelected(false);
         }
 
         public void setSingleChoice(boolean singleChoice) {
