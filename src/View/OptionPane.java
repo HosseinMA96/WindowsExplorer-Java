@@ -18,7 +18,7 @@ public class OptionPane
             JOptionPane.showMessageDialog(null,"Type:\t\t"+type+"\nLocation:\t\t"+address+"\n"+"Size:\t\t"+size/1024+" KB\n"+"Created:\t\t"+created+"\n");
 
         else
-            JOptionPane.showMessageDialog(null,"Type:\t\t"+type+"\nLocation:\t\t"+address+"\n"+"Size:\t\t"+size+" bytes\n"+"Created:\t\t"+created+"\nContained:\t\t"+filesContained+", files "+foldersContained+", folders");
+            JOptionPane.showMessageDialog(null,"Type:\t\t"+type+"\nLocation:\t\t"+address+"\n"+"Size:\t\t"+size+" bytes\n"+"Created:\t\t"+created+"\nContained:\t\t"+"files : "+filesContained+" folders : "+foldersContained);
 
     }
 }

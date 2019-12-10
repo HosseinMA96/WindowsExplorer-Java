@@ -66,12 +66,15 @@ public class JFileManager {
 
             @Override
             public void mousePressed(MouseEvent e) {
+                view.getFrame().repaint();
                 view.getFrame().setVisible(true);
             }
         });
 
 
     }
+
+
 
     static void initializeModelWithDefaultSettings() {
         model.loadSettings();
