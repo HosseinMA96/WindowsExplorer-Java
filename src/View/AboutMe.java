@@ -1,11 +1,17 @@
+/**
+ * A class to represent about me frame
+ */
 package View;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class AboutMe {
-    JFrame aboutMeFrame;
+    private JFrame aboutMeFrame;
 
+    /**
+     * Constructor for this class
+     */
     public AboutMe() {
 
         aboutMeFrame = new JFrame("About Me");

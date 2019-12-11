@@ -1,3 +1,6 @@
+/**
+ * This class represnts the view, that is the frame, lefte tree and buttons and menus that are added to it, and which they perform simple action.
+ */
 package View;
 
 
@@ -16,7 +19,9 @@ import java.util.Spliterator;
 
 import static java.lang.System.exit;
 
-
+/**
+ * Focus listener to regain focus for this. we want focus to remain on this frame forever because we need to give key actions to it, so we let it implement Focus listener
+ */
 public class View extends JFrame implements FocusListener {
 
     @Override
@@ -30,16 +35,13 @@ public class View extends JFrame implements FocusListener {
     }
 
 
-
-
-
     private boolean hasPrevView = false;
     private FileTableModel model;
     private JTable table = new JTable();
     private int status = 0;
 
 
-    private  JFrame frame = new JFrame("APP.JFileManager");
+    private JFrame frame = new JFrame("APP.JFileManager");
     private String currentAddress;
 
     //Adress and Search Textfiled at top
@@ -98,21 +100,13 @@ public class View extends JFrame implements FocusListener {
     private JScrollPane leftScrollPane = null;
     private JScrollPane rightScrollPane = null;
 
-    File[] currentDirectoryFiles;
-    //   String currentAddress;
-
-    //Starting pass
-    private Robot val;
-
-    //current file Holder
-
-    JLayeredPane layeredPane;
-
-    //current GridIcons
-   // private ArrayList<GridIcon> gridIconArrayList;
-   // private DrawRect drawRect;
+    private File[] currentDirectoryFiles;
 
 
+
+    /**
+     * Constructor for this classs in which we put main components of the frame together
+     */
     public View() {
 
         this.setAlwaysOnTop(true);
@@ -128,36 +122,13 @@ public class View extends JFrame implements FocusListener {
         frame.setIconImage(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\mainIcon.png").getImage());
 
         //Two panels for upper Panel
-          JPanel upperPanel = new JPanel(new BorderLayout());
+        JPanel upperPanel = new JPanel(new BorderLayout());
         JPanel upperPanel_FlowPanel = new JPanel(new FlowLayout());
 
         //Panel for lower panel
         JPanel lowerPanel = new JPanel(new BorderLayout());
         JPanel lowerPanel_FlowPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-        //Add file Menu Items
-//        file.add(file_NewFile);
-//        file.add(file_SetCurrentForSync);
-//        file.add(file_Delete);
-//        file.add(file_NewFolder);
-//
-//
-//        //Add Edit Menu Items
-//        edit.add(edit_Rename);
-//        edit.add(edit_Copy);
-//        edit.add(edit_Cut);
-//        edit.add(edit_Paste);
-//        edit.add(edit_Synchronize);
-//
-//        //Add View.View.Help Menu Items
-//        help.add(help_Settings);
-//        help.add(help_AboutMe);
-//        help.add(help_Help);
-//
-//        //Add Menus To Menubar
-//        upperMenuBar.add(file);
-//        upperMenuBar.add(edit);
-//        upperMenuBar.add(help);
 
         //Adding Arows to upperPanel's Left panel
         upperPanel_FlowPanel.add(leftArrow);
@@ -203,9 +174,6 @@ public class View extends JFrame implements FocusListener {
         frame.add(lowerPanel, BorderLayout.SOUTH);
 
 
-
-
-
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         // frame.setSize(screenSize.width, screenSize.height);
 
@@ -219,8 +187,7 @@ public class View extends JFrame implements FocusListener {
 
     }
 
-    public void addMenuBars()
-    {
+    public void addMenuBars() {
         file.add(file_NewFile);
         file.add(file_SetCurrentForSync);
         file.add(file_Delete);
@@ -245,6 +212,17 @@ public class View extends JFrame implements FocusListener {
         upperMenuBar.add(help);
     }
 
+    /**
+     *Setter for rightSidePanel
+     * @param rightSidePanel
+     */
+    public void setRightSidePanel(JPanel rightSidePanel) {
+        this.rightSidePanel = rightSidePanel;
+    }
+
+    /**
+     * A function to set frame view as grid display mode
+     */
     public void setGridDisplay() {
 
         if (hasPrevView)
@@ -252,12 +230,13 @@ public class View extends JFrame implements FocusListener {
 
         makeLeftTree();
 
-      //   drawRect = new DrawRect(currentDirectoryFiles);
-       // drawRect.repaint();
-        JPanel dummyPannel=new JPanel(new BorderLayout());
-     //   dummyPannel.add(drawRect,BorderLayout.CENTER);
 
-        rightScrollPane = new JScrollPane(dummyPannel);
+       // JPanel dummyPannel = new JPanel(new BorderLayout());
+        if(rightSidePanel==null)
+            rightSidePanel=new JPanel(new BorderLayout());
+
+
+        rightScrollPane = new JScrollPane(rightSidePanel);
 
         leftScrollPane = new JScrollPane(leftTree);
 
@@ -268,18 +247,26 @@ public class View extends JFrame implements FocusListener {
         splitPane = new JSplitPane(SwingConstants.VERTICAL, leftScrollPane, rightScrollPane);
 
         frame.add(splitPane);
- //       drawRect.repaint();
+
         frame.setVisible(true);
 
         hasPrevView = true;
     }
 
 
+    /**
+     * Getter for table
+     *
+     * @return table
+     */
 
     public JTable getTable() {
         return table;
     }
 
+    /**
+     * A function to set list display mode for this frame
+     */
     public void setListDisplay() {
 
         makeLeftTree();
@@ -317,26 +304,49 @@ public class View extends JFrame implements FocusListener {
         hasPrevView = true;
     }
 
+    /**
+     * Getter for address text field
+     *
+     * @return addressTextField
+     */
     public JTextField getAddressTextField() {
         return addressTextField;
     }
 
+    /**
+     * Getter for help_AboutMe
+     *
+     * @return help_AboutMe
+     */
     public JMenuItem getHelp_AboutMe() {
         return help_AboutMe;
     }
 
+    /**
+     * Getter for {
+     * return help_Settings;
+     * }
+     *
+     * @return {
+     * return help_Settings;
+     * }
+     */
     public JMenuItem getHelp_Settings() {
         return help_Settings;
     }
 
+    /**
+     * Getter for help_Help
+     *
+     * @return help_Help
+     */
     public JMenuItem getHelp_Help() {
         return help_Help;
     }
 
-//    public DrawRect getDrawrect()
-//    {
-//        return this.drawRect;
-//    }
+    /**
+     * A method to make the left three acording to current address
+     */
 
     public void makeLeftTree() {
 
@@ -349,10 +359,7 @@ public class View extends JFrame implements FocusListener {
         DefaultMutableTreeNode thisDir = new DefaultMutableTreeNode(f.getName(), true);
 
 
-
         ArrayList<DefaultMutableTreeNode> nodes = new ArrayList<>();
-
-
 
 
         for (int i = 0; i < currentDirectoryFiles.length; i++) {
@@ -400,173 +407,292 @@ public class View extends JFrame implements FocusListener {
         }
 
 
-
-
         leftScrollPane = new JScrollPane(leftTree);
         leftTree.setPreferredSize(new Dimension(200, 800));
 
     }
 
+    /**
+     * Getter for searchTextField
+     *
+     * @return searchTextField
+     */
     public JTextField getSearchTextField() {
         return searchTextField;
     }
 
+    /**
+     * Getter for numberOfSelectedLabel
+     *
+     * @return numberOfSelectedLabel
+     */
     public JLabel getNumberOfSelectedLabel() {
         return numberOfSelectedLabel;
     }
 
-    public void setNumberOfSelectedLabel(JLabel numberOfSelectedLabel) {
-        this.numberOfSelectedLabel = numberOfSelectedLabel;
-    }
-
+    /**
+     * Getter for gridDisplay
+     *
+     * @return gridDisplay
+     */
     public JButton getGridDisplay() {
         return gridDisplay;
     }
 
-    public boolean isHasPrevView() {
-        return hasPrevView;
-    }
 
+    /**
+     * Getter for edit_Rename
+     *
+     * @return edit_Rename
+     */
     public JMenuItem getEdit_Rename() {
         return edit_Rename;
     }
 
-    public boolean hasPreview()
-    {
+    /**
+     * Getter for hasPreview
+     *
+     * @return hasPreview
+     */
+    public boolean hasPreview() {
         return this.hasPrevView;
     }
 
-
+    /**
+     * Geter for edit_Copy
+     *
+     * @return edit_Copy
+     */
     public JMenuItem getEdit_Copy() {
         return edit_Copy;
     }
 
-
+    /**
+     * Getter for edit_Cut
+     *
+     * @return edit_Cut
+     */
     public JMenuItem getEdit_Cut() {
         return edit_Cut;
     }
 
+    /**
+     * Getter for edit_Paste
+     *
+     * @return edit_Paste
+     */
     public JMenuItem getEdit_Paste() {
         return edit_Paste;
     }
 
-    public JMenuItem getEdit_Synchronize() {
-        return edit_Synchronize;
-    }
 
+    /**
+     * Getter for status
+     *
+     * @param status
+     */
     public void setStatus(int status) {
         this.status = status;
     }
 
+    /**
+     * Getter for tableDisplay
+     *
+     * @return
+     */
     public JButton getTableDisplay() {
         return tableDisplay;
     }
 
-  //  public ArrayList<GridIcon> getGridIconArrayList() {
-     //   return gridIconArrayList;
- //   }
-
-
-
+    /**
+     * Getter for file_NewFolder
+     *
+     * @return file_NewFolder
+     */
     public JMenuItem getFile_NewFolder() {
         return file_NewFolder;
     }
 
+
+    /**
+     * Getter for file_NewFile
+     *
+     * @return file_NewFile
+     */
     public JMenuItem getFile_NewFile() {
         return file_NewFile;
     }
 
+
+    /**
+     * Getter for file_Delete
+     *
+     * @return file_Delete
+     */
     public JMenuItem getFile_Delete() {
         return file_Delete;
     }
 
+    /**
+     * Getter for file_SetCurrentForSync
+     *
+     * @return file_SetCurrentForSync
+     */
     public JMenuItem getFile_SetCurrentForSync() {
         return file_SetCurrentForSync;
     }
 
+    /**
+     * Add status by 1
+     */
     public void addStatus() {
         status++;
         status %= 2;
     }
 
+    /**
+     * Getter for status
+     *
+     * @return status
+     */
     public int getStatus() {
         return status;
     }
 
-
-  //  public DrawRect getDrawRect() {
-   //     return drawRect;
-   // }
+    /**
+     * Getter for frame
+     *
+     * @return frame
+     */
 
     public JFrame getFrame() {
         return frame;
     }
 
+    /**
+     * Set text for addressTextField
+     *
+     * @param text
+     */
     public void setAddressTextField(String text) {
         this.addressTextField.setText(text);
     }
 
+    /**
+     * Getter for uppArrow
+     *
+     * @return uppArrow
+     */
     public JButton getUppArrow() {
         return uppArrow;
     }
 
+    /**
+     * Getter for leftArrow
+     *
+     * @return leftArrow
+     */
     public JButton getLeftArrow() {
         return leftArrow;
     }
 
+    /**
+     * Getter for rightArrow
+     *
+     * @return rightArrow
+     */
     public JButton getRightArrow() {
         return rightArrow;
     }
 
-    public JPanel getRightSidePanel() {
-        return rightSidePanel;
-    }
-
+    /**
+     * Setter for currentDirectoryFiles
+     *
+     * @param currentDirectoryFiles
+     */
     public void setCurrentDirectoryFiles(File[] currentDirectoryFiles) {
         this.currentDirectoryFiles = currentDirectoryFiles;
-        //System.out.println(this.currentDirectoryFiles.length);
+
     }
 
-   public void setSplitPane(JSplitPane splitPane)
-    {
-        this.splitPane=splitPane;
+    /**
+     * Setter for splitPane
+     *
+     * @param splitPane
+     */
+    public void setSplitPane(JSplitPane splitPane) {
+        this.splitPane = splitPane;
     }
 
+
+    /**
+     * Getter for leftTree
+     *
+     * @return leftTree
+     */
     public JTree getLeftTree() {
         return leftTree;
     }
 
+    /**
+     * Getter for leftScrollPane
+     *
+     * @return leftScrollPane
+     */
     public JScrollPane getLeftScrollPane() {
         return leftScrollPane;
     }
 
+    /**
+     * Setter for leftScrollPane
+     *
+     * @param leftScrollPane
+     */
     public void setLeftScrollPane(JScrollPane leftScrollPane) {
         this.leftScrollPane = leftScrollPane;
     }
 
-
+    /**
+     * Setter for rightScrollPane
+     *
+     * @param rightScrollPane
+     */
     public void setRightScrollPane(JScrollPane rightScrollPane) {
         this.rightScrollPane = rightScrollPane;
     }
 
-    public JMenuBar getUpperMenuBar() {
-        return upperMenuBar;
-    }
-
-
-
+    /**
+     * Getter for rightScrollPane
+     *
+     * @return rightScrollPane
+     */
     public JScrollPane getRightScrollPane() {
         return rightScrollPane;
     }
 
+    /**
+     * Getter for JSplitPane
+     *
+     * @return JSplitPane
+     */
     public JSplitPane getSplitPane() {
         return splitPane;
     }
 
+    /**
+     * Setter for currentAddress
+     *
+     * @param currentAddress
+     */
     public void setCurrentAddress(String currentAddress) {
         this.currentAddress = currentAddress;
     }
 
+    /**
+     * A method to set look and feel of this program
+     *
+     * @param LF
+     */
     public void setLookAndFeel(String LF) {
 
         switch (LF) {
@@ -608,7 +734,6 @@ public class View extends JFrame implements FocusListener {
 
 
     }
-
 
 
 }

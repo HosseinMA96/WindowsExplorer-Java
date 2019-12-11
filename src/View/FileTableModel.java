@@ -1,3 +1,7 @@
+/**
+ * A Class for building table, naming it's columns and assigning values to it's rows. Also assigning icons to the first column
+ */
+
 package View;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
@@ -12,11 +16,11 @@ import java.util.Date;
 public class FileTableModel extends AbstractTableModel  {
 
 
-    protected File[] files;
+    private File[] files;
 
-    protected String[] columnNames = new String[]{"icon", "name", "size(KB)", "last modified", "type"};
+    private String[] columnNames = new String[]{"icon", "name", "size(KB)", "last modified", "type"};
 
-    protected Class[] columnClassses = new Class[]{
+    private Class[] columnClassses = new Class[]{
             String.class, Long.class, Date.class, Icon.class
     };
 
@@ -30,21 +34,30 @@ public class FileTableModel extends AbstractTableModel  {
     }
 
 
-
-
-
+    /**
+     * Cunstructor for this class
+     * @param files
+     */
     public FileTableModel(File [] files) {
         this.files=files;
     }
 
+    /**
+     * Overriden method for getColumnsName
+     * @param col
+     * @return columnNames[col]
+     */
+    @Override
     public String getColumnName(int col) {
         return columnNames[col];
     }
 
-    public Class getColumnsClass(int col) {
-        return columnClassses[col];
-    }
-
+    /**
+     * Overriden method for getValue, to assing values to cells of the table
+     * @param row
+     * @param col
+     * @return entries in cells
+     */
 
     @Override
     public Object getValueAt(int row, int col) {
@@ -76,18 +89,15 @@ public class FileTableModel extends AbstractTableModel  {
         }
     }
 
-//    class mcr extends DefaultTableCellRenderer {
-//        public Class getColumnClass(int c) {
-//            return ImageIcon.class;
-//        }
-//    }
-
+    /**
+     * Overriden method for get columns classes
+     * @param column
+     * @return column class
+     */
+    @Override
     public    Class getColumnClass(int column) {
         return (column == 0) ? Icon.class : Object.class;
     }
-
-//    File f = new File(dir, filenames[row]);
-
 
 
 }

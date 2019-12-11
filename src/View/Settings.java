@@ -1,9 +1,15 @@
+/**
+ * A class to make Settings Jframe
+ */
 package View;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class Settings {
     private JTextField initialAddressTextField = new JTextField();
@@ -11,15 +17,6 @@ public class Settings {
     private JTextField remoteComputerAddressTextField = new JTextField();
     private JTextField remoteComputerPort = new JTextField();
 
-    //Place to save
-    private String initialAddressString;
-    private String receivedFileAddressString;
-    private String remoteComputerAddressString;
-    private String remoteComputerPortString;
-    private String intervalString;
-    private String lookAndFeelString;
-    private String path = "C:\\Users\\erfan\\Desktop";
-    private String[] details;
 
 
     private JLabel initialAddressLabel = new JLabel("Initial Address:");
@@ -39,10 +36,12 @@ public class Settings {
     private JComboBox maxFlashbacks = new JComboBox(flashBacks);
     private JCheckBox tableDisplayFormatCheckBox = new JCheckBox("Table");
     private JCheckBox gridDisplayFormatCheckBox = new JCheckBox("Grid");
-    String dummy;
+    private String firstTimeAddress;
 
 
-
+    /**
+     * Cusntructor for this class
+     */
     public Settings() {
         JPanel checkBoxPanel = new JPanel(new GridLayout(1, 2));
         frame.setResizable(false);
@@ -82,118 +81,185 @@ public class Settings {
         frame.add(flashBackLabel);
         frame.add(maxFlashbacks);
 
-        //Add listeners
-        initialAddressTextField.addActionListener(new InitialAddressListener());
-        gridDisplayFormatCheckBox.addActionListener(new GridTick());
-        tableDisplayFormatCheckBox.addActionListener(new TableTick());
-        receivedFileAddress.addActionListener(new ReceivedFileAddressListener());
-        remoteComputerAddressTextField.addActionListener(new RemoteComputerAddressListener());
-        remoteComputerPort.addActionListener(new RemoteComputerPortListener());
+//        //Add listeners
+//        initialAddressTextField.addActionListener(new InitialAddressListener());
+//        gridDisplayFormatCheckBox.addActionListener(new GridTick());
+//        tableDisplayFormatCheckBox.addActionListener(new TableTick());
+//        receivedFileAddress.addActionListener(new ReceivedFileAddressListener());
+//        remoteComputerAddressTextField.addActionListener(new RemoteComputerAddressListener());
+//        remoteComputerPort.addActionListener(new RemoteComputerPortListener());
+
+
+
+//        try
+//        {
+//            List<String> allLines = Files.readAllLines(Paths.get("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\JFileManager_Settings.txt"));
+//
+//            initialAddressTextField.setText(allLines.get(0));
+//          //  JOptionPane.showMessageDialog(null,initialAddressTextField.getText());
+//
+//            if(allLines.get(5)=="true")
+//            {
+//                gridDisplayFormatCheckBox.setSelected(true);
+//                tableDisplayFormatCheckBox.setSelected(false);
+//            }
+//
+//            else
+//            {
+//                gridDisplayFormatCheckBox.setSelected(false);
+//                getTableDisplayFormatCheckBox().setSelected(true);
+//            }
+//        }
+//        catch (Exception e)
+//        {
+//            JOptionPane.showMessageDialog(null,"Exception");
+//        }
+
 
         frame.setVisible(true);
     }
 
+    /**
+     * Setter for setFirstTimeAddress
+     * @param firstTimeAddress
+     */
+    public void setFirstTimeAddress(String firstTimeAddress) {
+        this.firstTimeAddress = firstTimeAddress;
+    }
+
+    /**
+     * Getter for remoteComputerAddressTextField
+     * @return
+     */
     public JTextField getRemoteComputerAddressTextField() {
         return remoteComputerAddressTextField;
     }
 
+    /**
+     * Getter for initialAddressTextField
+     * @return initialAddressTextField
+     */
     public JTextField getInitialAddressTextField() {
         return initialAddressTextField;
     }
 
+    /**
+     * Getter for receivedFileAddress
+     * @return receivedFileAddress
+     */
     public JTextField getReceivedFileAddress() {
         return receivedFileAddress;
     }
 
+    /**
+     * Getter for getOtherPCAddress
+     * @return getOtherPCAddress
+     */
     public JTextField getOtherPCAddress() {
         return remoteComputerAddressTextField;
     }
 
+    /**
+     * Getter for remoteComputerPort
+     * @return remoteComputerPort
+     */
     public JTextField getRemoteComputerPort() {
         return remoteComputerPort;
     }
 
+    /**
+     * Getter for lookNFeel
+     * @return lookNFeel
+     */
     public JComboBox getLookNFeel() {
         return lookNFeel;
     }
 
+    /**
+     * Getter for syncInterval
+     * @return syncInterval
+     */
     public JComboBox getSyncInterval() {
         return syncInterval;
     }
 
+    /**
+     * Getter for maxFlashbacks
+     * @return maxFlashbacks
+     */
     public JComboBox getMaxFlashbacks() {
         return maxFlashbacks;
     }
 
-
+    /**
+     * Getter for tableDisplayFormatCheckBox
+     * @return tableDisplayFormatCheckBox
+     */
     public JCheckBox getTableDisplayFormatCheckBox() {
         return tableDisplayFormatCheckBox;
     }
 
+    /**
+     * Getter for gridDisplayFormatCheckBox
+     * @return gridDisplayFormatCheckBox
+     */
     public JCheckBox getGridDisplayFormatCheckBox() {
         return gridDisplayFormatCheckBox;
     }
 
-    class InitialAddressListener implements ActionListener {
-        public void actionPerformed(ActionEvent event) {
-            initialAddressString = initialAddressTextField.getText();
-        }
-    }
+//    /**
+//     * Listener class for initialAddressString
+//     */
+//    class InitialAddressListener implements ActionListener {
+//        public void actionPerformed(ActionEvent event) {
+//            initialAddressString = initialAddressTextField.getText();
+//        }
+//    }
+//
+//    /**
+//     * Listener class for gridDisplayFormatCheckBox
+//     */
+//    class GridTick implements ActionListener {
+//        public void actionPerformed(ActionEvent event) {
+//            tableDisplayFormatCheckBox.setSelected(false);
+//            gridDisplayFormatCheckBox.setSelected(true);
+//        }
+//    }
 
-    class GridTick implements ActionListener {
-        public void actionPerformed(ActionEvent event) {
-            tableDisplayFormatCheckBox.setSelected(false);
-            gridDisplayFormatCheckBox.setSelected(true);
-        }
-    }
+//    /**
+//     *  Listener class for tableDisplayFormatCheckBox
+//     */
+//    class TableTick implements ActionListener {
+//        public void actionPerformed(ActionEvent event) {
+//            tableDisplayFormatCheckBox.setSelected(true);
+//            gridDisplayFormatCheckBox.setSelected(false);
+//        }
+//    }
 
-    class TableTick implements ActionListener {
-        public void actionPerformed(ActionEvent event) {
-            tableDisplayFormatCheckBox.setSelected(true);
-            gridDisplayFormatCheckBox.setSelected(false);
-        }
-    }
+    /**
+//     * Listener class for receivedFileAddressString
+//     */
+//    class ReceivedFileAddressListener implements ActionListener {
+//        public void actionPerformed(ActionEvent e) {
+//            receivedFileAddressString = receivedFileAddress.getText();
+//        }
+//    }
 
-    class ReceivedFileAddressListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            receivedFileAddressString = receivedFileAddress.getText();
-        }
-    }
+//    /**
+//     * Listener class for remoteComputerAddressString
+//     */
+//    class RemoteComputerAddressListener implements ActionListener {
+//        public void actionPerformed(ActionEvent e) {
+//            remoteComputerAddressString = remoteComputerAddressTextField.getText();
+//        }
+//    }
 
-    class RemoteComputerAddressListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            remoteComputerAddressString = remoteComputerAddressTextField.getText();
-        }
-    }
-
-    class RemoteComputerPortListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            remoteComputerPortString = remoteComputerPort.getText();
-        }
-    }
-
-    class LookAndFeelListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            lookAndFeelString = lookNFeel.getName();
-        }
-    }
-
-    class SyncListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            intervalString = syncInterval.getName();
-        }
-    }
-
-    void writeUpdate() {
-        String initialAddressString;
-        String receivedFileAddressString;
-        String remoteComputerAddressString;
-        String remoteComputerPortString;
-        String intervalString;
-        String lookAndFeelString;
-    }
-
-    public JFrame getFrame() {
-        return frame;
-    }
+    /**
+     * Listener class for remoteComputerPortString
+//     */
+//    class RemoteComputerPortListener implements ActionListener {
+//        public void actionPerformed(ActionEvent e) {
+//            remoteComputerPortString = remoteComputerPort.getText();
+//        }
+//    }
 }

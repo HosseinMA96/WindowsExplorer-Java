@@ -1,3 +1,8 @@
+/**
+ * A Class to Represent controller. Action listeners are added in this class. When user interacts with the GUI (the myView class) it triggers listeners in this class
+ * So that we are able to change the model and the myView accordingly
+ */
+
 package Controller;
 
 import Model.Model;
@@ -20,7 +25,7 @@ import java.util.Date;
 
 public class Controller {
     private Model myModel;
-    private View view;
+    private View myView;
     private ArrayList<File> coppy;
     boolean cutPressed = false, coppyPressed = false;
     private ArrayList<File> selectedFiles;
@@ -33,76 +38,65 @@ public class Controller {
     private ArrayList<GridIcon> gridIcons;
 
 
-    // private MyDragDropListener myDragDropListener;
-
-
-    public Controller(Model myModel, View view) {
+    /**
+     * Constructor for this class
+     *
+     * @param myModel
+     * @param myView
+     */
+    public Controller(Model myModel, View myView) {
         this.myModel = myModel;
 
-        this.view = view;
+        this.myView = myView;
 
         myModel.upgradeFiles();
 
     }
 
+    /**
+     * A Method to initialize controller and add add action listeners to view files, buttons and menus
+     */
     public void initController() {
 
 
         handleFrameKeyListener();
 
 
-        view.setAddressTextField(myModel.getCurrentAddress());
-        view.getGridDisplay().addActionListener(new GridListener());
-        view.getTableDisplay().addActionListener(new ListListener());
-        view.getFile_NewFile().addActionListener(new NewFileListener());
-        view.getFile_SetCurrentForSync().addActionListener(new SetAsSyncPathListener());
-        view.getFile_Delete().addActionListener(new DeleteListener());
-        view.getFile_NewFolder().addActionListener(new NewFolderListener());
-        view.getEdit_Rename().addActionListener(new RenameListener());
-        view.getUppArrow().addActionListener(new GoUpListener());
-        view.getEdit_Copy().addActionListener(new CopyListener());
-        view.getEdit_Paste().addActionListener(new PasteListener());
-        view.getEdit_Cut().addActionListener(new CutListener());
-        view.getHelp_Settings().addActionListener(new SettingsListener());
-        view.getHelp_AboutMe().addActionListener(new AboutMeListener());
-        view.getHelp_Help().addActionListener(new HelpListener());
-        //    view.getTable().addMouseListener(new TableListener());
-        //     view.getTable().getTableHeader().addMouseListener(new TableHeaderListener());
-        view.getAddressTextField().addActionListener(new ListenToAddressTextField());
-        //    view.getTable().setCellSelectionEnabled(true);
+        myView.setAddressTextField(myModel.getCurrentAddress());
+        myView.getGridDisplay().addActionListener(new GridListener());
+        myView.getTableDisplay().addActionListener(new ListListener());
+        myView.getFile_NewFile().addActionListener(new NewFileListener());
+        myView.getFile_SetCurrentForSync().addActionListener(new SetAsSyncPathListener());
+        myView.getFile_Delete().addActionListener(new DeleteListener());
+        myView.getFile_NewFolder().addActionListener(new NewFolderListener());
+        myView.getEdit_Rename().addActionListener(new RenameListener());
+        myView.getUppArrow().addActionListener(new GoUpListener());
+        myView.getEdit_Copy().addActionListener(new CopyListener());
+        myView.getEdit_Paste().addActionListener(new PasteListener());
+        myView.getEdit_Cut().addActionListener(new CutListener());
+        myView.getHelp_Settings().addActionListener(new SettingsListener());
+        myView.getHelp_AboutMe().addActionListener(new AboutMeListener());
+        myView.getHelp_Help().addActionListener(new HelpListener());
+        myView.getAddressTextField().addActionListener(new ListenToAddressTextField());
         initializeTable();
 
-
-        //implement a function for default start situation
-        //     myModel.setGridDisplay(true);
-        //   view.setCurrentDirectoryFiles(myModel.getAllFiles());
-        //   view.setCurrentAddress(myModel.getCurrentAddress());
-
-
-        //      view.makeLeftTree();
 
         handleSearchFieldListener();
         upgradeView();
 
-
-        //  MyDragDropListener myDragDropListener=new MyDragDropListener();
-        //  new DropTarget(view.getFrame(),myDragDropListener);
-
     }
 
-
+    /**
+     * A Method to initialize table and add Listeners to it
+     */
     void initializeTable() {
-        view.getTable().addMouseListener(new TableListener());
+        myView.getTable().addMouseListener(new TableListener());
 
-        view.getTable().getTableHeader().addMouseListener(new TableHeaderListener());
-        view.getNumberOfSelectedLabel().setText("Number of items selected: ");
-        //  view.getTable().setCellSelectionEnabled(true);
-        // ListSelectionModel cellSelectionModel = view.getTable().getSelectionModel();
-        //   cellSelectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        //   view.getTable().setSelectionModel(view.getTable().getSelectionModel().MULTIPLE_INTERVAL_SELECTION)
-        view.getTable().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        myView.getTable().getTableHeader().addMouseListener(new TableHeaderListener());
+        myView.getNumberOfSelectedLabel().setText("Number of items selected: ");
+        myView.getTable().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-        view.getTable().addFocusListener(new FocusListener() {
+        myView.getTable().addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
 
@@ -111,19 +105,19 @@ public class Controller {
             @Override
             public void focusLost(FocusEvent e) {
                 selectedFiles = null;
-                view.getNumberOfSelectedLabel().setText("Number of items selected: ");
+                myView.getNumberOfSelectedLabel().setText("Number of items selected: ");
             }
         });
 
-        view.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        myView.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 selectedFiles = new ArrayList<>();
                 //           String selectedDate=null;
 
-                int[] selectedRow = view.getTable().getSelectedRows();
-                int[] selectedColumns = view.getTable().getSelectedColumns();//here has good table.get seelction staff
-                view.getNumberOfSelectedLabel().setText("Number of items selected: " + selectedRow.length);
+                int[] selectedRow = myView.getTable().getSelectedRows();
+                int[] selectedColumns = myView.getTable().getSelectedColumns();//here has good table.get seelction staff
+                myView.getNumberOfSelectedLabel().setText("Number of items selected: " + selectedRow.length);
 
                 for (int i = 0; i < selectedRow.length; i++) {
                     selectedFiles.add(new File(myModel.getAllFiles()[selectedRow[i]].getAbsolutePath()));
@@ -134,15 +128,15 @@ public class Controller {
 
         });
 
-        if (view.getRightScrollPane() == null)
-            view.setRightScrollPane(new JScrollPane());
+        if (myView.getRightScrollPane() == null)
+            myView.setRightScrollPane(new JScrollPane());
 
-        view.getRightScrollPane().addMouseListener(new MouseAdapter() {
+        myView.getRightScrollPane().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isRightMouseButton(e)) {
                     //   JOptionPane.showMessageDialog(null,"Right click on panel");
-                    GridEmptySpacePopMenu gridEmptySpacePopMenu = new GridEmptySpacePopMenu(coppyPressed, e.getXOnScreen(), e.getYOnScreen(), view.getRightScrollPane());
+                    GridEmptySpacePopMenu gridEmptySpacePopMenu = new GridEmptySpacePopMenu(coppyPressed, e.getXOnScreen(), e.getYOnScreen(), myView.getRightScrollPane());
                     gridEmptySpacePopMenu.getPaste().addActionListener(new PasteListener());
                     gridEmptySpacePopMenu.getNewFolder().addActionListener(new NewFolderListener());
                     gridEmptySpacePopMenu.getNewFile().addActionListener(new NewFileListener());
@@ -151,11 +145,11 @@ public class Controller {
                     selectedFiles.add(new File(myModel.getCurrentAddress()));
                     gridEmptySpacePopMenu.getProperties().addActionListener(new PropertiesListener());
                     selectedFiles = null;
-                    view.getNumberOfSelectedLabel().setText("number of items selected:");
+                    myView.getNumberOfSelectedLabel().setText("number of items selected:");
                     //Overlord
                 } else {
                     selectedFiles = null;
-                    view.getNumberOfSelectedLabel().setText("number of items selected:");
+                    myView.getNumberOfSelectedLabel().setText("number of items selected:");
 
                 }
 
@@ -163,28 +157,28 @@ public class Controller {
             }
         });
         handleFrameKeyListener();
-        //  view.getTable().setCellSelectionEnabled(true);
-
 
     }
 
-
+    /**
+     * A method to add keyListenrs to the frame. Also handles drag and drop operation
+     */
     void handleFrameKeyListener() {
-        view.getFrame().setFocusable(true);
-        view.getFrame().requestFocus();
+        myView.getFrame().setFocusable(true);
+        myView.getFrame().requestFocus();
 
 
         if (frameKeyListener != null) {
-            view.getFrame().removeKeyListener(frameKeyListener);
+            myView.getFrame().removeKeyListener(frameKeyListener);
             frameKeyListener = new FrameKeyListener();
-            view.getFrame().addKeyListener(frameKeyListener);
+            myView.getFrame().addKeyListener(frameKeyListener);
         } else {
             frameKeyListener = new FrameKeyListener();
-            view.getFrame().addKeyListener(frameKeyListener);
+            myView.getFrame().addKeyListener(frameKeyListener);
         }
 
 
-        new DropTarget(view.getFrame(), new DropTargetListener() {
+        new DropTarget(myView.getFrame(), new DropTargetListener() {
             @Override
             public void drop(DropTargetDropEvent event) {
 
@@ -196,8 +190,7 @@ public class Controller {
                     java.util.List list = (java.util.List) event.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
 
                     File file = (File) list.get(0);
-                    // JOptionPane.showMessageDialog(null,list.size());
-                    // JOptionPane.showMessageDialog(null,file.getAbsolutePath());
+
 
                     ArrayList<File> temp = new ArrayList<>();
 
@@ -211,7 +204,7 @@ public class Controller {
                     coppy.add(new File(file.getAbsolutePath()));
 
                     ArrayList<String> newName = findNewNames();
-                    //    JOptionPane.showMessageDialog(null,newName.get(0));
+
 
                     Model.pasteFile(file.getAbsolutePath(), myModel.getCurrentAddress() + "\\" + newName.get(0));
 
@@ -233,6 +226,7 @@ public class Controller {
 
                 // Inform that the drop is complete
                 event.dropComplete(true);
+                upgradeView();
 
             }
 
@@ -256,19 +250,25 @@ public class Controller {
 
     }
 
+    /**
+     * An innerclass that represents listener added to gridDisplay button
+     */
     class GridListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            view.setCurrentDirectoryFiles(myModel.getAllFiles());
-            view.setCurrentAddress(myModel.getCurrentAddress());
+            myView.setCurrentDirectoryFiles(myModel.getAllFiles());
+            myView.setCurrentAddress(myModel.getCurrentAddress());
             if (myModel.getGridDisplay() == false) {
                 selectedFiles = null;
-                view.getNumberOfSelectedLabel().setText("number of items selected:");
+                myView.getNumberOfSelectedLabel().setText("number of items selected:");
             }
             myModel.setGridDisplay(true);
             upgradeView();
         }
     }
 
+    /**
+     * An innerclass that represents listener added to rename button
+     */
     class RenameListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
 
@@ -289,37 +289,52 @@ public class Controller {
         }
     }
 
+    /**
+     * An innerclass that represents listener added to listDisplay button
+     */
     class ListListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (myModel.getGridDisplay() == true) {
                 selectedFiles = null;
-                view.getNumberOfSelectedLabel().setText("number of items selected:");
+                myView.getNumberOfSelectedLabel().setText("number of items selected:");
             }
 
-            view.setListDisplay();
+            myView.setListDisplay();
             myModel.setGridDisplay(false);
             upgradeView();
         }
     }
 
+    /**
+     * An innerclass that represents listener added to help item
+     */
     class HelpListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             Help help = new Help();
         }
     }
 
+    /**
+     * An innerclass that represents listener added to abouMe feature
+     */
     class AboutMeListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             AboutMe aboutMe = new AboutMe();
         }
     }
 
+    /**
+     * An innerclass that represents listener added to setAsSyncPath feature
+     */
     class SetAsSyncPathListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             myModel.setAsSynchPath();
         }
     }
 
+    /**
+     * A Method to upgrade the view, invoked when a change made in model
+     */
     public void upgradeView() {
 
 
@@ -327,77 +342,76 @@ public class Controller {
 
         if (myModel.getGridDisplay()) {
             myModel.upgradeFiles();
-            view.setCurrentDirectoryFiles(myModel.getAllFiles());
-            view.setCurrentAddress(myModel.getCurrentAddress());
-            view.setGridDisplay();
+            myView.setCurrentDirectoryFiles(myModel.getAllFiles());
+            myView.setCurrentAddress(myModel.getCurrentAddress());
+            myView.setGridDisplay();
             drawRect = new DrawRect(myModel.getAllFiles());
 
-            if (view.hasPreview()) {
-                view.getFrame().remove(view.getSplitPane());
+            if (myView.hasPreview()) {
+                myView.getFrame().remove(myView.getSplitPane());
             }
-            view.setRightScrollPane(new JScrollPane(drawRect));
-            view.setLeftScrollPane(new JScrollPane(view.getLeftTree()));
-            view.setSplitPane(new JSplitPane(SwingConstants.VERTICAL, view.getLeftScrollPane(), view.getRightScrollPane()));
-            view.getFrame().add(view.getSplitPane());
-            view.getLeftScrollPane().setVisible(true);
-            view.getLeftTree().setVisible(true);
-            view.getRightScrollPane().setVisible(true);
+            myView.setRightScrollPane(new JScrollPane(drawRect));
+            myView.setLeftScrollPane(new JScrollPane(myView.getLeftTree()));
+            myView.setSplitPane(new JSplitPane(SwingConstants.VERTICAL, myView.getLeftScrollPane(), myView.getRightScrollPane()));
+            myView.getFrame().add(myView.getSplitPane());
+            myView.getLeftScrollPane().setVisible(true);
+            myView.getLeftTree().setVisible(true);
+            myView.getRightScrollPane().setVisible(true);
             drawRect.setVisible(true);
-            view.getSplitPane().setVisible(true);
-            view.addMenuBars();
-            view.getRightScrollPane().revalidate();
-            view.getFrame().revalidate();
-            view.getFrame().setVisible(true);
+            myView.getSplitPane().setVisible(true);
+            myView.addMenuBars();
+            myView.getRightScrollPane().revalidate();
+            myView.getFrame().revalidate();
+            myView.getFrame().setVisible(true);
 
 
         } else {
-//            myModel.setCurrentAddress(f.getAbsolutePath());
-//            myModel.upgradeFiles();
-//            upgradeView();
 
-            view.setCurrentAddress(myModel.getCurrentAddress());
+
+            myView.setCurrentAddress(myModel.getCurrentAddress());
             myModel.upgradeFiles();
-            view.setCurrentDirectoryFiles(myModel.getAllFiles());
-            view.setListDisplay();
-//            view.getTable().addMouseListener(new TableListener());
-//            view.getTable().getTableHeader().addMouseListener(new TableListener());
-//            view.getTable().setCellSelectionEnabled(true);
+            myView.setCurrentDirectoryFiles(myModel.getAllFiles());
+            myView.setListDisplay();
             initializeTable();
 
         }
 
-        view.setAddressTextField(myModel.getCurrentAddress());
+        myView.setAddressTextField(myModel.getCurrentAddress());
 
 
         if (selectedFiles == null)
-            view.getNumberOfSelectedLabel().setText("number of items selected: ");
+            myView.getNumberOfSelectedLabel().setText("number of items selected: ");
 
         else
-            view.getNumberOfSelectedLabel().setText("number of items selected: " + selectedFiles.size());
-        //  view.getTable().addMouseListener(new TableListener());
-
+            myView.getNumberOfSelectedLabel().setText("number of items selected: " + selectedFiles.size());
 
     }
 
+    /**
+     * An innerclass that represents listener added to newFolder item
+     */
     class NewFolderListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             myModel.newFolder();
 
             if (!myModel.getGridDisplay()) {
-                view.setCurrentDirectoryFiles(myModel.getAllFiles());
-                view.setCurrentAddress(myModel.getCurrentAddress());
-                //       view.setListDisplay();
+                myView.setCurrentDirectoryFiles(myModel.getAllFiles());
+                myView.setCurrentAddress(myModel.getCurrentAddress());
+
 
             } else {
-                view.setCurrentDirectoryFiles(myModel.getAllFiles());
-                view.setCurrentAddress(myModel.getCurrentAddress());
-                //     view.setGridDisplay();
+                myView.setCurrentDirectoryFiles(myModel.getAllFiles());
+                myView.setCurrentAddress(myModel.getCurrentAddress());
+
             }
 
             upgradeView();
         }
     }
 
+    /**
+     * A method to upgrade selectedFiles
+     */
     public void upgradeSelectedFiles() {
         if (gridIcons == null)
             return;
@@ -409,20 +423,22 @@ public class Controller {
                 selectedFiles.add(new File(gridIcons.get(i).path));
 
         if (selectedFiles == null)
-            view.getNumberOfSelectedLabel().setText("number of items selected: ");
+            myView.getNumberOfSelectedLabel().setText("number of items selected: ");
 
         else
-            view.getNumberOfSelectedLabel().setText("number of items selected: " + selectedFiles.size());
+            myView.getNumberOfSelectedLabel().setText("number of items selected: " + selectedFiles.size());
 
     }
 
-    ///Only works for grid display!!
+    /**
+     * An inner class  Listener for Delete feature
+     */
     class DeleteListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
 
 
             for (int i = 0; i < selectedFiles.size(); i++) {
-                //  JOptionPane.showMessageDialog(null,"Selected file : "+selectedFiles.get(i).getAbsolutePath());
+
                 myModel.deleteFile(selectedFiles.get(i));
             }
 
@@ -431,7 +447,9 @@ public class Controller {
         }
     }
 
-
+    /**
+     * An inner class  Listener for New File feature
+     */
     class NewFileListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             myModel.newFile();
@@ -441,7 +459,9 @@ public class Controller {
         }
     }
 
-
+    /**
+     * An inner class  Listener for Go Up feature
+     */
     class GoUpListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             myModel.goToParent();
@@ -449,20 +469,32 @@ public class Controller {
         }
     }
 
-
+    /**
+     * An inner class  Listener for Settings feature
+     */
     class SettingsListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            //     JOptionPane.showMessageDialog(null,"Before "+myModel.getCurrentAddress());
+
             Settings settings = new Settings();
-            //      JOptionPane.showMessageDialog(null,"mid "+myModel.getCurrentAddress());
-            myModel.loadSettings();
-            //      JOptionPane.showMessageDialog(null,"after "+myModel.getCurrentAddress());
+            if(myModel.getFirstTimeAddress() != null)
+            {
+                settings.getInitialAddressTextField().setText(myModel.getFirstTimeAddress());
+            }
+
+
+     //       myModel.loadSettings();
+
             handleSettingsListener(settings);
 
 
         }
     }
 
+    /**
+     * A Method to add listeners to different items of Settings using anonymous listener classes
+     *
+     * @param settings
+     */
     void handleSettingsListener(Settings settings) {
         settings.getInitialAddressTextField().addActionListener(new ActionListener() {
             @Override
@@ -501,9 +533,9 @@ public class Controller {
         settings.getLookNFeel().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //   JOptionPane.showMessageDialog(null,"address before LF : "+myModel.getCurrentAddress());
+
                 myModel.setLookAndFeel(settings.getLookNFeel().getSelectedItem() + "");
-                view.setLookAndFeel(myModel.getLookAndFeel());
+                myView.setLookAndFeel(myModel.getLookAndFeel());
 
                 upgradeView();
                 myModel.writeSettingsToFile();
@@ -547,10 +579,12 @@ public class Controller {
             }
         });
 
-//        this lousy thing does not work!!
-//        myModel.loadSettings();
+        if(myModel.getInitialAddress()==null)
+        settings.getInitialAddressTextField().setText(myModel.getFirstTimeAddress());
 
-        settings.getInitialAddressTextField().setText(myModel.getInitialAddress());
+        else
+            settings.getInitialAddressTextField().setText(myModel.getInitialAddress());
+
         settings.getReceivedFileAddress().setText(myModel.getReceivedFileAddress());
         settings.getRemoteComputerAddressTextField().setText(myModel.getRemoteComputerAddress());
         settings.getRemoteComputerPort().setText(myModel.getRemoteComputerPort());
@@ -568,7 +602,9 @@ public class Controller {
         settings.getMaxFlashbacks().setSelectedItem(myModel.getSyncInterval());
     }
 
-
+    /**
+     * An inner class  Listener for Cut feature
+     */
     class CutListener extends CopyListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             super.actionPerformed(e);
@@ -577,6 +613,9 @@ public class Controller {
         }
     }
 
+    /**
+     * An inner class  Listener for Copy feature
+     */
     class CopyListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
 
@@ -596,13 +635,15 @@ public class Controller {
                 return;
             }
 
-            // JOptionPane.showMessageDialog(null,"Number of coppied : "+selectedFiles.size());
             coppyPressed = true;
 
 
         }
     }
 
+    /**
+     * An inner class  Listener for Paste feature
+     */
     class PasteListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (coppy == null || coppy.size() == 0)
@@ -612,10 +653,9 @@ public class Controller {
                 ArrayList<String> newNames = findNewNames();
                 for (int i = 0; i < newNames.size(); i++)
                     try {
-                        //  System.out.println("From "+coppy.get(i).getAbsolutePath()+" To "+myModel.getCurrentAddress()+"\\"+coppy.get(i).getName());
+
                         Model.pasteFile(coppy.get(i).getAbsolutePath(), myModel.getCurrentAddress() + "\\" + newNames.get(i));
                     } catch (Exception ex) {
-                        //   JOptionPane.showMessageDialog(null,"Pasting failed\n"+ex.,"Error",2);
                         JOptionPane.showMessageDialog(null, "Failed to paste " + coppy.get(i).getAbsolutePath(), "Eror", 1);
                     }
 
@@ -638,6 +678,11 @@ public class Controller {
 
     }
 
+    /**
+     * A Method to change the name of the coppied file or folder if it already exists in the destination
+     *
+     * @return
+     */
 
     ArrayList<String> findNewNames() {
         ArrayList<String> ans = new ArrayList<String>();
@@ -688,23 +733,20 @@ public class Controller {
         return ans;
     }
 
+    /**
+     * An inner class to add mouse listenet to the table
+     */
     class TableListener implements MouseListener {
 
         public void mouseClicked(MouseEvent mouseEvent) {
 
-
-            //   Point point = mouseEvent.getPoint();
-            // int row = view.getTable().rowAtPoint(point);
-            if (mouseEvent.getClickCount() == 2 && view.getTable().getSelectedRow() != -1 && SwingUtilities.isLeftMouseButton(mouseEvent) && !mouseEvent.isConsumed()) {
+            if (mouseEvent.getClickCount() == 2 && myView.getTable().getSelectedRow() != -1 && SwingUtilities.isLeftMouseButton(mouseEvent) && !mouseEvent.isConsumed()) {
                 mouseEvent.isConsumed();
-                int[] selectedRow = view.getTable().getSelectedRows();
+                int[] selectedRow = myView.getTable().getSelectedRows();
 
 
                 if (selectedRow.length == 1) {
                     int r = selectedRow[0];
-                    //      JOptionPane.showMessageDialog(null,"Number of selecte drows: "+selectedRow.length+"\nr is: "+r);
-                    //  myModel.upgradeFiles();
-                    //    JOptionPane.showMessageDialog(null,"myModel files : "+myModel.getAllFiles().length);
 
                     try {
                         open(myModel.getAllFiles()[r]);
@@ -721,18 +763,18 @@ public class Controller {
 
             }
 
-            if (mouseEvent.getClickCount() == 1 && view.getTable().getSelectedRow() != -1 && SwingUtilities.isRightMouseButton(mouseEvent)) {
+            if (mouseEvent.getClickCount() == 1 && myView.getTable().getSelectedRow() != -1 && SwingUtilities.isRightMouseButton(mouseEvent)) {
 
 
                 PopMenu popMenu = null;
 
                 if (selectedFiles != null)
                     if (selectedFiles.size() == 1)
-                        popMenu = new PopMenu(true, coppyPressed, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), view.getTable());
+                        popMenu = new PopMenu(true, coppyPressed, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), myView.getTable());
 
                 if (selectedFiles != null)
                     if (selectedFiles.size() > 1)
-                        popMenu = new PopMenu(false, coppyPressed, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), view.getTable());
+                        popMenu = new PopMenu(false, coppyPressed, mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen(), myView.getTable());
 
                 if (selectedFiles != null)
                     if (popMenu != null) {
@@ -746,7 +788,6 @@ public class Controller {
                         popMenu.getNewFolder().addActionListener(new NewFolderListener());
                         popMenu.getPaste().addActionListener(new PasteListener());
 
-                        //popMenu.getProperties()
                     }
 
 
@@ -774,6 +815,9 @@ public class Controller {
 
     }
 
+    /**
+     * An inner class to ad listeners to table header
+     */
     class TableHeaderListener extends MouseAdapter {
 
 
@@ -783,33 +827,26 @@ public class Controller {
             if (e.getClickCount() == 1 && SwingUtilities.isLeftMouseButton(e)) {
 
 
-                view.addStatus();
+                myView.addStatus();
 
 
-                int col = view.getTable().columnAtPoint(e.getPoint());
+                int col = myView.getTable().columnAtPoint(e.getPoint());
 
                 if (headerCol != col)
-                    view.setStatus(0);
+                    myView.setStatus(0);
 
                 headerCol = col;
 
-                String name = view.getTable().getColumnName(col);
+                String name = myView.getTable().getColumnName(col);
 
-                //   JOptionPane.showMessageDialog(null,"status : "+view.getStatus()+" , col : "+col);
-
-
-                if (view.getStatus() == 1)
+                if (myView.getStatus() == 1)
                     sort(1, col);
 
 
                 else
                     sort(0, col);
-
-                //  currentStatus=col;
-                //      sort(currentStatus );
-
                 try {
-                    view.setListDisplay();
+                    myView.setListDisplay();
                     initializeTable();
                 } catch (Exception b) {
 
@@ -819,14 +856,14 @@ public class Controller {
             }
 
 
-//                view.setCurrentDirectoryFiles(myModel.getAllFiles());
-//                upgradeView();
-
             handleFrameKeyListener();
         }
     }
 
 
+    /**
+     * An iner class for Open feature
+     */
     class OpenListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (selectedFiles != null)
@@ -839,6 +876,9 @@ public class Controller {
         }
     }
 
+    /**
+     * An inner class  Listener for Properties feature
+     */
     class PropertiesListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (selectedFiles != null && selectedFiles.size() == 1) {
@@ -868,6 +908,11 @@ public class Controller {
         }
     }
 
+    /**
+     * A Method to open file f
+     *
+     * @param f
+     */
     public void open(File f) {
 
         if (f.exists() && f.isFile()) {
@@ -895,8 +940,8 @@ public class Controller {
             //        JOptionPane.showMessageDialog(null,"Must be here");
             myModel.setCurrentAddress(f.getAbsolutePath());
             myModel.upgradeFiles();
-            view.setCurrentDirectoryFiles(myModel.getAllFiles());
-            view.setCurrentAddress(myModel.getCurrentAddress());
+            myView.setCurrentDirectoryFiles(myModel.getAllFiles());
+            myView.setCurrentAddress(myModel.getCurrentAddress());
             upgradeView();
 
         }
@@ -904,15 +949,17 @@ public class Controller {
         selectedFiles = null;
     }
 
-
+    /**
+     * An inner class  Listener for addressTextField
+     */
     class ListenToAddressTextField implements ActionListener {
         public void actionPerformed(ActionEvent e) {
 
-            File F = new File(view.getAddressTextField().getText());
+            File F = new File(myView.getAddressTextField().getText());
 
 
             if (F.exists() && F.isDirectory()) {
-                myModel.setCurrentAddress(view.getAddressTextField().getText());
+                myModel.setCurrentAddress(myView.getAddressTextField().getText());
                 upgradeView();
             }
 
@@ -930,93 +977,86 @@ public class Controller {
             }
 
             if (!F.exists()) {
-                view.getAddressTextField().setText(myModel.getCurrentAddress());
+                myView.getAddressTextField().setText(myModel.getCurrentAddress());
                 JOptionPane.showMessageDialog(null, "Invalid file or address", "Eror", 0);
             }
 
         }
     }
 
-    void handleDrawRect() {
-
-    }
-
-    void addGridIConListener(GridIcon gridIcon) {
-
-    }
-
+    /**
+     * A dynamic listener to handle change in the searchfield
+     */
     void handleSearchFieldListener() {
-        view.getSearchTextField().getDocument().addDocumentListener(new DocumentListener() {
+        myView.getSearchTextField().getDocument().addDocumentListener(new DocumentListener() {
             private void upgradeLocally() {
-                File[] F=null;
+                File[] F = null;
 
-                if (view.getSearchTextField().getText().length() != 0) {
-                     F = new File[search.size()];
+                if (myView.getSearchTextField().getText().length() != 0) {
+                    F = new File[search.size()];
                     for (int i = 0; i < search.size(); i++)
                         F[i] = search.get(i);
 
 
-                    view.setCurrentDirectoryFiles(F);
+                    myView.setCurrentDirectoryFiles(F);
                 }
 
 
-                //    JOptionPane.showMessageDialog(null,F.length);
-
-                if (view.getSearchTextField().getText().length() == 0) {
-                    view.setCurrentDirectoryFiles(myModel.getAllFiles());
+                if (myView.getSearchTextField().getText().length() == 0) {
+                    myView.setCurrentDirectoryFiles(myModel.getAllFiles());
                     upgradeView();
                     return;
-                    //       view.getSearchTextField().setText("Search");
+
                 }
 
-                if (myModel.getGridDisplay())
-                {
-                    drawRect.setFiles(F);
-                    view.setGridDisplay();
-                }
+                if (myModel.getGridDisplay()) {
+                    DrawRect pleaseWork=new DrawRect(F);
+                    myView.setRightSidePanel(pleaseWork);
+                    myView.setGridDisplay();
+
+                } else
+                    myView.setListDisplay();
 
 
-                else
-                    view.setListDisplay();
-
-
-                upgradeView();
+                //    upgradeView();
 
 
             }
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                // JOptionPane.showMessageDialog(null,view.getSearchTextField().getDocument()+"");
-                //       JOptionPane.showMessageDialog(null,view.getSearchTextField().getDocument() + "");
+
                 search = new ArrayList<>();
-                massiveSearch(new File(myModel.getCurrentAddress()), view.getSearchTextField().getText());
+                massiveSearch(new File(myModel.getCurrentAddress()), myView.getSearchTextField().getText());
                 upgradeLocally();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                //         JOptionPane.showMessageDialog(null,view.getSearchTextField().getText());
+
                 search = new ArrayList<>();
-                massiveSearch(new File(myModel.getCurrentAddress()), view.getSearchTextField().getText());
+                massiveSearch(new File(myModel.getCurrentAddress()), myView.getSearchTextField().getText());
                 upgradeLocally();
-                //      JOptionPane.showMessageDialog(null,view.getSearchTextField().getText());
+
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                // JOptionPane.showMessageDialog(null,view.getSearchTextField().getDocument()+"");
-                search = new ArrayList<>();
-                massiveSearch(new File(myModel.getCurrentAddress()), view.getSearchTextField().getText());
-                upgradeLocally();
-                //      JOptionPane.showMessageDialog(null,view.getSearchTextField().getText());
 
+                search = new ArrayList<>();
+                massiveSearch(new File(myModel.getCurrentAddress()), myView.getSearchTextField().getText());
+                upgradeLocally();
 
             }
         });
     }
 
-
+    /**
+     * Given a directory dir, this function puts all files whom have String name in them in an arraylist called search
+     *
+     * @param dir
+     * @param name
+     */
     private void massiveSearch(File dir, String name) {
         if (name == null || name.length() == 0)
             return;
@@ -1041,6 +1081,12 @@ public class Controller {
 
     }
 
+    /**
+     * Given the feature (column number, 1 to 3) and the order (0 for ascending and 1 for descending) this function sorts the table accordingly
+     *
+     * @param order
+     * @param feature
+     */
     private void sort(int order, int feature) {
 
         if (feature == 0)
@@ -1075,9 +1121,13 @@ public class Controller {
             }
         }
 
-        view.setCurrentDirectoryFiles(F);
+        myView.setCurrentDirectoryFiles(F);
     }
 
+    /**
+     * In order to handle reaction of grid displayed icons to the arrow keys, we need to calculate current row and column of the current selected item
+     * in the grid display
+     */
     void calcRowAndColumn() {
         upgradeSelectedFiles();
 
@@ -1107,13 +1157,18 @@ public class Controller {
 
     }
 
+    /**
+     * Compare two files A,B according to the feature (feature = column name)
+     * status=1:sort By name
+     * status=2:sort By size
+     * status=3:sort By Date
+     *
+     * @param A
+     * @param B
+     * @param feature
+     * @return
+     */
     private boolean compare(File A, File B, int feature) {
-        /*
-        status=1:sort By name
-        status=2:sort By size
-        status=3:sort By Date
-        status=column number
-         */
 
 
         switch (feature) {
@@ -1139,6 +1194,9 @@ public class Controller {
 
     }
 
+    /**
+     * This function adds key listener to the frame. We need to add listeners to the frame. We also need to make sure that frame is currently in the focus
+     */
     class FrameKeyListener implements KeyListener {
         @Override
         public void keyTyped(KeyEvent e) {
@@ -1155,7 +1213,6 @@ public class Controller {
 
                     selectedFiles = null;
 
-                    //       JOptionPane.showMessageDialog(null, "DELL");
                     upgradeView();
                 }
 
@@ -1167,28 +1224,27 @@ public class Controller {
 
                     if (selectedFiles.size() == 1 && selectedFiles.get(0).isDirectory())
                         open(selectedFiles.get(0));
-                    //      JOptionPane.showMessageDialog(null, "Enter");
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_UP && !controlPressed) {
                     if (myModel.getAllFiles() == null)
                         return;
-                    ///////////IMPEMENT FOR GRID
+
 
                     if (myModel.getGridDisplay() == false) {
-                        int row = view.getTable().getSelectedRow();
+                        int row = myView.getTable().getSelectedRow();
 
 
                         if (row != 0)
-                            view.getTable().setRowSelectionInterval(row - 1, row - 1);
+                            myView.getTable().setRowSelectionInterval(row - 1, row - 1);
 
                         else
-                            view.getTable().setRowSelectionInterval(myModel.getAllFiles().length - 1, myModel.getAllFiles().length - 1);
+                            myView.getTable().setRowSelectionInterval(myModel.getAllFiles().length - 1, myModel.getAllFiles().length - 1);
 
-                        //  JOptionPane.showMessageDialog(null, "Arrow UP");
-                        view.getTable().scrollRectToVisible(view.getTable().getCellRect(view.getTable().getSelectedRow(), 0, true));
+
+                        myView.getTable().scrollRectToVisible(myView.getTable().getCellRect(myView.getTable().getSelectedRow(), 0, true));
                     } else {
-                        // JOptionPane.showMessageDialog(null,"Grid up"+currentGridIconRow+","+currentGridIconColumn);
+
                         calcRowAndColumn();
 
                         if (myModel.getAllFiles() != null) {
@@ -1294,24 +1350,22 @@ public class Controller {
                 if (e.getKeyCode() == KeyEvent.VK_DOWN && !controlPressed) {
                     if (myModel.getAllFiles() == null)
                         return;
-                    ///////////IMPEMENT FOR GRID
 
                     if (myModel.getGridDisplay() == false) {
 
 
-                        int[] selectedRows = view.getTable().getSelectedRows();
+                        int[] selectedRows = myView.getTable().getSelectedRows();
                         int row = selectedRows[selectedRows.length - 1];
 
 
                         if (row != myModel.getAllFiles().length - 1)
-                            view.getTable().setRowSelectionInterval(row + 1, row + 1);
+                            myView.getTable().setRowSelectionInterval(row + 1, row + 1);
 
 
                         else
-                            view.getTable().setRowSelectionInterval(0, 0);
+                            myView.getTable().setRowSelectionInterval(0, 0);
 
-                        //       JOptionPane.showMessageDialog(null, "Arrow Down");
-                        view.getTable().scrollRectToVisible(view.getTable().getCellRect(view.getTable().getSelectedRow(), 0, true));
+                        myView.getTable().scrollRectToVisible(myView.getTable().getCellRect(myView.getTable().getSelectedRow(), 0, true));
                     } else if (myModel.getAllFiles() != null) {
                         calcRowAndColumn();
                         int l = myModel.getAllFiles().length;
@@ -1353,30 +1407,23 @@ public class Controller {
 
                 if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
                     controlPressed = true;
-                    //   JOptionPane.showMessageDialog(null,"control pressed");
+
 
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_C && controlPressed) {
                     coppy = new ArrayList<>();
-                    //      JOptionPane.showMessageDialog(null, "ctrl + C pressed");
+
                     if (selectedFiles != null)
                         for (int i = 0; i < selectedFiles.size(); i++)
                             coppy.add(new File(selectedFiles.get(i).getAbsolutePath()));
 
                     coppyPressed = true;
-                    if (coppy != null)
-                        JOptionPane.showMessageDialog(null, "Ncoppy : " + coppy.size());
-
-                    else
-                        JOptionPane.showMessageDialog(null, "Ncoppy : " + 0);
-
 
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_V && controlPressed) {
 
-                    //   JOptionPane.showMessageDialog(null, "V pressed");
 
                     if (coppy != null) {
 
@@ -1455,6 +1502,11 @@ public class Controller {
 
     }
 
+    /**
+     * An inner class to represent GridIcons, the one that are displayed when frame is set to be in the grid mode.
+     * Since we need to add Listenrs to this which is able to change model in case of certain action events, A descision was made to also include this class in the
+     * Controller Class as an inner class
+     */
     class GridIcon extends JButton {
         private Color pressedBackgroundColor = new Color(0, 0, 255, 100);
         private String shortenedName;
@@ -1463,9 +1515,15 @@ public class Controller {
         private long time;
         private boolean previouslySelected = false;
 
-
+        /**
+         * Constructor for this class
+         *
+         * @param text
+         * @param icon
+         * @param path
+         */
         public GridIcon(String text, Icon icon, String path) {
-            //    addListener();
+
             this.path = path;
 
             if (text.length() > 9) {
@@ -1496,6 +1554,9 @@ public class Controller {
 
         }
 
+        /**
+         * A Method to add tooltip to this GridIcon
+         */
         private void generateTooltip() {
             File f = new File(path);
 
@@ -1503,7 +1564,7 @@ public class Controller {
             if (f.isFile()) {
                 this.setToolTipText("<html>" + "Date created:\t" + new Date(f.lastModified()) + "<br>" + "Size(Kb):\t" + f.length() / 1024 + "</html>");
             } else {
-                String first3Files = "Files contained:\t", first3Folders = "";
+                String first3Files = "Files contained:\t", first3Folders = "Folders contained:";
                 File[] F = f.listFiles();
                 int fileCounter = 0, folderCounter = 0;
 
@@ -1531,15 +1592,29 @@ public class Controller {
             }
         }
 
-
+        /**
+         * Getter for previouslySelected
+         *
+         * @return previouslySelected
+         */
         public boolean isPreviouslySelected() {
             return previouslySelected;
         }
 
+
+        /**
+         * Setter for previouslySelected
+         *
+         * @param b
+         */
         public void setPreviouslySelected(boolean b) {
             previouslySelected = b;
         }
 
+
+        /**
+         * Add listeners to this GridIcon
+         */
         void addListener() {
             this.addMouseListener(new MouseAdapter() {
                 @Override
@@ -1576,7 +1651,18 @@ public class Controller {
                             if (temp - time < 500) {
 
                                 //  JOptionPane.showMessageDialog(null, "Double click");
-                                open(new File(path));
+                                try
+                                {
+                                    open(new File(path));
+                                }
+
+                                catch (Exception ex)
+                                {
+                                    JOptionPane.showMessageDialog(null, "Access is denied to the file", "Eror", 0);
+                                    myModel.goToParent();
+                                    upgradeView();
+                                }
+
 
                             }
 
@@ -1620,72 +1706,7 @@ public class Controller {
                     super.mouseMoved(e);
                 }
             });
-//            this.addActionListener(new ActionListener() {
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    if (setSelected) {
-//                        setSelected = false;
-//
-//                        long temp = new Date().getTime();
-//
-//                        if (temp - time < 500) {
-//
-//                            //  JOptionPane.showMessageDialog(null, "Double click");
-//                            open(new File(path));
-//
-//                        }
-//
-//
-//                    } else {
-//
-//
-//                        if (!controlPressed) {
-//                            for (int i = 0; i < gridIcons.size(); i++) {
-//                                gridIcons.get(i).setSetSelected(false);
-//                                gridIcons.get(i).repaint();
-//                            }
-//
-//
-//                            //           drawRect.repaint();
-//
-//                            //     JOptionPane.showMessageDialog(null,"Control not selected");
-//                            //      JOptionPane.showMessageDialog(null,gridIcons.size());
-//
-//                        }
-//
-//
-//                        setSelected = true;
-//
-//
-//                        repaint();
-//
-//                        if (selectedFiles != null && selectedFiles.size() != 0)
-//                            selectedFiles.add(new File(path));
-//
-//                        else {
-//                            selectedFiles = new ArrayList<>();
-//                            selectedFiles.add(new File(path));
-//                        }
-//
-//
-//                        time = new Date().getTime();
-//
-//
-//                        //     JOptionPane.showMessageDialog(null,"button cord :  x= "+getXMid()+" ,y= "+getYMid());
-//                    }
-//
-//                    int temp = 0;
-//                    if (selectedFiles == null)
-//                        temp = 0;
-//
-//                    else
-//                        temp = selectedFiles.size();
-//
-//                    view.getNumberOfSelectedLabel().setText("number of items selected: " + temp);
-//                }
-//            });
         }
-
 
         @Override
         public void paint(Graphics g) {
@@ -1694,98 +1715,102 @@ public class Controller {
                 g.setColor(pressedBackgroundColor);
             } else {
                 Color color = new Color(0, 0, 0, 0);
-                //   g.setColor(getBackground());
+
                 g.setColor(color);
             }
-            //  g.fillRect(0 + getWidth() / 2 - 2 * this.getIcon().getIconWidth() - 10, 0 + getHeight() / 2 - this.getIcon().getIconHeight() - 20, this.getWidth() / 2, this.getHeight() + 20);
+
             g.fillRect(0, 0, getWidth(), getHeight());
-            // super.paintComponent(g);
+
         }
 
+        /**
+         * We don't want content area to be filled, so we override it and change it to do nothing
+         *
+         * @param b
+         */
         @Override
         public void setContentAreaFilled(boolean b) {
         }
 
-
+        /**
+         * Setter for path
+         *
+         * @return
+         */
         public String getPath() {
             return path;
         }
 
-        public Color getPressedBackgroundColor() {
-            return pressedBackgroundColor;
-        }
-
-        public void setPressedBackgroundColor(Color pressedBackgroundColor) {
-            this.pressedBackgroundColor = pressedBackgroundColor;
-        }
-
+        /**
+         * Setter for isSelected
+         *
+         * @param isSelected
+         */
         public void setSetSelected(boolean isSelected) {
             setSelected = isSelected;
-//
-//            if (isSelected) {
-//                if (selectedFiles != null && selectedFiles.size() > 0) {
-//                    selectedFiles.add(new File(path));
-//                } else {
-//                    selectedFiles = new ArrayList<>();
-//                    selectedFiles.add(new File(path));
-//                }
-//            } else {
-//                if (selectedFiles != null) {
-//                    for (int i = 0; i < selectedFiles.size(); i++)
-//                        if (selectedFiles.get(i).getAbsolutePath().equals(path)) {
-//                            selectedFiles.remove(i);
-//                            return;
-//                        }
-//                }
-//            }
+
 
             upgradeSelectedFiles();
         }
 
-
+        /**
+         * Getter for isSelected
+         *
+         * @return isSelected
+         */
         public boolean isSetSelected() {
             return setSelected;
         }
 
-
+        /**
+         * Calculate and return Xmid, The X that must be contained within the selection rectange so this GridIcon is selected
+         *
+         * @return Xmid
+         */
         double getXMid() {
-            //  return this.getX()+this.getWidth()/2;
-
             return this.getLocationOnScreen().getX() + getHeight() / 2;
-//        return this.getLocationOnScreen().getX();
-            //  return getX();
-
         }
 
+        /**
+         * Calculate and return Ymid, The Y that must be contained within the selection rectange so this GridIcon is selected
+         *
+         * @return Ymid
+         */
         double getYMid() {
-            //  return this.getX()+this.getHeight()/2;
             return this.getLocationOnScreen().getY() + getWidth() / 2;
-            // return this.getLocationOnScreen().getY();
-            // return getY();
         }
-
-
     }
 
-
+    /**
+     * A Class That represents DrawRect, A Jpanel which has the ability to draw a selection rectangle, and hence calculate the GridIcons selected
+     * Since Actions performed in instances of this class directly change contents on the Model class or the Controller class, A Decision was
+     * Made to add it as an inner Class to the Controller class
+     */
     class DrawRect extends JPanel {
 
         private int x, y, x2, y2, xOnScreen1, yOnScreen1, xOnScreen2, yOnScreen2;
-        private boolean singleChoice = true, leftClicked = false;
-        PopMenu popMenu;
+        private boolean leftClicked = false;
 
         private File[] files;
 
-
+        /**
+         * Setter for files
+         *
+         * @param files
+         */
         public void setFiles(File[] files) {
             this.files = files;
             addButtons();
             handleMouseListeners();
         }
 
-
+        /**
+         * Constructor for this class
+         *
+         * @param F
+         */
         public DrawRect(File[] F) {
-            x = y = x2 = y2 = 0; //
+            x = y = x2 = y2 = 0;
 
             files = F;
 
@@ -1797,6 +1822,9 @@ public class Controller {
 
         }
 
+        /**
+         * A Function to represent Icons in current directory in Grid mode
+         */
         void addButtons() {
 
             int numberOfFiles = files.length;
@@ -1818,7 +1846,6 @@ public class Controller {
                     helper = 0;
                 }
                 temp++;
-                //error
                 if (f.isFile()) {
 
                     GridIcon fileIcon = new GridIcon(f.getName(), FileSystemView.getFileSystemView().getSystemIcon(f), f.getAbsolutePath());
@@ -1853,16 +1880,37 @@ public class Controller {
             this.revalidate();
         }
 
+        /**
+         * A Method to set started point where mouse clicked
+         *
+         * @param x
+         * @param y
+         */
         public void setStartPoint(int x, int y) {
             this.x = x;
             this.y = y;
         }
 
+        /**
+         * A Method to set end point where mouse released
+         *
+         * @param x
+         * @param y
+         */
         public void setEndPoint(int x, int y) {
             x2 = (x);
             y2 = (y);
         }
 
+        /**
+         * Given two points, This function draws selection rectangle accordingly
+         *
+         * @param g
+         * @param x
+         * @param y
+         * @param x2
+         * @param y2
+         */
         public void drawPerfectRect(Graphics g, int x, int y, int x2, int y2) {
             int px = Math.min(x, x2);
             int py = Math.min(y, y2);
@@ -1870,23 +1918,23 @@ public class Controller {
             int ph = Math.abs(y - y2);
             g.drawRect(px, py, pw, ph);
             g.fillRect(px, py, pw, ph);
-            //   checkButtonsContained(px,py,px+pw,py+ph);
-
         }
 
+        /**
+         * A Method to add MouseListenres to this panel
+         */
         public void handleMouseListeners() {
             this.addMouseListener(new MouseAdapter() {
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    //  JOptionPane.showMessageDialog(null,"click");
                     if (!controlPressed) {
                         for (int i = 0; i < gridIcons.size(); i++)
                             gridIcons.get(i).setSetSelected(false);
 
                         upgradeSelectedFiles();
                         selectedFiles = null;
-                        view.getNumberOfSelectedLabel().setText("number of items selected :");
+                        myView.getNumberOfSelectedLabel().setText("number of items selected :");
                         repaint();
                     }
 
@@ -1952,7 +2000,6 @@ public class Controller {
 
                 }
 
-//            }
 
                 @Override
                 public void mouseReleased(MouseEvent e) {
@@ -1965,11 +2012,6 @@ public class Controller {
                         y = 0;
                         x2 = 0;
                         y2 = 0;
-
-//                    xOnScreen1=0;
-//                    xOnScreen2=0;
-//                    yOnScreen1=0;
-//                    yOnScreen2=0;
 
 
                         repaint();
@@ -1987,7 +2029,6 @@ public class Controller {
                 @Override
                 public void mouseDragged(MouseEvent e) {
 
-                    //       JOptionPane.showMessageDialog(null,"Dragged");
                     if (leftClicked) {
                         setEndPoint(e.getX(), e.getY());
                         xOnScreen2 = e.getXOnScreen();
@@ -2001,10 +2042,10 @@ public class Controller {
 
 
                         if (selectedFiles == null)
-                            view.getNumberOfSelectedLabel().setText("number of items selected: ");
+                            myView.getNumberOfSelectedLabel().setText("number of items selected: ");
 
                         else
-                            view.getNumberOfSelectedLabel().setText("number of items selected: " + selectedFiles.size());
+                            myView.getNumberOfSelectedLabel().setText("number of items selected: " + selectedFiles.size());
                         repaint();
 
 
@@ -2016,10 +2057,11 @@ public class Controller {
 
         }
 
-        public ArrayList<GridIcon> getGridIcons() {
-            return gridIcons;
-        }
-
+        /**
+         * We have overriden the paint method so that we can put our selection rectangle above GridICons presented
+         *
+         * @param g
+         */
         @Override
         public void paint(Graphics g) {
             try {
@@ -2027,17 +2069,24 @@ public class Controller {
                 super.paintComponents(g);
                 super.paint(g);
                 int alpha = 50; // 50% transparent
-                Color myColour = new Color(0, 0, 200, 50);
+                Color myColour = new Color(0, 0, 200, alpha);
                 g.setColor(myColour);
                 drawPerfectRect(g, x, y, x2, y2);
-                //      checkButtonsContained(Math.min(xOnScreen1, xOnScreen2), Math.min(yOnScreen1, yOnScreen2), Math.max(xOnScreen1, xOnScreen2), Math.max(yOnScreen1, yOnScreen2));
             } catch (Exception e) {
                 e.printStackTrace();
-                //   JOptionPane.showMessageDialog(null, "Bingo");
             }
 
         }
 
+        /**
+         * Given a selection rectangle, this function determines which Grid icons are contained within that selection rectangle and hence they are
+         * Set selected and added to the selected files arraylist
+         *
+         * @param xmin
+         * @param ymin
+         * @param xmax
+         * @param ymax
+         */
         void checkButtonsContained(int xmin, int ymin, int xmax, int ymax) {
             if (gridIcons != null) {
 
@@ -2070,34 +2119,10 @@ public class Controller {
 
                 }
 
-//                int temp;
-//
-//                if (selectedFiles == null)
-//                    temp = 0;
-//
-//                else
-//                    temp = selectedFiles.size();
-//
-//                view.getNumberOfSelectedLabel().setText("number of items selected: " + temp);
-                //  repaint();
             }
 
             for (int i = 0; i < gridIcons.size(); i++)
                 gridIcons.get(i).setPreviouslySelected(false);
         }
-
-        public void setSingleChoice(boolean singleChoice) {
-            this.singleChoice = singleChoice;
-        }
     }
-
-
 }
-//package View;
-//
-//import javax.swing.*;
-//import java.awt.*;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//import java.util.Date;
-

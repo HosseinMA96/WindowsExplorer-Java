@@ -1,3 +1,7 @@
+/**
+ * This class is main class for the program which we initiate it . has instances of model,view and controll
+ */
+
 package APP;
 
 import Controller.Controller;
@@ -32,6 +36,9 @@ public class JFileManager {
 
     }
 
+    /**
+     * Initialize system tray
+     */
     static void initializeTray() {
         SystemTray tray = SystemTray.getSystemTray();
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -56,7 +63,6 @@ public class JFileManager {
         closeItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "exit");
                 exit(0);
             }
         });
@@ -74,7 +80,9 @@ public class JFileManager {
 
     }
 
-
+    /**
+     * This fucntion loads saved information for our program to load
+     */
 
     static void initializeModelWithDefaultSettings() {
         model.loadSettings();
