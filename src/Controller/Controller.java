@@ -1463,6 +1463,8 @@ public class Controller {
                         coppy.add(selectedFiles.get(i));
 
 
+
+
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_F2 && !controlPressed) {
@@ -1482,11 +1484,13 @@ public class Controller {
                 if (e.getKeyCode() == KeyEvent.VK_F && controlPressed) {
                     myModel.newFile();
                     upgradeView();
+                    controlPressed=false;
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_N && controlPressed) {
                     myModel.newFolder();
                     upgradeView();
+                    controlPressed=false;
                 }
 
 

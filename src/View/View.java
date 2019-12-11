@@ -66,22 +66,22 @@ public class View extends JFrame implements FocusListener {
     private JMenu help = new JMenu("Help");
 
     //File Menu items
-    private JMenuItem file_NewFile = new JMenuItem("New File");
-    private JMenuItem file_NewFolder = new JMenuItem("New Folder");
-    private JMenuItem file_Delete = new JMenuItem("Delete");
-    private JMenuItem file_SetCurrentForSync = new JMenuItem("Set as Sync Path");
+    private JMenuItem file_NewFile = new JMenuItem("New File", 'e');
+    private JMenuItem file_NewFolder = new JMenuItem("New Folder", 'w');
+    private JMenuItem file_Delete = new JMenuItem("Delete", 'd');
+    private JMenuItem file_SetCurrentForSync = new JMenuItem("Set as Sync Path", 'p');
 
     //Edit Menu Items
-    private JMenuItem edit_Rename = new JMenuItem("Rename ");
-    private JMenuItem edit_Copy = new JMenuItem("Copy");
-    private JMenuItem edit_Cut = new JMenuItem("Cut");
-    private JMenuItem edit_Paste = new JMenuItem("Paste");
-    private JMenuItem edit_Synchronize = new JMenuItem("Sync");
+    private JMenuItem edit_Rename = new JMenuItem("Rename ", 'r');
+    private JMenuItem edit_Copy = new JMenuItem("Copy", 'c');
+    private JMenuItem edit_Cut = new JMenuItem("Cut", 'u');
+    private JMenuItem edit_Paste = new JMenuItem("Paste", 'a');
+    private JMenuItem edit_Synchronize = new JMenuItem("Sync", 'y');
 
     //View.View.Help Menu Items
-    private JMenuItem help_AboutMe = new JMenuItem("About me ");
-    private JMenuItem help_Settings = new JMenuItem("Settings");
-    private JMenuItem help_Help = new JMenuItem("Help");
+    private JMenuItem help_AboutMe = new JMenuItem("About me ", 'o');
+    private JMenuItem help_Settings = new JMenuItem("Settings", 't');
+    private JMenuItem help_Help = new JMenuItem("Help", 'l');
 
     //Number of Selected labels
     private JLabel numberOfSelectedLabel = new JLabel("Number of items selected:");
@@ -107,6 +107,10 @@ public class View extends JFrame implements FocusListener {
      * Constructor for this classs in which we put main components of the frame together
      */
     public View() {
+        file.setMnemonic('F');
+        edit.setMnemonic('E');
+        help.setMnemonic('H');
+
 
         this.setAlwaysOnTop(true);
         this.setAutoRequestFocus(true);
