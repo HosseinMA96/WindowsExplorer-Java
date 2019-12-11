@@ -13,6 +13,7 @@ public class PopMenu extends JPopupMenu {
 
     /**
      * Constructor for this class
+     *
      * @param singleChoice
      * @param hasPaste
      * @param x
@@ -58,6 +59,7 @@ public class PopMenu extends JPopupMenu {
 
     /**
      * Getter for rename
+     *
      * @return
      */
     public JMenuItem getRename() {
@@ -66,7 +68,8 @@ public class PopMenu extends JPopupMenu {
 
     /**
      * Getter for open
-     * @return  open
+     *
+     * @return open
      */
     public JMenuItem getOpen() {
         return open;
@@ -74,6 +77,7 @@ public class PopMenu extends JPopupMenu {
 
     /**
      * Getter for delete
+     *
      * @return
      */
     public JMenuItem getDelete() {
@@ -82,6 +86,7 @@ public class PopMenu extends JPopupMenu {
 
     /**
      * Getter for cut
+     *
      * @return cut
      */
     public JMenuItem getCut() {
@@ -90,6 +95,7 @@ public class PopMenu extends JPopupMenu {
 
     /**
      * Getter for copy
+     *
      * @return
      */
     public JMenuItem getCopy() {
@@ -98,6 +104,7 @@ public class PopMenu extends JPopupMenu {
 
     /**
      * Getter for properties
+     *
      * @return
      */
     public JMenuItem getProperties() {
@@ -106,6 +113,7 @@ public class PopMenu extends JPopupMenu {
 
     /**
      * Getter for paste
+     *
      * @return paste
      */
     public JMenuItem getPaste() {
@@ -114,6 +122,7 @@ public class PopMenu extends JPopupMenu {
 
     /**
      * Getter for newFile
+     *
      * @return
      */
     public JMenuItem getNewFile() {
@@ -122,6 +131,7 @@ public class PopMenu extends JPopupMenu {
 
     /**
      * Getter for newFolder
+     *
      * @return newFolder
      */
     public JMenuItem getNewFolder() {

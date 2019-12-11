@@ -5,6 +5,7 @@
 
 package Controller;
 
+import Memento.CareTaker;
 import Model.Model;
 import View.*;
 
@@ -48,6 +49,8 @@ public class Controller {
         this.myModel = myModel;
 
         this.myView = myView;
+
+        myModel.setCareTaker(new CareTaker(myModel, myView, this, myModel.getCurrentAddress(), 1));
 
         myModel.upgradeFiles();
 
@@ -476,13 +479,12 @@ public class Controller {
         public void actionPerformed(ActionEvent e) {
 
             Settings settings = new Settings();
-            if(myModel.getFirstTimeAddress() != null)
-            {
+            if (myModel.getFirstTimeAddress() != null) {
                 settings.getInitialAddressTextField().setText(myModel.getFirstTimeAddress());
             }
 
 
-     //       myModel.loadSettings();
+            //       myModel.loadSettings();
 
             handleSettingsListener(settings);
 
@@ -575,12 +577,13 @@ public class Controller {
             @Override
             public void actionPerformed(ActionEvent e) {
                 myModel.setFlashBackNumber(settings.getMaxFlashbacks().getSelectedItem() + "");
+                myModel.getCareTaker().setNumberOfFlashBacks(Integer.parseInt(settings.getMaxFlashbacks().getSelectedItem() + ""));
                 myModel.writeSettingsToFile();
             }
         });
 
-        if(myModel.getInitialAddress()==null)
-        settings.getInitialAddressTextField().setText(myModel.getFirstTimeAddress());
+        if (myModel.getInitialAddress() == null)
+            settings.getInitialAddressTextField().setText(myModel.getFirstTimeAddress());
 
         else
             settings.getInitialAddressTextField().setText(myModel.getInitialAddress());
@@ -1010,7 +1013,7 @@ public class Controller {
                 }
 
                 if (myModel.getGridDisplay()) {
-                    DrawRect pleaseWork=new DrawRect(F);
+                    DrawRect pleaseWork = new DrawRect(F);
                     myView.setRightSidePanel(pleaseWork);
                     myView.setGridDisplay();
 
@@ -1651,13 +1654,9 @@ public class Controller {
                             if (temp - time < 500) {
 
                                 //  JOptionPane.showMessageDialog(null, "Double click");
-                                try
-                                {
+                                try {
                                     open(new File(path));
-                                }
-
-                                catch (Exception ex)
-                                {
+                                } catch (Exception ex) {
                                     JOptionPane.showMessageDialog(null, "Access is denied to the file", "Eror", 0);
                                     myModel.goToParent();
                                     upgradeView();

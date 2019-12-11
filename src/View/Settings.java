@@ -5,18 +5,13 @@ package View;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
+
 
 public class Settings {
     private JTextField initialAddressTextField = new JTextField();
     private JTextField receivedFileAddress = new JTextField();
     private JTextField remoteComputerAddressTextField = new JTextField();
     private JTextField remoteComputerPort = new JTextField();
-
 
 
     private JLabel initialAddressLabel = new JLabel("Initial Address:");
@@ -28,7 +23,7 @@ public class Settings {
     private JLabel syncIntervalLabel = new JLabel("Synchronizing interval:");
     private JLabel flashBackLabel = new JLabel("Maximum number of flashbacks:");
     private JFrame frame = new JFrame("View.Settings");
-    private String[] syncIntervals = {"never", "1 minute", "5 minutes", "30 minutes", "1 hour"}, lookAndFeels = {"default","Motif", "System", "WindowsClassic", "Nimbus"};
+    private String[] syncIntervals = {"never", "1 minute", "5 minutes", "30 minutes", "1 hour"}, lookAndFeels = { "Motif", "System", "WindowsClassic", "Nimbus"};
     private String[] flashBacks = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
 
     private JComboBox lookNFeel = new JComboBox(lookAndFeels);
@@ -81,46 +76,12 @@ public class Settings {
         frame.add(flashBackLabel);
         frame.add(maxFlashbacks);
 
-//        //Add listeners
-//        initialAddressTextField.addActionListener(new InitialAddressListener());
-//        gridDisplayFormatCheckBox.addActionListener(new GridTick());
-//        tableDisplayFormatCheckBox.addActionListener(new TableTick());
-//        receivedFileAddress.addActionListener(new ReceivedFileAddressListener());
-//        remoteComputerAddressTextField.addActionListener(new RemoteComputerAddressListener());
-//        remoteComputerPort.addActionListener(new RemoteComputerPortListener());
-
-
-
-//        try
-//        {
-//            List<String> allLines = Files.readAllLines(Paths.get("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\JFileManager_Settings.txt"));
-//
-//            initialAddressTextField.setText(allLines.get(0));
-//          //  JOptionPane.showMessageDialog(null,initialAddressTextField.getText());
-//
-//            if(allLines.get(5)=="true")
-//            {
-//                gridDisplayFormatCheckBox.setSelected(true);
-//                tableDisplayFormatCheckBox.setSelected(false);
-//            }
-//
-//            else
-//            {
-//                gridDisplayFormatCheckBox.setSelected(false);
-//                getTableDisplayFormatCheckBox().setSelected(true);
-//            }
-//        }
-//        catch (Exception e)
-//        {
-//            JOptionPane.showMessageDialog(null,"Exception");
-//        }
-
-
         frame.setVisible(true);
     }
 
     /**
      * Setter for setFirstTimeAddress
+     *
      * @param firstTimeAddress
      */
     public void setFirstTimeAddress(String firstTimeAddress) {
@@ -129,6 +90,7 @@ public class Settings {
 
     /**
      * Getter for remoteComputerAddressTextField
+     *
      * @return
      */
     public JTextField getRemoteComputerAddressTextField() {
@@ -137,6 +99,7 @@ public class Settings {
 
     /**
      * Getter for initialAddressTextField
+     *
      * @return initialAddressTextField
      */
     public JTextField getInitialAddressTextField() {
@@ -145,6 +108,7 @@ public class Settings {
 
     /**
      * Getter for receivedFileAddress
+     *
      * @return receivedFileAddress
      */
     public JTextField getReceivedFileAddress() {
@@ -153,6 +117,7 @@ public class Settings {
 
     /**
      * Getter for getOtherPCAddress
+     *
      * @return getOtherPCAddress
      */
     public JTextField getOtherPCAddress() {
@@ -161,6 +126,7 @@ public class Settings {
 
     /**
      * Getter for remoteComputerPort
+     *
      * @return remoteComputerPort
      */
     public JTextField getRemoteComputerPort() {
@@ -169,6 +135,7 @@ public class Settings {
 
     /**
      * Getter for lookNFeel
+     *
      * @return lookNFeel
      */
     public JComboBox getLookNFeel() {
@@ -177,6 +144,7 @@ public class Settings {
 
     /**
      * Getter for syncInterval
+     *
      * @return syncInterval
      */
     public JComboBox getSyncInterval() {
@@ -185,6 +153,7 @@ public class Settings {
 
     /**
      * Getter for maxFlashbacks
+     *
      * @return maxFlashbacks
      */
     public JComboBox getMaxFlashbacks() {
@@ -193,6 +162,7 @@ public class Settings {
 
     /**
      * Getter for tableDisplayFormatCheckBox
+     *
      * @return tableDisplayFormatCheckBox
      */
     public JCheckBox getTableDisplayFormatCheckBox() {
@@ -201,6 +171,7 @@ public class Settings {
 
     /**
      * Getter for gridDisplayFormatCheckBox
+     *
      * @return gridDisplayFormatCheckBox
      */
     public JCheckBox getGridDisplayFormatCheckBox() {
@@ -237,8 +208,8 @@ public class Settings {
 //    }
 
     /**
-//     * Listener class for receivedFileAddressString
-//     */
+     //     * Listener class for receivedFileAddressString
+     //     */
 //    class ReceivedFileAddressListener implements ActionListener {
 //        public void actionPerformed(ActionEvent e) {
 //            receivedFileAddressString = receivedFileAddress.getText();
@@ -256,7 +227,7 @@ public class Settings {
 
     /**
      * Listener class for remoteComputerPortString
-//     */
+     //     */
 //    class RemoteComputerPortListener implements ActionListener {
 //        public void actionPerformed(ActionEvent e) {
 //            remoteComputerPortString = remoteComputerPort.getText();

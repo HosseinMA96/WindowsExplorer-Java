@@ -15,6 +15,7 @@ public class GridEmptySpacePopMenu extends JPopupMenu {
 
     /**
      * Constructor for current class
+     *
      * @param copyPressed
      * @param x
      * @param y
@@ -44,6 +45,7 @@ public class GridEmptySpacePopMenu extends JPopupMenu {
 
     /**
      * Getter for Properties
+     *
      * @return properties
      */
     public JMenuItem getProperties() {
@@ -52,6 +54,7 @@ public class GridEmptySpacePopMenu extends JPopupMenu {
 
     /**
      * Getter for paste
+     *
      * @return paste
      */
     public JMenuItem getPaste() {
@@ -60,6 +63,7 @@ public class GridEmptySpacePopMenu extends JPopupMenu {
 
     /**
      * Getter for newFile
+     *
      * @return paste
      */
     public JMenuItem getNewFile() {
@@ -68,6 +72,7 @@ public class GridEmptySpacePopMenu extends JPopupMenu {
 
     /**
      * Getter for newFolder
+     *
      * @return newFolder
      */
     public JMenuItem getNewFolder() {

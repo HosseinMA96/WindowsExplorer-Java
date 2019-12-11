@@ -4,10 +4,11 @@
  */
 package Model;
 
+import Memento.CareTaker;
+
 import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
@@ -21,7 +22,27 @@ public class Model {
     private boolean isGridDisplay;
     private String initialAddress, receivedFileAddress, remoteComputerAddress, remoteComputerPort, lookAndFeel, displayFormat, syncInterval, flashBackNumber;
     private boolean firsTimeAddressLoad = true;
-   private String firstTimeAddress;
+    private String firstTimeAddress;
+    private CareTaker careTaker;
+
+
+    /**
+     * Setter for careTaker
+     *
+     * @param careTaker
+     */
+    public void setCareTaker(CareTaker careTaker) {
+        this.careTaker = careTaker;
+    }
+
+    /**
+     * Getter for careTaker
+     *
+     * @return careTaker
+     */
+    public CareTaker getCareTaker() {
+        return careTaker;
+    }
 
     /**
      * Getter for
@@ -42,12 +63,24 @@ public class Model {
     }
 
     /**
-     * Setter for currentAddress
+     * Setter for currentAddress, and records the result in careTaker
      *
      * @param currentAddress
      */
     public void setCurrentAddress(String currentAddress) {
         this.currentAddress = currentAddress;
+
+        if (careTaker != null)
+            careTaker.openNewAddress(currentAddress);
+    }
+
+    /**
+     * Setter for currentAddress, and does not record  the result in careTaker
+     *
+     * @param s
+     */
+    public void setCurrentAddressWithoutCareTakerModification(String s) {
+        this.currentAddress = s;
     }
 
     /**
@@ -92,6 +125,7 @@ public class Model {
 
     /**
      * A Method to delete a file f
+     *
      * @param f
      */
     public void deleteFile(File f) {
@@ -132,24 +166,21 @@ public class Model {
         try {
             List<String> allLines = Files.readAllLines(Paths.get("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\JFileManager_Settings.txt"));
 
-            if (firsTimeAddressLoad)
-                {
-                    this.setCurrentAddress(allLines.get(0));
-                    firstTimeAddress=new String(currentAddress);
-                }
+            if (firsTimeAddressLoad) {
+                this.setCurrentAddress(allLines.get(0));
+                firstTimeAddress = new String(currentAddress);
+            }
 
 
-                try {
-                    isGridDisplay = Boolean.parseBoolean(allLines.get(5));
+            try {
+                isGridDisplay = Boolean.parseBoolean(allLines.get(5));
 
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "Error in finding the initial display mode. Was set to list display");
-                    isGridDisplay = false;
-                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error in finding the initial display mode. Was set to list display");
+                isGridDisplay = false;
+            }
 
-                firsTimeAddressLoad = false;
-
-
+            firsTimeAddressLoad = false;
 
 
         } catch (IOException e) {
@@ -171,8 +202,15 @@ public class Model {
 
             FileWriter fw = new FileWriter("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\JFileManager_Settings.txt");
 
+            if (initialAddress == null || initialAddress == "" || initialAddress == "null") {
+                if (firstTimeAddress != null)
+                    fw.write(firstTimeAddress + "\r\n");
 
-            fw.write(initialAddress + "\r\n");
+                else
+                    fw.write("C:" + "\r\n");
+
+            } else
+                fw.write(initialAddress + "\r\n");
 
             fw.write(receivedFileAddress + "\r\n");
 
@@ -180,7 +218,8 @@ public class Model {
 
             fw.write(remoteComputerPort + "\r\n");
 
-            fw.write(lookAndFeel + "\r\n");;
+            fw.write(lookAndFeel + "\r\n");
+            ;
 
             fw.write(isGridDisplay + "\r\n");
 
@@ -199,6 +238,7 @@ public class Model {
 
     /**
      * Setter for syncPath
+     *
      * @param syncPath
      */
     public void setSyncPath(String syncPath) {
@@ -207,6 +247,7 @@ public class Model {
 
     /**
      * Setter for initialAddress
+     *
      * @param initialAddress
      */
     public void setInitialAddress(String initialAddress) {
@@ -215,6 +256,7 @@ public class Model {
 
     /**
      * Setter for receivedFileAddress
+     *
      * @param receivedFileAddress
      */
     public void setReceivedFileAddress(String receivedFileAddress) {
@@ -223,6 +265,7 @@ public class Model {
 
     /**
      * Setter for remoteComputerAddress
+     *
      * @param remoteComputerAddress
      */
     public void setRemoteComputerAddress(String remoteComputerAddress) {
@@ -231,6 +274,7 @@ public class Model {
 
     /**
      * Getter for firstTimeAddress
+     *
      * @return firstTimeAddress
      */
     public String getFirstTimeAddress() {
@@ -239,6 +283,7 @@ public class Model {
 
     /**
      * Setter for remoteComputerPort
+     *
      * @param remoteComputerPort
      */
     public void setRemoteComputerPort(String remoteComputerPort) {
@@ -247,6 +292,7 @@ public class Model {
 
     /**
      * setter for lookAndFeel
+     *
      * @param lookAndFeel
      */
     public void setLookAndFeel(String lookAndFeel) {
@@ -255,6 +301,7 @@ public class Model {
 
     /**
      * Setter for syncInterval
+     *
      * @param syncInterval
      */
     public void setSyncInterval(String syncInterval) {
@@ -263,6 +310,7 @@ public class Model {
 
     /**
      * Setter flashBackNumber
+     *
      * @param flashBackNumber
      */
     public void setFlashBackNumber(String flashBackNumber) {
@@ -271,6 +319,7 @@ public class Model {
 
     /**
      * Getter for initialAddress
+     *
      * @return initialAddress
      */
     public String getInitialAddress() {
@@ -279,7 +328,8 @@ public class Model {
 
     /**
      * Getter for receivedFileAddress
-     * @return  receivedFileAddress
+     *
+     * @return receivedFileAddress
      */
     public String getReceivedFileAddress() {
         return receivedFileAddress;
@@ -287,6 +337,7 @@ public class Model {
 
     /**
      * Getter for remoteComputerAddress
+     *
      * @return remoteComputerAddress
      */
     public String getRemoteComputerAddress() {
@@ -295,6 +346,7 @@ public class Model {
 
     /**
      * Getter for remoteComputerPort
+     *
      * @return remoteComputerPort
      */
     public String getRemoteComputerPort() {
@@ -303,6 +355,7 @@ public class Model {
 
     /**
      * Getter for lookAndFeel
+     *
      * @return lookAndFeel
      */
     public String getLookAndFeel() {
@@ -312,6 +365,7 @@ public class Model {
 
     /**
      * Getter for syncInterval
+     *
      * @return
      */
     public String getSyncInterval() {
@@ -320,6 +374,7 @@ public class Model {
 
     /**
      * Getter for flashBackNumber
+     *
      * @return
      */
     public String getFlashBackNumber() {
@@ -328,6 +383,7 @@ public class Model {
 
     /**
      * Satic method for pasting a file From address "from" to address "to"
+     *
      * @param from
      * @param to
      * @throws IOException
@@ -403,6 +459,7 @@ public class Model {
 
     /**
      * Set display as gridDisplay
+     *
      * @param gridDisplay
      */
     public void setGridDisplay(boolean gridDisplay) {
@@ -411,6 +468,7 @@ public class Model {
 
     /**
      * Get isGridDisplay
+     *
      * @return isGridDisplay
      */
     public boolean getGridDisplay() {
@@ -454,7 +512,7 @@ public class Model {
             f = f.getParentFile();
 
             if (f.exists())
-                currentAddress = f.getAbsolutePath();
+                setCurrentAddress(f.getAbsolutePath());
 
 
         } catch (Exception e) {

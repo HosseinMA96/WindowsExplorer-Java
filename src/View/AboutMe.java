@@ -23,7 +23,7 @@ public class AboutMe {
         aboutMeFrame.add(new JLabel("          Fall 1398"));
         aboutMeFrame.setVisible(true);
         aboutMeFrame.setResizable(false);
-        aboutMeFrame.getContentPane().setBackground(Color.LIGHT_GRAY );
+        aboutMeFrame.getContentPane().setBackground(Color.LIGHT_GRAY);
 
 
         ImageIcon img = new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\informationIcon.png");

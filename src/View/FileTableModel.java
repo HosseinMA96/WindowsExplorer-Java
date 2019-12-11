@@ -3,6 +3,7 @@
  */
 
 package View;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.AbstractTableModel;
@@ -13,7 +14,7 @@ import java.io.File;
 import java.util.Date;
 
 
-public class FileTableModel extends AbstractTableModel  {
+public class FileTableModel extends AbstractTableModel {
 
 
     private File[] files;
@@ -36,14 +37,16 @@ public class FileTableModel extends AbstractTableModel  {
 
     /**
      * Cunstructor for this class
+     *
      * @param files
      */
-    public FileTableModel(File [] files) {
-        this.files=files;
+    public FileTableModel(File[] files) {
+        this.files = files;
     }
 
     /**
      * Overriden method for getColumnsName
+     *
      * @param col
      * @return columnNames[col]
      */
@@ -54,6 +57,7 @@ public class FileTableModel extends AbstractTableModel  {
 
     /**
      * Overriden method for getValue, to assing values to cells of the table
+     *
      * @param row
      * @param col
      * @return entries in cells
@@ -91,11 +95,12 @@ public class FileTableModel extends AbstractTableModel  {
 
     /**
      * Overriden method for get columns classes
+     *
      * @param column
      * @return column class
      */
     @Override
-    public    Class getColumnClass(int column) {
+    public Class getColumnClass(int column) {
         return (column == 0) ? Icon.class : Object.class;
     }
 

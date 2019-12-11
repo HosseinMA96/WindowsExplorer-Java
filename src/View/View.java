@@ -103,7 +103,6 @@ public class View extends JFrame implements FocusListener {
     private File[] currentDirectoryFiles;
 
 
-
     /**
      * Constructor for this classs in which we put main components of the frame together
      */
@@ -213,7 +212,8 @@ public class View extends JFrame implements FocusListener {
     }
 
     /**
-     *Setter for rightSidePanel
+     * Setter for rightSidePanel
+     *
      * @param rightSidePanel
      */
     public void setRightSidePanel(JPanel rightSidePanel) {
@@ -231,9 +231,9 @@ public class View extends JFrame implements FocusListener {
         makeLeftTree();
 
 
-       // JPanel dummyPannel = new JPanel(new BorderLayout());
-        if(rightSidePanel==null)
-            rightSidePanel=new JPanel(new BorderLayout());
+        // JPanel dummyPannel = new JPanel(new BorderLayout());
+        if (rightSidePanel == null)
+            rightSidePanel = new JPanel(new BorderLayout());
 
 
         rightScrollPane = new JScrollPane(rightSidePanel);
