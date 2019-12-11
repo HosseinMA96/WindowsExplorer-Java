@@ -26,7 +26,7 @@ public class AboutMe {
         aboutMeFrame.getContentPane().setBackground(Color.LIGHT_GRAY);
 
 
-        ImageIcon img = new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\informationIcon.png");
+        ImageIcon img = new ImageIcon("images\\informationIcon.png");
         aboutMeFrame.setIconImage(img.getImage());
     }
 }

@@ -49,13 +49,13 @@ public class View extends JFrame implements FocusListener {
     private JTextField searchTextField = new JTextField("Search", 20);
 
     //Three arrows
-    private JButton uppArrow = new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\upArrow.png"));
-    private JButton leftArrow = new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\leftArrow.png"));
-    private JButton rightArrow = new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\rightArrow.png"));
+    private JButton uppArrow = new JButton(new ImageIcon("images\\upArrow.png"));
+    private JButton leftArrow = new JButton(new ImageIcon("images\\leftArrow.png"));
+    private JButton rightArrow = new JButton(new ImageIcon("images\\rightArrow.png"));
 
     //Two View.View buttons (Grid and table) located on lower right part of the frame
-    private JButton gridDisplay = new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\gridDisplay.png"));
-    private JButton tableDisplay = new JButton(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\tableDisplay.png"));
+    private JButton gridDisplay = new JButton(new ImageIcon("images\\gridDisplay.png"));
+    private JButton tableDisplay = new JButton(new ImageIcon("images\\tableDisplay.png"));
 
     //Upper menu bar
     private JMenuBar upperMenuBar = new JMenuBar();
@@ -122,7 +122,7 @@ public class View extends JFrame implements FocusListener {
         frame.setLayout(new BorderLayout());
 
         //set ICon
-        frame.setIconImage(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\mainIcon.png").getImage());
+        frame.setIconImage(new ImageIcon("images\\mainIcon.png").getImage());
 
         //Two panels for upper Panel
         JPanel upperPanel = new JPanel(new BorderLayout());

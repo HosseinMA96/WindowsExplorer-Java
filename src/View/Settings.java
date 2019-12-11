@@ -40,7 +40,7 @@ public class Settings {
     public Settings() {
         JPanel checkBoxPanel = new JPanel(new GridLayout(1, 2));
         frame.setResizable(false);
-        frame.setIconImage(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\settingIcon.png").getImage());
+        frame.setIconImage(new ImageIcon("images\\settingIcon.png").getImage());
         frame.setLayout(new GridLayout(8, 2));
 
         gridDisplayFormatCheckBox.setSelected(true);

@@ -36,7 +36,7 @@ public class ProgressBar {
         bar.setForeground(Color.green);
 
 
-        frame.setIconImage(new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\syncIcon.png").getImage());
+        frame.setIconImage(new ImageIcon("images\\syncIcon.png").getImage());
 
         frame.setVisible(true);
     }

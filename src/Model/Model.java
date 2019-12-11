@@ -164,7 +164,7 @@ public class Model {
     public void loadSettings() {
 
         try {
-            List<String> allLines = Files.readAllLines(Paths.get("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\JFileManager_Settings.txt"));
+            List<String> allLines = Files.readAllLines(Paths.get("JFileManager_Settings.txt"));
 
             if (firsTimeAddressLoad) {
                 this.setCurrentAddress(allLines.get(0));
@@ -194,13 +194,13 @@ public class Model {
     public void writeSettingsToFile() {
         try {
 
-            File f = new File("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\JFileManager_Settings.txt");
+            File f = new File("JFileManager_Settings.txt");
 
 
             if (new File(f.getAbsolutePath()).exists())
                 deleteFile(new File(f.getAbsolutePath()));
 
-            FileWriter fw = new FileWriter("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\JFileManager_Settings.txt");
+            FileWriter fw = new FileWriter("JFileManager_Settings.txt");
 
             if (initialAddress == null || initialAddress == "" || initialAddress == "null") {
                 if (firstTimeAddress != null)

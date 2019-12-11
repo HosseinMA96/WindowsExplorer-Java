@@ -66,17 +66,16 @@ public class FileTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int row, int col) {
         File f = files[row];
-        //    {"icon","name","size","last modified","type"};
+
         switch (col) {
             case 0:
                 return FileSystemView.getFileSystemView().getSystemIcon(f);
-            //   return new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\fileIcon.png");
             case 1:
                 return f.getName();
 
             case 2:
                 return f.length();
-            //return calculateSize(f);
+
 
 
             case 4:

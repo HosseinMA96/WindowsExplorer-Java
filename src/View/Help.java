@@ -24,7 +24,7 @@ public class Help {
         help.add(textArea);
 
 
-        ImageIcon img = new ImageIcon("C:\\Users\\erfan\\Desktop\\WindowsExplorer\\images\\questionIcon.png");
+        ImageIcon img = new ImageIcon("images\\questionIcon.png");
         help.setIconImage(img.getImage());
         textArea.setEnabled(false);
 
