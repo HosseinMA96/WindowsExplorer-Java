@@ -112,6 +112,9 @@ public class Model {
      */
     public void renameFile(String prevName, String newName) {
 
+        if (newName == null || newName.length() == 0)
+            return;
+
         String dummy;
         File oldFile = new File(prevName);
 
@@ -136,7 +139,7 @@ public class Model {
                     JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 1);
 
             } catch (Exception ex) {
-
+                JOptionPane.showMessageDialog(null, "Error happened in deleting process", "Error", 1);
             }
         }
 
@@ -219,7 +222,7 @@ public class Model {
             fw.write(remoteComputerPort + "\r\n");
 
             fw.write(lookAndFeel + "\r\n");
-            ;
+
 
             fw.write(isGridDisplay + "\r\n");
 
@@ -435,7 +438,11 @@ public class Model {
     public void newFile() {
 
         String newFileName = JOptionPane.showInputDialog(null, "Enter new file name");
+        if (newFileName == null || newFileName.length() == 0)
+            return;
+
         upgradeFiles();
+
 
         for (int i = 0; i < allFiles.length; i++) {
             File f = allFiles[i];
@@ -480,24 +487,30 @@ public class Model {
      */
     public void newFolder() {
         String newFolderName = JOptionPane.showInputDialog(null, "Enter New Folder name");
+        if (newFolderName == null || newFolderName.length() == 0)
+            return;
+
         upgradeFiles();
+        try {
+            for (int i = 0; i < allFiles.length; i++) {
+                File f = allFiles[i];
 
-        for (int i = 0; i < allFiles.length; i++) {
-            File f = allFiles[i];
+                if (!f.isFile() && f.getName().equals(newFolderName)) {
+                    newFolderName += "_copy";
+                    i = 0;
+                    continue;
+                }
 
-            if (!f.isFile() && f.getName().equals(newFolderName)) {
-                newFolderName += "_copy";
-                i = 0;
-                continue;
             }
 
-        }
+            File F = new File(currentAddress + "\\" + newFolderName);
 
-        File F = new File(currentAddress + "\\" + newFolderName);
-
-        //try {
-        if (!F.mkdir())
+            //try {
+            if (!F.mkdir())
+                JOptionPane.showMessageDialog(null, "Unable to create Folder", "Eror", 3);
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Unable to create Folder", "Eror", 3);
+        }
 
     }
 

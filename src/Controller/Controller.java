@@ -122,10 +122,11 @@ public class Controller {
                 int[] selectedColumns = myView.getTable().getSelectedColumns();//here has good table.get seelction staff
                 myView.getNumberOfSelectedLabel().setText("Number of items selected: " + selectedRow.length);
 
-                for (int i = 0; i < selectedRow.length; i++) {
-                    selectedFiles.add(new File(myModel.getAllFiles()[selectedRow[i]].getAbsolutePath()));
-                    //      JOptionPane.showMessageDialog(null,currentDirectoryFiles[selectedRow[i]].getAbsolutePath()+"");
-                }
+
+                if (selectedRow != null)
+                    for (int i = 0; i < selectedRow.length; i++) {
+                        selectedFiles.add(new File(myModel.getAllFiles()[selectedRow[i]].getAbsolutePath()));
+                    }
 
             }
 
@@ -138,7 +139,6 @@ public class Controller {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isRightMouseButton(e)) {
-                    //   JOptionPane.showMessageDialog(null,"Right click on panel");
                     GridEmptySpacePopMenu gridEmptySpacePopMenu = new GridEmptySpacePopMenu(coppyPressed, e.getXOnScreen(), e.getYOnScreen(), myView.getRightScrollPane());
                     gridEmptySpacePopMenu.getPaste().addActionListener(new PasteListener());
                     gridEmptySpacePopMenu.getNewFolder().addActionListener(new NewFolderListener());
@@ -149,7 +149,6 @@ public class Controller {
                     gridEmptySpacePopMenu.getProperties().addActionListener(new PropertiesListener());
                     selectedFiles = null;
                     myView.getNumberOfSelectedLabel().setText("number of items selected:");
-                    //Overlord
                 } else {
                     selectedFiles = null;
                     myView.getNumberOfSelectedLabel().setText("number of items selected:");
@@ -220,7 +219,6 @@ public class Controller {
                     else
                         coppy = new ArrayList<>();
 
-                    temp = null;
 
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "Unable to perform drag and drop");
@@ -275,6 +273,8 @@ public class Controller {
     class RenameListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
 
+            if (selectedFiles == null)
+                return;
 
             switch (selectedFiles.size()) {
                 case 1:
@@ -439,6 +439,8 @@ public class Controller {
     class DeleteListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
 
+            if (selectedFiles == null)
+                return;
 
             for (int i = 0; i < selectedFiles.size(); i++) {
 
@@ -483,12 +485,7 @@ public class Controller {
                 settings.getInitialAddressTextField().setText(myModel.getFirstTimeAddress());
             }
 
-
-            //       myModel.loadSettings();
-
             handleSettingsListener(settings);
-
-
         }
     }
 
@@ -689,6 +686,8 @@ public class Controller {
 
     ArrayList<String> findNewNames() {
         ArrayList<String> ans = new ArrayList<String>();
+        if (coppy == null)
+            return null;
 
         for (int i = 0; i < coppy.size(); i++) {
             String newName = coppy.get(i).getName();
@@ -747,6 +746,8 @@ public class Controller {
                 mouseEvent.isConsumed();
                 int[] selectedRow = myView.getTable().getSelectedRows();
 
+                if (selectedRow == null)
+                    return;
 
                 if (selectedRow.length == 1) {
                     int r = selectedRow[0];
@@ -934,13 +935,8 @@ public class Controller {
                 }
             }
 
-
-            //let's try to open PDF file
-//                            file = new File("/Users/pankaj/java.pdf");
-//                            if(file.exists()) desktop.open(file);
         }
         if (f.exists() && f.isDirectory()) {
-            //        JOptionPane.showMessageDialog(null,"Must be here");
             myModel.setCurrentAddress(f.getAbsolutePath());
             myModel.upgradeFiles();
             myView.setCurrentDirectoryFiles(myModel.getAllFiles());
@@ -1019,11 +1015,6 @@ public class Controller {
 
                 } else
                     myView.setListDisplay();
-
-
-                //    upgradeView();
-
-
             }
 
             @Override
@@ -1092,10 +1083,8 @@ public class Controller {
      */
     private void sort(int order, int feature) {
 
-        if (feature == 0)
+        if (feature == 0 || feature == 4)
             return;
-
-        int index = 0;
 
         File[] F = new File[myModel.getAllFiles().length];
 
@@ -1220,17 +1209,18 @@ public class Controller {
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_ENTER && !controlPressed) {
-                    for (int i = 0; i < selectedFiles.size(); i++)
-                        if (selectedFiles.get(i).isFile())
-                            open(selectedFiles.get(i));
+                    if (selectedFiles != null)
+                        for (int i = 0; i < selectedFiles.size(); i++)
+                            if (selectedFiles.get(i).isFile())
+                                open(selectedFiles.get(i));
 
-
-                    if (selectedFiles.size() == 1 && selectedFiles.get(0).isDirectory())
-                        open(selectedFiles.get(0));
+                    if (selectedFiles != null)
+                        if (selectedFiles.size() == 1 && selectedFiles.get(0).isDirectory())
+                            open(selectedFiles.get(0));
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_UP && !controlPressed) {
-                    if (myModel.getAllFiles() == null)
+                    if (myModel.getAllFiles() == null || myModel.getAllFiles().length == 0)
                         return;
 
 
@@ -1282,8 +1272,9 @@ public class Controller {
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT && !controlPressed) {
-                    if (myModel.getAllFiles() == null)
+                    if (myModel.getAllFiles() == null || myModel.getAllFiles().length == 0)
                         return;
+
 
                     if (myModel.getGridDisplay() && myModel.getAllFiles() != null) {
                         calcRowAndColumn();
@@ -1315,8 +1306,9 @@ public class Controller {
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_LEFT && !controlPressed) {
-                    if (myModel.getAllFiles() == null)
+                    if (myModel.getAllFiles() == null || myModel.getAllFiles().length == 0)
                         return;
+
 
                     if (myModel.getGridDisplay() && myModel.getAllFiles() != null) {
                         calcRowAndColumn();
@@ -1351,8 +1343,9 @@ public class Controller {
 
 
                 if (e.getKeyCode() == KeyEvent.VK_DOWN && !controlPressed) {
-                    if (myModel.getAllFiles() == null)
+                    if (myModel.getAllFiles() == null || myModel.getAllFiles().length == 0)
                         return;
+
 
                     if (myModel.getGridDisplay() == false) {
 
@@ -1430,12 +1423,18 @@ public class Controller {
 
                     if (coppy != null) {
 
+                        boolean[] check = new boolean[coppy.size()];
+
+                        for (int i = 0; i < check.length; i++)
+                            check[i] = true;
+
                         ArrayList<String> newNames = findNewNames();
                         for (int i = 0; i < newNames.size(); i++) {
                             try {
                                 Model.pasteFile(coppy.get(i).getAbsolutePath(), myModel.getCurrentAddress() + "\\" + newNames.get(i));
                             } catch (Exception f) {
-                                JOptionPane.showMessageDialog(null, "Unable to paste");
+                                JOptionPane.showMessageDialog(null, "Unable to paste ");
+                                check[i] = false;
                             }
 
 
@@ -1443,7 +1442,8 @@ public class Controller {
 
                         if (cutPressed) {
                             for (int i = 0; i < coppy.size(); i++)
-                                myModel.deleteFile(coppy.get(i));
+                                if (check[i])
+                                    myModel.deleteFile(coppy.get(i));
 
                             coppy = null;
 
@@ -1459,10 +1459,9 @@ public class Controller {
                     coppy = new ArrayList<>();
                     cutPressed = true;
 
-                    for (int i = 0; i < selectedFiles.size(); i++)
-                        coppy.add(selectedFiles.get(i));
-
-
+                    if (selectedFiles != null)
+                        for (int i = 0; i < selectedFiles.size(); i++)
+                            coppy.add(selectedFiles.get(i));
 
 
                 }
@@ -1484,13 +1483,13 @@ public class Controller {
                 if (e.getKeyCode() == KeyEvent.VK_F && controlPressed) {
                     myModel.newFile();
                     upgradeView();
-                    controlPressed=false;
+                    controlPressed = false;
                 }
 
                 if (e.getKeyCode() == KeyEvent.VK_N && controlPressed) {
                     myModel.newFolder();
                     upgradeView();
-                    controlPressed=false;
+                    controlPressed = false;
                 }
 
 
@@ -1501,8 +1500,6 @@ public class Controller {
         public void keyReleased(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
                 controlPressed = false;
-                //     JOptionPane.showMessageDialog(null, "control released");
-
             }
 
         }
@@ -2076,7 +2073,7 @@ public class Controller {
                 g.setColor(myColour);
                 drawPerfectRect(g, x, y, x2, y2);
             } catch (Exception e) {
-                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "unable to paint!");
             }
 
         }
