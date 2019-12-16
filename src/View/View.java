@@ -4,6 +4,8 @@
 package View;
 
 
+import com.sun.corba.se.spi.activation.Server;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -358,7 +360,6 @@ public class View extends JFrame implements FocusListener {
         String temp = currentAddress;
         boolean exit = false;
         File f = new File(temp);
-
 
         DefaultMutableTreeNode thisDir = new DefaultMutableTreeNode(f.getName(), true);
 

@@ -736,7 +736,7 @@ public class Controller {
     }
 
     /**
-     * An inner class to add mouse listenet to the table
+     * An inner class to add mouse listener to the table
      */
     class TableListener implements MouseListener {
 
@@ -1648,11 +1648,9 @@ public class Controller {
                     if (SwingUtilities.isLeftMouseButton(e)) {
 
                         if (setSelected) {
-                            setSelected = false;
-
                             long temp = new Date().getTime();
 
-                            if (temp - time < 500) {
+                            if (temp - time < 300) {
 
                                 //  JOptionPane.showMessageDialog(null, "Double click");
                                 try {
