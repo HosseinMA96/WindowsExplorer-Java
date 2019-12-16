@@ -8,7 +8,7 @@ import java.util.Set;
 public class MultiServer {
     private static File base;
     private static int clientCount=0;
-    private static ArrayList<Server>servers=new ArrayList<>();
+    private static ArrayList<ServerReader> serverReaders =new ArrayList<>();
     private static void initializeServer() {
 
         base = new File("E:\\JFileManagerItems");
@@ -63,27 +63,48 @@ public class MultiServer {
 
     public static void main(String[] args) throws  Exception{
 
-//        Server fs = new Server(22000);
+//        ServerReader fs = new ServerReader(22000);
         ServerSocket serverSocket=new ServerSocket(22000);
         initializeServer();
 
-//        while(true)
+        while(true)
         {
-            clientCount++;
-            Socket socket=serverSocket.accept();
-            Server tempServer=new Server(socket,clientCount==1,base);
-            servers.add(tempServer);
-            tempServer.start();
-           // tempServer.wait();
 
 
-            if(servers.size()>1)
+            Socket socket1Reader=serverSocket.accept();
+            ServerReader firstServerReader =new ServerReader(socket1Reader,true,base);
+            firstServerReader.start();
+           // serverReaders.add(tempServerReader);
+
+
+
+            Socket socket2Reader=serverSocket.accept();
+            ServerReader secondServerReader =new ServerReader(socket2Reader,true,base);
+            secondServerReader.start();
+
+
+            firstServerReader.join();
+            secondServerReader.join();
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if(serverReaders.size()>1)
             {
 
             }
         }
 
-//        fs.start();
+
 
     }
 
