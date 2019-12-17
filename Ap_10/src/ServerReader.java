@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import java.io.*;
 import java.net.ServerSocket;
@@ -8,13 +7,13 @@ import java.util.HashSet;
 
 public class ServerReader extends Thread {
 
-    private ServerSocket serverSocket;
+    private ServerSocket serverSocket,ss;
     private int numberOfConnection = 0;
     private File base;
     Socket socket;
     private ArrayList<String> addedFiles = new ArrayList<>();
     //ArrayList<String>deletedFileNames=new ArrayList<>();
-    private HashSet<String> deletedFilenames = new HashSet<>();
+    private ArrayList<String> deletedFilenames = new ArrayList<>();
     private InputStream input;
     private OutputStream output;
     private boolean isFirst;
@@ -27,6 +26,7 @@ public class ServerReader extends Thread {
     //  public ServerReader(int port) {
     public ServerReader(Socket socket, boolean first, File location) {
         try {
+
             //    serverSocket = new ServerSocket(port);
             //    initializeServer();
             //   Socket socket=serverSocket.accept();
@@ -46,13 +46,15 @@ public class ServerReader extends Thread {
         }
     }
 
+
+
     @Override
     public void run() {
 
         try {
             initialize();
-            saveFile(socket);
-            System.out.println("Accept");
+            saveFile();
+            System.out.println("saveFiles finished, in server reader . ");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,6 +62,12 @@ public class ServerReader extends Thread {
     }
 
     private void initialize() throws Exception {
+
+        File del=new File("E:\\DELS");
+        if(del.exists())
+            MultiServer.deleteFile(del);
+
+        del.mkdir();
 
         turn = br.readLine();
 
@@ -91,133 +99,93 @@ public class ServerReader extends Thread {
                 break;
 
 
-            System.out.println(fileName + " " + fileName.length());
+            System.out.println(fileName + "  was file name " );
             addedFiles.add(fileName);
 
             //      Scanner scanner=new Scanner(System.in);
             //     int b=scanner.nextInt();
-         //   System.out.println("DOWN gggg");
+            //   System.out.println("DOWN gggg");
         }
 
 
         while (true) {
 
             String delName = br.readLine();
-
+            System.out.println(delName + "  was del name " );
 
             if (delName.equals(":END") || delName.equals("::END"))
                 break;
 
 
-      //      System.out.println(delName + " " + delName.length());
+            //      System.out.println(delName + " " + delName.length());
             deletedFilenames.add(delName);
-      //      System.out.println("DOWN HERE");
+            //      System.out.println("DOWN HERE");
 
         }
+
+        //    JOptionPane.showMessageDialog(null,deletedFilenames.size());
 
 
 
     }
 
-    private void addFile(File temp) throws Exception
-    {
-    //    DataInputStream dis = new DataInputStream(input);
-        FileOutputStream fos = new FileOutputStream(base.getAbsolutePath() + "\\" + temp.getName());
 
 
-        byte[] buffer = new byte[4096];
+    private void saveFile() throws IOException {
 
-        int filesize = 15123; // Send file size in separate msg
-        int read = 0;
-        int totalRead = 0;
-        int remaining = filesize;
-        while ((read = dis.read(buffer, 0, Math.min(buffer.length, remaining))) > 0) {
-            totalRead += read;
-            remaining -= read;
-                      System.out.println("read " + totalRead + " bytes.");
-            fos.write(buffer, 0, read);
-        }
+        BufferedInputStream bis = new BufferedInputStream(input);
+        DataInputStream dis = new DataInputStream(bis);
 
-        fos.close();
-    }
+        int filesCount = dis.readInt();
+        File[] files = new File[filesCount];
 
-    private void saveFile(Socket clientSock) throws IOException {
+        for(int i = 0; i < filesCount; i++)
+        {
+            boolean mustBeDeleted=false;
+            long fileLength = dis.readLong();
+            String fileName = dis.readUTF();
 
-        //اینجا شک دارم که دو خط پایین باید داخل وایل باشه یا نه؟ فعلا میزارم بیرون
-//        DataInputStream dis = new DataInputStream(input);
-
-
-
-        System.out.println("out here");
-
-        for (int i = 0; i < addedFiles.size(); i++) {
-
-            File temp = new File(addedFiles.get(i));
-            //For first, save new files
-            if (turn.equals("first")) {
-
-//                FileOutputStream fos = new FileOutputStream(base.getAbsolutePath() + "\\" + temp.getName());
-//
-//
-//                byte[] buffer = new byte[4096];
-//
-//                int filesize = 15123; // Send file size in separate msg
-//                int read = 0;
-//                int totalRead = 0;
-//                int remaining = filesize;
-//                while ((read = dis.read(buffer, 0, Math.min(buffer.length, remaining))) > 0) {
-//                    totalRead += read;
-//                    remaining -= read;
-//          //          System.out.println("read " + totalRead + " bytes.");
-//                    fos.write(buffer, 0, read);
-//                }
-//
-//                fos.close();
-                try {
-                    addFile(temp);
-                }
-                catch (Exception e)
-                {
-                    JOptionPane.showMessageDialog(null,"unable to add file "+temp.getName()+" to server");
-                }
-            }
-
-            //for second, only save if there's no file with current name
-            else
+            if(turn.equals("second"))
             {
-                boolean alreadyExist=false;
+                File [] checkFiles=base.listFiles();
 
-                File [] files=base.listFiles();
-
-                for (int j=0;j<files.length;j++)
-                    if(files[j].getName().equals(temp.getName()))
+                for (int j=0;j<checkFiles.length;j++)
+                    if(checkFiles[j].getName().equals(fileName))
                     {
-                        alreadyExist=true;
+                        mustBeDeleted=true;
                         break;
                     }
-
-
-                if(!alreadyExist)
-                {
-                    try {
-                        addFile(temp);
-                    }
-                    catch (Exception e)
-                    {
-                        JOptionPane.showMessageDialog(null,"unable to add file "+temp.getName()+" to server");
-                    }
-                }
             }
+
+            if(!mustBeDeleted)
+            files[i] = new File(base.getAbsolutePath()+"\\"+fileName);
+
+            else
+                files[i] = new File(base.getParentFile()+"\\"+"DELS"+"\\"+fileName);
+
+            FileOutputStream fos = new FileOutputStream(files[i]);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+            for(int j = 0; j < fileLength; j++) bos.write(bis.read());
+
+            bos.close();
         }
+
+        File del=new File("E:\\DELS");
+        if(del.exists())
+            MultiServer.deleteFile(del);
+
 
 
         dis.close();
     }
 
-    public HashSet<String> getDeletedFilenames()
+    public ArrayList<String> getDeletedFilenames()
     {
         return this.deletedFilenames;
     }
+
+
 
 
 }
