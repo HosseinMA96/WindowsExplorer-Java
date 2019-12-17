@@ -46,7 +46,9 @@ public class ServerReader extends Thread {
         }
     }
 
-
+    public PrintWriter getBp() {
+        return bp;
+    }
 
     @Override
     public void run() {

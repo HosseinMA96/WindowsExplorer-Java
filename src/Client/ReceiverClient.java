@@ -135,7 +135,6 @@ public class ReceiverClient extends Thread {
     }
 
 
-
 //    private void receiveDeleteArray() {
 //        try {
 //            String fuck = br.readLine();

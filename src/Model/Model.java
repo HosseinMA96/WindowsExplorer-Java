@@ -4,6 +4,8 @@
  */
 package Model;
 
+import Client.ReceiverClient;
+import Client.SenderClient;
 import Memento.CareTaker;
 
 import javax.swing.*;
@@ -13,6 +15,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 
 public class Model {
@@ -28,6 +31,7 @@ public class Model {
     private ArrayList<String> loggedFileNames = new ArrayList<>();
     private ArrayList<String> deletedFileNames = new ArrayList<>();
     private ArrayList<String> addedFileNames = new ArrayList<>();
+    private String tag = "none";
 
 
     /**
@@ -592,7 +596,7 @@ public class Model {
 
     public void initializeWatching(File F) {
         File[] files = F.listFiles();
-        deletedFileNames=new ArrayList<>();
+        deletedFileNames = new ArrayList<>();
         loggedFileNames = new ArrayList<>();
 
         if (files != null)
@@ -613,13 +617,96 @@ public class Model {
 
         logChanges();
 
-        File F=new File(syncPath);
+        File F = new File(syncPath);
+
+        ///////////////////////////////////////////////////////////
+        //  public static void main(String[] args) throws Exception {
+        int port = 220000;
 
 
+        while (true) {
+            try {
+                port = Integer.parseInt(remoteComputerPort);
+                break;
+
+            } catch (Exception e) {
+                remoteComputerPort = JOptionPane.showInputDialog("Error, Inavlid Port. Enter an Integer.");
+            }
+
+        }
+
+        while (true) {
+            if(new File(receivedFileAddress).isDirectory())
+                break;
+
+            else
+                receivedFileAddress = JOptionPane.showInputDialog("Error, directory to save files. Enter a valid directory.");
+
+        }
+
+
+
+
+        File syncFile = new File(syncPath);
+        File receivedFileFile = new File(receivedFileAddress);
+
+        new TransferHandler(remoteComputerAddress, port, syncFile, receivedFileFile, tag).start();
 
 
 
     }
 
+    class TransferHandler extends Thread {
+        private String host;
+        private int port;
+        private File synsFile, writtenIn;
+        private SenderClient senderClient;
+        private ReceiverClient receiverClient;
+        private String identity;
 
+        public TransferHandler(String host, int port, File syncFile, File writtenIn, String identity) {
+            this.host = host;
+            this.port = port;
+            this.synsFile = syncFile;
+            this.writtenIn = writtenIn;
+            this.identity = identity;
+        }
+
+        @Override
+        public void run() {
+            // SenderClient sc = new SenderClient("127.0.0.1", 22000, new File("C:\\Users\\erfan\\Desktop\\base1"));
+
+            senderClient = new SenderClient(host, port, synsFile);
+
+//            try {
+//
+//                String str = senderClient.getBr().readLine();
+//                System.out.println(str);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
+            senderClient.start();
+
+            if (identity.equals("none"))
+                tag = senderClient.getIdentity();
+
+            try {
+                senderClient.join();
+                receiverClient = new ReceiverClient(writtenIn, host, port);
+                receiverClient.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
+    }
 }
+
+
+
+
+

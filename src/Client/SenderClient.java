@@ -19,10 +19,11 @@ public class SenderClient extends Thread {
     private PrintWriter bw;
     private BufferedReader br;
     private DataOutputStream dos;
+    private File base;
 
 
     //  public SenderClient(String host, int port, ArrayList<String> addedFiles, ArrayList<String> nestedDirs) {
-    public SenderClient(String host, int port, File base) {
+    public SenderClient(String host, int port, File theBase) {
         try {
             addedFiles = new ArrayList<>();
             socket = new Socket(host, port);
@@ -32,17 +33,26 @@ public class SenderClient extends Thread {
             br = new BufferedReader(new InputStreamReader(input));
             dos = new DataOutputStream(output);
             dirs = new ArrayList<>();
-            //   preInit(base);
-            initialize(base,"");
+            base=theBase;
+
+
         } catch (Exception e) {
-            System.out.println("fuck");
             e.printStackTrace();
         }
     }
 
     @Override
     public void run() {
+        initialize(base, "");
         sendFile();
+    }
+
+    public BufferedReader getBr() {
+        return br;
+    }
+
+    public Socket getSocket() {
+        return socket;
     }
 
     public void sendFile() {
@@ -88,22 +98,14 @@ public class SenderClient extends Thread {
             }
 
 
-            sendAFile("abc");
+            sendAFile();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void sendAFile(String absoluteAddress) throws Exception {
-        //    String directory = ...;
-        //    String hostDomain = ...;
-        //   int port = ...;
-
-        //   File[] files = new File(directory).listFiles();
-
-        //  Socket socket = new Socket(InetAddress.getByName(hostDomain), port);
-
+    private void sendAFile() throws Exception {
         BufferedOutputStream bos = new BufferedOutputStream(output);
         DataOutputStream dos = new DataOutputStream(bos);
         File[] files = new File[addedFiles.size()];
@@ -137,91 +139,74 @@ public class SenderClient extends Thread {
         socket.close();
     }
 
-    public static void main(String[] args) throws Exception {
-        SenderClient sc = new SenderClient("127.0.0.1", 22000, new File("C:\\Users\\erfan\\Desktop\\base1"));
-        sc.start();
-
-        File F = new File("C:\\Users\\erfan\\Desktop\\first");
-
-
-        System.out.println();
-
-        try {
-            sc.join();
-
-
-            Scanner scanner = new Scanner(System.in);
-            String A = scanner.nextLine();
-
-
-            // System.out.println("after join");
-            ReceiverClient rc = new ReceiverClient(F, "127.0.0.1", 22000);
-
-            rc.start();
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
+    public String getIdentity() {
+        return identity;
     }
 
-    void initialize(File directory, String aux) {
-        File []F=directory.listFiles();
-        //System.out.println(directory.getAbsolutePath() + " "+F.length + " " +aux);
-
-        if(F!=null)
-            for (int i=0;i<F.length;i++)
-            {
-                if(F[i].isFile() )
-                {
-                    addedFiles.add(F[i].getAbsolutePath());
-                    dirs.add(aux);
-                }
-
-                else
-                {
-
-                    String temp=F[i].getName();
-                    temp=aux+"\\"+temp;
-                    initialize(F[i],temp);
-                }
-            }
-
-//        if(F.length==0 && !directory.getName().equals("divert"))
-//        {
-//            System.out.println(directory.getAbsolutePath());
-//            File divert=new File(directory.getAbsolutePath()+"\\"+"divert");
-//            divert.mkdir();
+//    public static void main(String[] args) throws Exception {
+//        SenderClient sc = new SenderClient("127.0.0.1", 22000, new File("C:\\Users\\erfan\\Desktop\\base1"));
+//        sc.start();
+//
+//        File F = new File("C:\\Users\\erfan\\Desktop\\first");
+//
+//
+//        System.out.println();
+//
+//        try {
+//            sc.join();
+//
+//
+//            Scanner scanner = new Scanner(System.in);
+//            String A = scanner.nextLine();
+//
+//
+//            // System.out.println("after join");
+//            ReceiverClient rc = new ReceiverClient(F, "127.0.0.1", 22000);
+//
+//            rc.start();
+//
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
 //        }
 
 
+//}
 
-    }
+    void initialize(File directory, String aux) {
+        File[] F = directory.listFiles();
 
-    private void preInit(File directory)
-    {
-        File [] F=directory.listFiles();
 
-        if(F!=null)
-        {
-            if(F.length==0)
-            {
-                File divert=new File(directory.getAbsolutePath()+"\\"+"divert");
-                try {
-                    divert.createNewFile();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
+        if (F != null)
+            for (int i = 0; i < F.length; i++) {
+                if (F[i].isFile()) {
+                    addedFiles.add(F[i].getAbsolutePath());
+                    dirs.add(aux);
+                } else {
+
+                    String temp = F[i].getName();
+                    temp = aux + "\\" + temp;
+                    initialize(F[i], temp);
                 }
             }
 
-            else
-            {
-                for (int i=0;i<F.length;i++)
-                    if(F[i].isDirectory())
+
+    }
+
+    private void preInit(File directory) {
+        File[] F = directory.listFiles();
+
+        if (F != null) {
+            if (F.length == 0) {
+                File divert = new File(directory.getAbsolutePath() + "\\" + "divert");
+                try {
+                    divert.createNewFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                for (int i = 0; i < F.length; i++)
+                    if (F[i].isDirectory())
                         preInit(F[i]);
             }
 

@@ -79,16 +79,23 @@ public class MultiServer {
 
             Socket socketReader1 = serverSocket.accept();
             ServerReader serverReader1 = new ServerReader(socketReader1, true, base);
-            serverReader1.start();
+           // serverReader1.start();
             System.out.println("first reader started");
 
             Socket socketReader2 = serverSocket.accept();
             ServerReader serverReader2 = new ServerReader(socketReader2, false, base);
+        //    serverReader2.start();
+
+      //      serverReader1.getBp().println(":CLEARANCE");
+       //     serverReader2.getBp().println(":CLEARANCE");
+
+            serverReader1.start();
             serverReader2.start();
+
             System.out.println("second reader started");
 
 
-            mergeFile(serverReader1, serverReader2);
+
 
 
             Socket socketWriter1 = serverSocket.accept();
@@ -102,6 +109,8 @@ public class MultiServer {
 
             serverReader1.join();
             serverReader2.join();
+
+            mergeFile(serverReader1, serverReader2);
 
             System.out.println("Both readers joined");
 
@@ -185,7 +194,7 @@ public class MultiServer {
 
                 if (coppy) {
                     try {
-                        pasteFile(files[i].getAbsolutePath(), base.getAbsolutePath());
+                        pasteFile(files[i].getAbsolutePath(), base.getAbsolutePath()+"\\"+files[i].getName());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

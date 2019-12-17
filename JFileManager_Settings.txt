@@ -1,8 +1,8 @@
-asdkagasd
-10203040
-10203040
-10203040
-System
+C:\users\erfan\desktop
+C:\users\erfan\desktop\first
+127.0.0.1
+22000
+null
 true
 null
 null
