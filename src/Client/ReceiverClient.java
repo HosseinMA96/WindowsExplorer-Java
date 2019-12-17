@@ -1,3 +1,6 @@
+package Client;
+
+
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
@@ -117,7 +120,7 @@ public class ReceiverClient extends Thread {
 
             ///////////////////////////////////
 
-        //    files[i] = new File(savingDir.getAbsolutePath() + "\\" + fileName);
+            //    files[i] = new File(savingDir.getAbsolutePath() + "\\" + fileName);
 
             FileOutputStream fos = new FileOutputStream(files[i]);
             BufferedOutputStream bos = new BufferedOutputStream(fos);

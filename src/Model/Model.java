@@ -11,6 +11,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,6 +25,9 @@ public class Model {
     private boolean firsTimeAddressLoad = true;
     private String firstTimeAddress;
     private CareTaker careTaker;
+    private ArrayList<String> loggedFileNames = new ArrayList<>();
+    private ArrayList<String> deletedFileNames = new ArrayList<>();
+    private ArrayList<String> addedFileNames = new ArrayList<>();
 
 
     /**
@@ -132,6 +136,22 @@ public class Model {
      * @param f
      */
     public void deleteFile(File f) {
+
+        if (f.getParentFile().getAbsolutePath().equals(syncPath)) {
+            if (deletedFileNames == null)
+                deletedFileNames = new ArrayList<>();
+
+            boolean alreadyExists = false;
+
+            for (int i = 0; i < deletedFileNames.size(); i++)
+                if (deletedFileNames.get(i).equals(f.getName())) {
+                    alreadyExists = true;
+                    break;
+                }
+
+            if (!alreadyExists)
+                deletedFileNames.add(f.getName());
+        }
 
         if (f.isFile()) {
             try {
@@ -245,6 +265,8 @@ public class Model {
      * @param syncPath
      */
     public void setSyncPath(String syncPath) {
+
+        initializeWatching(new File(syncPath));
         this.syncPath = syncPath;
     }
 
@@ -533,6 +555,69 @@ public class Model {
         } finally {
             upgradeFiles();
         }
+
+    }
+
+    public void logChanges() {
+        File F = new File(syncPath);
+        addedFileNames = new ArrayList<>();
+
+        File[] files = F.listFiles();
+
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                boolean toBeAdded = true;
+
+                if (loggedFileNames != null)
+                    for (int j = 0; j < loggedFileNames.size(); j++)
+                        if (loggedFileNames.get(j).equals(files[i].getName())) {
+                            toBeAdded = false;
+                            break;
+                        }
+
+
+                if (deletedFileNames != null)
+                    for (int j = 0; j < deletedFileNames.size(); j++)
+                        if (deletedFileNames.get(j).equals(files[i].getName())) {
+                            toBeAdded = false;
+                            break;
+                        }
+
+                if (toBeAdded)
+                    addedFileNames.add(files[i].getAbsolutePath());
+            }
+
+        }
+    }
+
+    public void initializeWatching(File F) {
+        File[] files = F.listFiles();
+        deletedFileNames=new ArrayList<>();
+        loggedFileNames = new ArrayList<>();
+
+        if (files != null)
+            for (int i = 0; i < files.length; i++)
+                loggedFileNames.add(files[i].getName());
+
+
+    }
+
+    /**
+     * A Method to Synchronize
+     */
+    public void sync() {
+        if (syncPath == null || !new File(syncPath).isDirectory()) {
+            JOptionPane.showMessageDialog(null, "Error, Specify a valid directory as a Sync path", "Error", 2);
+            return;
+        }
+
+        logChanges();
+
+        File F=new File(syncPath);
+
+
+
+
 
     }
 

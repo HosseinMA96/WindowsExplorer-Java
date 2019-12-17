@@ -740,7 +740,13 @@ public class View extends JFrame implements FocusListener {
 
     }
 
-
+    /**
+     * Getter for getEdit_Synchronize
+     * @return edit_Synchronize
+     */
+    public JMenuItem getEdit_Synchronize() {
+        return edit_Synchronize;
+    }
 }
 
 

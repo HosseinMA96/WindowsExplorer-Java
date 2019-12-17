@@ -81,6 +81,23 @@ public class Controller {
         myView.getHelp_AboutMe().addActionListener(new AboutMeListener());
         myView.getHelp_Help().addActionListener(new HelpListener());
         myView.getAddressTextField().addActionListener(new ListenToAddressTextField());
+
+
+        myView.getFile_SetCurrentForSync().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                myModel.setSyncPath(myModel.getCurrentAddress());
+            }
+        });
+
+        myView.getEdit_Synchronize().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                myModel.sync();
+            }
+        });
+
+
         initializeTable();
 
 

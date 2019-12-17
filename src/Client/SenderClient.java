@@ -1,4 +1,4 @@
-
+package Client;
 
 
 import javax.swing.*;
@@ -32,7 +32,7 @@ public class SenderClient extends Thread {
             br = new BufferedReader(new InputStreamReader(input));
             dos = new DataOutputStream(output);
             dirs = new ArrayList<>();
-         //   preInit(base);
+            //   preInit(base);
             initialize(base,"");
         } catch (Exception e) {
             System.out.println("fuck");
@@ -156,6 +156,7 @@ public class SenderClient extends Thread {
 
             // System.out.println("after join");
             ReceiverClient rc = new ReceiverClient(F, "127.0.0.1", 22000);
+
             rc.start();
 
 
@@ -171,22 +172,22 @@ public class SenderClient extends Thread {
         //System.out.println(directory.getAbsolutePath() + " "+F.length + " " +aux);
 
         if(F!=null)
-        for (int i=0;i<F.length;i++)
-        {
-            if(F[i].isFile() )
+            for (int i=0;i<F.length;i++)
             {
-                addedFiles.add(F[i].getAbsolutePath());
-                dirs.add(aux);
-            }
+                if(F[i].isFile() )
+                {
+                    addedFiles.add(F[i].getAbsolutePath());
+                    dirs.add(aux);
+                }
 
-            else
-            {
+                else
+                {
 
-                String temp=F[i].getName();
-                temp=aux+"\\"+temp;
-                initialize(F[i],temp);
+                    String temp=F[i].getName();
+                    temp=aux+"\\"+temp;
+                    initialize(F[i],temp);
+                }
             }
-        }
 
 //        if(F.length==0 && !directory.getName().equals("divert"))
 //        {

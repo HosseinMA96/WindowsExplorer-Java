@@ -14,19 +14,23 @@ public class ServerWriter extends Thread {
     private PrintWriter bp;
     private String turn;
     private DataOutputStream dos;
-    private File base;
-    //  private ArrayList<String> list = new ArrayList<>();
+    private ArrayList<String> addedFiles, dirs;
     private ArrayList<String> delete;
+    private File base;
 
-    public ServerWriter(Socket socket, File baseFile, ArrayList<String> del) {
+    public ServerWriter(Socket socket, File file, ArrayList<String> del) {
         try {
-
-
             this.socket = socket;
             input = socket.getInputStream();
             output = socket.getOutputStream();
             dos = new DataOutputStream(output);
-            base = baseFile;
+
+            addedFiles = new ArrayList<>();
+            File[] dummy = file.listFiles();
+            dirs = new ArrayList<>();
+            base=file;
+
+
 
             bp = new PrintWriter(new OutputStreamWriter(output));
             delete = del;
@@ -39,83 +43,108 @@ public class ServerWriter extends Thread {
     public void run() {
 
         try {
+            broadcastPrepreation(base, "");
             sendAllDirFiles();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-    //    bp.println("END:FILE:SEND");
-  //      bp.flush();
-      //  sendDeleteString();
+        //    bp.println("END:FILE:SEND");
+        //      bp.flush();
+        //  sendDeleteString();
 
     }
 
 
-    private void sendAllDirFiles() throws Exception{
+    private void sendAllDirFiles() throws Exception {
 
-            //  String directory = ...;
-            //    String hostDomain = ...;
-            //   int port = ...;
+        //  String directory = ...;
+        //    String hostDomain = ...;
+        //   int port = ...;
 
-            File[] files = base.listFiles();
+        File[] files = new File[addedFiles.size()];
+        for (int i = 0; i < addedFiles.size(); i++)
+            files[i] = new File(addedFiles.get(i));
 
-            // Socket socket = new Socket(InetAddress.getByName(hostDomain), port);
 
-            BufferedOutputStream bos = new BufferedOutputStream(output);
-            DataOutputStream dos = new DataOutputStream(bos);
+        // Socket socket = new Socket(InetAddress.getByName(hostDomain), port);
 
-            dos.writeInt(files.length);
+        BufferedOutputStream bos = new BufferedOutputStream(output);
+        DataOutputStream dos = new DataOutputStream(bos);
 
-            for (File file : files) {
-                long length = file.length();
-                dos.writeLong(length);
+        dos.writeInt(files.length);
+        int k=-1;
 
-                String name = file.getName();
-                dos.writeUTF(name);
+        for (File file : files) {
+            k++;
+            long length = file.length();
+            dos.writeLong(length);
 
-                FileInputStream fis = new FileInputStream(file);
-                BufferedInputStream bis = new BufferedInputStream(fis);
+            String name = file.getName();
+            dos.writeUTF(name);
+            String path=dirs.get(k);
+            dos.writeUTF(path);
 
-                int theByte = 0;
-                while ((theByte = bis.read()) != -1) bos.write(theByte);
 
-                bis.close();
+            FileInputStream fis = new FileInputStream(file);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+
+            int theByte = 0;
+            while ((theByte = bis.read()) != -1) bos.write(theByte);
+
+            bis.close();
+        }
+
+        dos.close();
+
+    }
+
+//
+//    private void sendFile(File F, String pathToThisFile) throws Exception {
+//        //   DataOutputStream dos = new DataOutputStream(output);
+//        FileInputStream fis = new FileInputStream(F);
+//        bp.println(pathToThisFile);
+//        bp.flush();
+//
+////            for (int i = 0; i < addedFiles.size(); i++) {
+//        byte[] buffer = new byte[4096];
+//
+//        while (fis.read(buffer) > 0) {
+//            dos.write(buffer);
+//        }
+//
+////            }
+//        fis.close();
+//    }
+
+//    private void sendDeleteString() {
+//        String flsh = delete.size() + "";
+//        System.out.println("faulty string is : " + flsh);
+//        bp.println(delete.size() + "");
+//        bp.flush();
+//
+//
+//        for (int i = 0; i < delete.size(); i++) {
+//            bp.println(delete.get(i));
+//            bp.flush();
+//        }
+//    }
+
+    private void broadcastPrepreation(File directory, String aux) {
+        File[] F = directory.listFiles();
+
+        if(F !=null)
+        for (int i = 0; i < F.length; i++) {
+            if (F[i].isFile()) {
+                addedFiles.add(F[i].getAbsolutePath());
+                dirs.add(aux);
+            } else {
+                String temp = F[i].getName();
+                temp = aux + "\\" + temp;
+
+                broadcastPrepreation(F[i], temp);
             }
-
-            dos.close();
-
-    }
-
-
-    private void sendFile(File F, String pathToThisFile) throws Exception {
-        //   DataOutputStream dos = new DataOutputStream(output);
-        FileInputStream fis = new FileInputStream(F);
-        bp.println(pathToThisFile);
-        bp.flush();
-
-//            for (int i = 0; i < addedFiles.size(); i++) {
-        byte[] buffer = new byte[4096];
-
-        while (fis.read(buffer) > 0) {
-            dos.write(buffer);
         }
 
-//            }
-        fis.close();
-    }
-
-    private void sendDeleteString() {
-        String flsh = delete.size() + "";
-        System.out.println("faulty string is : " + flsh);
-        bp.println(delete.size() + "");
-        bp.flush();
-
-
-        for (int i = 0; i < delete.size(); i++) {
-            bp.println(delete.get(i));
-            bp.flush();
-        }
     }
 }
