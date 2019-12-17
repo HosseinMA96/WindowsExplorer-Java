@@ -54,6 +54,7 @@ public class ServerReader extends Thread {
         try {
             initialize();
             saveFile();
+            manageDels();
             System.out.println("saveFiles finished, in server reader . ");
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,6 +130,27 @@ public class ServerReader extends Thread {
 
     }
 
+    private void manageDels()
+    {
+        if(deletedFilenames==null || deletedFilenames.size()==0)
+            return;
+
+        File [] files=base.listFiles();
+
+        for (int i=0;i<deletedFilenames.size();i++)
+            for(int j=0;j<files.length;j++)
+            {
+                if(files[j]==null)
+                    continue;
+
+                if(files[j].getName().equals(deletedFilenames.get(i)))
+                {
+                    File F=files[j];
+                    MultiServer.deleteFile(F);
+                    files[j]=null;
+                }
+            }
+    }
 
 
     private void saveFile() throws IOException {

@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class ReceiverClient extends Thread {
     private File reserve;
@@ -25,8 +26,6 @@ public class ReceiverClient extends Thread {
         br = new BufferedReader(new InputStreamReader(input));
         dis = new DataInputStream(input);
         initialize();
-        //  bw.println(":RECEIVE");
-        //  bw.flush();
     }
 
     /////////////////////////
@@ -34,9 +33,10 @@ public class ReceiverClient extends Thread {
 
     private  void initialize() {
 
-        File F=new File(reserve.getAbsolutePath());
+        File F;
 
-        F = new File("E:\\JFileManagerItems");
+        F = new File(reserve.getAbsolutePath());
+
         if (F.exists())
             deleteFile(F);
 
@@ -48,7 +48,7 @@ public class ReceiverClient extends Thread {
         //     System.out.println("make " + base.mkdir());
     }
 
-    private  void deleteFile(File f) {
+    public static  void deleteFile(File f) {
 
         if (f.isFile()) {
             try {
@@ -82,44 +82,49 @@ public class ReceiverClient extends Thread {
 
     @Override
     public void run() {
-        System.out.println("in Receiver run");
-        receiveFiles(reserve);
-        receiveDeleteArray();
-        System.out.println("in Receiver finished");
+     //   System.out.println("in Receiver run");
+        try {
+            receiveFiles(reserve);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+     //   receiveDeleteArray();
+       // System.out.println("in Receiver finished");
 
     }
 
 
-    private void receiveFiles(File savingDir) {
-        try {
-            while (!withdraw) {
+    private void receiveFiles(File savingDir) throws Exception{
+       // String dirPath = ...;
 
-                command = br.readLine();
-                System.out.println("command is : " + command);
+      //  ServerSocket serverSocket = ...;
+      //  Socket socket = serverSocket.accept();
 
-                if (command.equals("END:FILE:SEND")) {
-                    withdraw = true;
-                    return;
-                }
+        BufferedInputStream bis = new BufferedInputStream(input);
+        DataInputStream dis = new DataInputStream(bis);
 
+        int filesCount = dis.readInt();
+        File[] files = new File[filesCount];
 
-                if (command.equals(":DIR:FINISHED"))
-                    return;
+        for(int i = 0; i < filesCount; i++)
+        {
+            long fileLength = dis.readLong();
+            String fileName = dis.readUTF();
 
+            files[i] = new File(savingDir.getAbsolutePath() + "\\" + fileName);
 
-                if (command.equals(":DIR")) {
-                    String newDir = br.readLine();
-                    newDir = savingDir.getAbsolutePath() + "\\" + newDir;
-                    receiveFiles(new File(newDir));
-                } else {
-                    String fileName = br.readLine();
-                    receiveAFile(savingDir, fileName);
-                }
-            }
+            FileOutputStream fos = new FileOutputStream(files[i]);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            for(int j = 0; j < fileLength; j++) bos.write(bis.read());
+
+            bos.close();
         }
+
+        dis.close();
 
     }
 

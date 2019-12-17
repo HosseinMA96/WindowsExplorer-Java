@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.Socket;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class SenderClient extends Thread {
 
@@ -142,33 +143,30 @@ public class SenderClient extends Thread {
 
             sendAFile("abc");
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void sendAFile(String absoluteAddress) throws Exception
-    {
-    //    String directory = ...;
-    //    String hostDomain = ...;
-     //   int port = ...;
+    private void sendAFile(String absoluteAddress) throws Exception {
+        //    String directory = ...;
+        //    String hostDomain = ...;
+        //   int port = ...;
 
-     //   File[] files = new File(directory).listFiles();
+        //   File[] files = new File(directory).listFiles();
 
-      //  Socket socket = new Socket(InetAddress.getByName(hostDomain), port);
+        //  Socket socket = new Socket(InetAddress.getByName(hostDomain), port);
 
         BufferedOutputStream bos = new BufferedOutputStream(output);
         DataOutputStream dos = new DataOutputStream(bos);
-        File [] files=new File[addedFiles.size()];
+        File[] files = new File[addedFiles.size()];
 
-        for (int i=0;i<addedFiles.size();i++)
-            files[i]=new File(addedFiles.get(i));
+        for (int i = 0; i < addedFiles.size(); i++)
+            files[i] = new File(addedFiles.get(i));
 
         dos.writeInt(files.length);
 
-        for(File file : files)
-        {
+        for (File file : files) {
             long length = file.length();
             dos.writeLong(length);
 
@@ -179,7 +177,7 @@ public class SenderClient extends Thread {
             BufferedInputStream bis = new BufferedInputStream(fis);
 
             int theByte = 0;
-            while((theByte = bis.read()) != -1) bos.write(theByte);
+            while ((theByte = bis.read()) != -1) bos.write(theByte);
 
             bis.close();
         }
@@ -188,12 +186,12 @@ public class SenderClient extends Thread {
         socket.close();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws  Exception{
         ArrayList<String> temp = new ArrayList<>();
         temp.add("C:\\Users\\erfan\\Desktop\\ds2.cpp");
         temp.add("C:\\Users\\erfan\\Desktop\\Capture.PNG");
         temp.add("C:\\Users\\erfan\\Desktop\\nanbaj.pdf");
-  //      temp.add("C:\\Users\\erfan\\Desktop\\New folder");
+        //      temp.add("C:\\Users\\erfan\\Desktop\\New folder");
 
 
         // temp.add("C:\\Users\\erfan\\Desktop\\Royal_UML.pdf");
@@ -203,23 +201,28 @@ public class SenderClient extends Thread {
         SenderClient sc = new SenderClient("127.0.0.1", 22000, temp);
         sc.start();
 
-//        for (int i=0;i<10000000;i++)
-//            if(i%1000000==0)
-//                System.out.print(i/100000+"\t");
+        File F=new File("C:\\Users\\erfan\\Desktop\\first");
+
+
 
         System.out.println();
 
         try {
             sc.join();
-            System.out.println("after join");
 
 
-        }
+            Scanner scanner=new Scanner(System.in);
+            String A=scanner.nextLine();
 
-        catch (Exception e)
-        {
-            JOptionPane.showMessageDialog(null,"closed ");
-            JOptionPane.showMessageDialog(null,"closed ");
+
+
+            // System.out.println("after join");
+            ReceiverClient rc=new ReceiverClient(F,"127.0.0.1",22000);
+            rc.start();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
 

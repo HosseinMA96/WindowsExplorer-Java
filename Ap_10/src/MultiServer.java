@@ -26,7 +26,7 @@ public class MultiServer {
         base = new File("E:\\JFileManagerItems");
         base.mkdir();
 
-    //    JOptionPane.showMessageDialog(null,"times in E del");
+        //    JOptionPane.showMessageDialog(null,"times in E del");
 
         //     System.out.println("make " + base.mkdir());
     }
@@ -80,28 +80,27 @@ public class MultiServer {
 
 
             Socket socketReader2 = serverSocket.accept();
-           ServerReader serverReader2 = new ServerReader(socketReader2, false, base);
-           serverReader2.start();
-            serverReader1.join();
-            serverReader2.join();
+            ServerReader serverReader2 = new ServerReader(socketReader2, false, base);
+            serverReader2.start();
+
 //
-       //     ArrayList<String> empty = serverReader1.getDeletedFilenames();
+            //     ArrayList<String> empty = serverReader1.getDeletedFilenames();
             //    generateDelArrayList(serverReader1.getDeletedFilenames(),ServerReader2.getDeletedFilenames());
             // generateDelArrayList(serverReader1.getDeletedFilenames(),empty);
 
-       //     Socket socketWriter1 = serverSocket.accept();
-       //     ServerWriter serverWriter1 = new ServerWriter(socketWriter1, base, empty);
-            //     serverWriter1.start();
+                 Socket socketWriter1 = serverSocket.accept();
+                 ServerWriter serverWriter1 = new ServerWriter(socketWriter1, base, null);
+                 serverWriter1.start();
 
 
-//            Socket socketWriter2 = serverSocket.accept();
-//            ServerWriter serverWriter2=new ServerWriter(socketWriter2,base,deleted);
-//            serverWriter2.start();
+            Socket socketWriter2 = serverSocket.accept();
+            ServerWriter serverWriter2=new ServerWriter(socketWriter2,base,null);
+            serverWriter2.start();
 
 
             //    ServerReader2.join();
 
-        //    serverWriter1.start();
+            //    serverWriter1.start();
             //    serverWriter2.start();
 
 

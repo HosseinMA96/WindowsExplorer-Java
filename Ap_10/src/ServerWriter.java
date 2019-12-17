@@ -20,13 +20,13 @@ public class ServerWriter extends Thread {
 
     public ServerWriter(Socket socket, File baseFile, ArrayList<String> del) {
         try {
-            System.out.println("in sw consturctor , del size : " + del.size());
+
 
             this.socket = socket;
             input = socket.getInputStream();
             output = socket.getOutputStream();
             dos = new DataOutputStream(output);
-            base = new File(baseFile.getAbsolutePath());
+            base = baseFile;
 
             bp = new PrintWriter(new OutputStreamWriter(output));
             delete = del;
@@ -38,65 +38,53 @@ public class ServerWriter extends Thread {
     @Override
     public void run() {
 
-        System.out.println("in run " + base.getAbsolutePath());
-        base=new File("in run " +base.getAbsolutePath()+" "+base.exists());
-        System.out.println("in server writer");
-//        System.out.println("virgin length: "+base.listFiles().length + base.exists());
-        sendAllDirFiles(base, "");
-        bp.println("END:FILE:SEND");
-        bp.flush();
-        sendDeleteString();
-        System.out.println("sw finished");
+        try {
+            sendAllDirFiles();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+    //    bp.println("END:FILE:SEND");
+  //      bp.flush();
+      //  sendDeleteString();
+
     }
 
 
-    private void sendAllDirFiles(File currentDir, String currentPath) {
-//        File[] files = base.listFiles();
-//
-//        for (int i = 0; i < files.length; i++) {
-//            if (files[i].isFile()) {
-//
-//            }
-//
-//        }
+    private void sendAllDirFiles() throws Exception{
 
-        System.out.println("curr Dir is : "+currentDir);
+            //  String directory = ...;
+            //    String hostDomain = ...;
+            //   int port = ...;
 
-        System.out.println("crashed");
-        System.out.println("This dir.exist: "+currentDir.exists());
-//        System.out.println(currentDir.listFiles().length);
-        File []files = currentDir.listFiles();
-//        System.out.println(files.length);
+            File[] files = base.listFiles();
 
+            // Socket socket = new Socket(InetAddress.getByName(hostDomain), port);
 
+            BufferedOutputStream bos = new BufferedOutputStream(output);
+            DataOutputStream dos = new DataOutputStream(bos);
 
-        for (int i = 0; i < files.length; i++) {
-            if (files[i].isFile()) {
-                try {
-                    String fileName = files[i].getName();
-                    bp.println(fileName);
-                    bp.flush();
+            dos.writeInt(files.length);
 
+            for (File file : files) {
+                long length = file.length();
+                dos.writeLong(length);
 
-                    sendFile(files[i], currentPath);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                String dirName = files[i].getName();
+                String name = file.getName();
+                dos.writeUTF(name);
 
-                bp.println(":DIR");
-                bp.flush();
-                bp.println(dirName);
-                bp.flush();
+                FileInputStream fis = new FileInputStream(file);
+                BufferedInputStream bis = new BufferedInputStream(fis);
 
-                sendAllDirFiles(files[i], currentPath + "\\" + dirName);
+                int theByte = 0;
+                while ((theByte = bis.read()) != -1) bos.write(theByte);
 
-                bp.println(":DIR:FINISHED");
-
+                bis.close();
             }
 
-        }
+            dos.close();
 
     }
 
