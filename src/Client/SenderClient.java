@@ -73,6 +73,7 @@ public class SenderClient extends Thread {
         {
             bw.println(deletedFiles.get(i));
             bw.flush();
+            System.out.println("in "+identity+" deleted file is : "+deletedFiles.get(i));
         }
 
         bw.println(":END");

@@ -65,6 +65,7 @@ public class ServerWriter extends Thread {
 
         for (int i=0;i<inflictedDelete.size();i++)
         {
+            System.out.println(turn + " DEL ORDER : " +inflictedDelete.get(i));
             bp.println(inflictedDelete.get(i));
             bp.flush();
         }

@@ -90,6 +90,13 @@ public class MultiServer {
             System.out.println("both reader started");
 
 
+
+            serverReader1.join();
+            serverReader2.join();
+
+
+            mergeFile(serverReader1, serverReader2);
+
             //ESHTEB NASHE DILITA :|
             Socket socketWriter1 = serverSocket.accept();
             ServerWriter serverWriter1 = new ServerWriter(socketWriter1, base, toBeDeletedInFirst,firstDeleted);
@@ -99,10 +106,6 @@ public class MultiServer {
             ServerWriter serverWriter2 = new ServerWriter(socketWriter2, base, toBeDeletedInFirst,firstDeleted);
 
 
-            serverReader1.join();
-            serverReader2.join();
-
-            mergeFile(serverReader1, serverReader2);
 
             System.out.println("Both readers joined");
 
@@ -131,6 +134,16 @@ public class MultiServer {
             secondDeleted = serverReader1.getDeletedFilenames();
             firstDeleted = serverReader2.getDeletedFilenames();
         }
+
+
+        System.out.println("IN MULTI SERVER, FIRST DELETED ARRAYLIST IS :");
+        for (int i=0;i<firstDeleted.size();i++)
+            System.out.println(firstDeleted.get(i));
+
+
+        System.out.println("IN MULTI SERVER, SECOND DELETED ARRAYLIST IS :");
+        for (int i=0;i<secondDeleted.size();i++)
+            System.out.println(secondDeleted.get(i));
 
         File firstFile = new File("E:\\temp1");
         File secondFile = new File("E:\\temp2");

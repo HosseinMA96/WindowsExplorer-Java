@@ -134,6 +134,11 @@ public class ReceiverClient extends Thread {
 
             deletedFilesNames.add(dummy);
         }
+
+        System.out.println("Inflicted deleted files :");
+
+        for(int i=0;i<deletedFilesNames.size();i++)
+            System.out.println(deletedFilesNames.get(i));
     }
 
     private void identify() {

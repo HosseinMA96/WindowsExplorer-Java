@@ -77,6 +77,7 @@ public class ServerReader extends Thread {
                 break;
 
             deletedFilenames.add(delName);
+            System.out.println(turn + " has deleted file "+ delName);
         }
     }
 

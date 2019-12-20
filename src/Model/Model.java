@@ -32,7 +32,7 @@ public class Model {
     private ArrayList<String> deletedFileNames = new ArrayList<>();
     private ArrayList<String> addedFileNames = new ArrayList<>();
     private String tag = "none";
-    private String nestPath = "C:\\Users\\erfan\\Desktop\\nest1";
+    private String nestPath = "E:\\nest1";
     private File nestFile;
 
     /**
