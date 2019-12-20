@@ -650,15 +650,11 @@ public class Model {
 //            }
 //        }
 
-        if(addedFileNames != null)
-        {
-            for (int i=0;i<addedFileNames.size();i++)
-            {
-                try{
+        if (addedFileNames != null) {
+            for (int i = 0; i < addedFileNames.size(); i++) {
+                try {
                     pasteFile(addedFileNames.get(i), nestPath + "\\" + new File(addedFileNames.get(i)).getName());
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -685,6 +681,27 @@ public class Model {
                 loggedFileNames.add(files[i].getName());
 
 
+    }
+
+    private void preInit(File directory) {
+        File[] F = directory.listFiles();
+
+        if (F != null) {
+            if (F.length == 0) {
+                //      JOptionPane.showMessageDialog(null,directory.getAbsolutePath());
+                File divert = new File(directory.getAbsolutePath() + "\\" + "divert");
+                try {
+                    divert.createNewFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                for (int i = 0; i < F.length; i++)
+                    if (F[i].isDirectory())
+                        preInit(F[i]);
+            }
+
+        }
     }
 
     /**
@@ -728,6 +745,7 @@ public class Model {
         JOptionPane.showMessageDialog(null, "added length : " + addedFileNames.size());
         JOptionPane.showMessageDialog(null, "dels : " + deletedFileNames.size());
         generateNestFile();
+        preInit(nestFile);
         File syncFile = new File(syncPath);
         receivedFileAddress = syncPath;
 
@@ -743,9 +761,10 @@ public class Model {
         private File synsFile, writtenIn;
         private SenderClient senderClient;
         private ReceiverClient receiverClient;
-        private String identity, syncPathLock ;
-        private File[] syncPathFileLock ;
-        private  ArrayList<String> deletedFileLock;;
+        private String identity, syncPathLock;
+        private File[] syncPathFileLock;
+        private ArrayList<String> deletedFileLock;
+        ;
 
         public TransferHandler(String host, int port, File syncFile, File writtenIn, String identity) {
             this.host = host;
@@ -753,9 +772,9 @@ public class Model {
             this.synsFile = syncFile;
             this.writtenIn = writtenIn;
             this.identity = identity;
-            syncPathLock=syncPath;
-            deletedFileLock=deletedFileNames;
-            syncPathFileLock=new File(syncPathLock).listFiles();
+            syncPathLock = syncPath;
+            deletedFileLock = deletedFileNames;
+            syncPathFileLock = new File(syncPathLock).listFiles();
 
         }
 
@@ -789,7 +808,8 @@ public class Model {
                 receiverClient = new ReceiverClient(writtenIn, host, port, tag);
                 receiverClient.start();
                 receiverClient.join();
-            //    trim();
+                postinit(new File(syncPathLock));
+                //    trim();
                 //    inflict(receiverClient.getDeletedFilesNames());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -809,6 +829,21 @@ public class Model {
                         }
 
 
+        }
+
+
+        private void postinit(File directory) {
+            File[] F = directory.listFiles();
+
+            if (F != null)
+                for (int i = 0; i < F.length; i++) {
+                    if (F[i].isFile())
+                        if (F[i].getName().equals("divert"))
+                            deleteFile(F[i]);
+
+                    if (F[i].isDirectory())
+                        postinit(F[i]);
+                }
         }
 
 

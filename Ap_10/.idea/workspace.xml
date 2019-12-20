@@ -2,30 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b2af0897-aef1-4e8e-91c5-70110cf85627" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/out/production/Ap_10/Ap_10.plantuml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/out/production/Ap_10/src.plantuml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/src.plantuml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../WindowsExplorer.plantuml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client10/out/production/client10/client10.plantuml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../client10/src/src.plantuml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../src/APP/APP.plantuml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../src/Client/Client.plantuml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../src/Controller/Controller.plantuml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../src/Memento/Memento.plantuml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../src/Model/Model.plantuml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../src/View/View.plantuml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Ap_10/MultiServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Ap_10/MultiServer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Ap_10/ServerReader.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Ap_10/ServerReader.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Ap_10/ServerWriter.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Ap_10/ServerWriter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MultiServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MultiServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../JFileManager_Settings.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../JFileManager_Settings.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client10/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client10/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Client/ReceiverClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/ReceiverClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/Client/SenderClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Client/SenderClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/Controller/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Controller/Controller.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/Model/Model.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/Model/Model.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -37,7 +15,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/MultiServer.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="135">
@@ -58,11 +36,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ServerReader.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="135">
-              <caret line="108" selection-start-line="108" selection-end-line="108" />
+              <caret line="139" selection-start-line="139" selection-end-line="139" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1501#1502#0" expanded="true" />
@@ -130,8 +108,8 @@
       <find>send</find>
       <find>count</find>
       <find>diver</find>
-      <find>22000</find>
       <find>pre</find>
+      <find>22000</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -149,9 +127,9 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="613" />
-    <option name="y" value="183" />
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="523" />
+    <option name="y" value="311" />
     <option name="width" value="697" />
     <option name="height" value="735" />
   </component>
@@ -189,7 +167,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1576826872978" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1576834198812" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../SECONDCLIENT" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -249,15 +227,15 @@
       <workItem from="1576584508404" duration="231000" />
       <workItem from="1576584940291" duration="22021000" />
       <workItem from="1576655020046" duration="2221000" />
-      <workItem from="1576688460045" duration="32284000" />
+      <workItem from="1576688460045" duration="35967000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="124342000" />
+    <option name="totallyTimeSpent" value="128025000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14750378" />
@@ -344,26 +322,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ServerReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="108" selection-start-line="108" selection-end-line="108" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1501#1502#0" expanded="true" />
-            <element signature="e#1526#1527#0" expanded="true" />
-            <element signature="e#5551#5552#0" expanded="true" />
-            <element signature="e#5609#5610#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/MultiServer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="48" selection-start-line="48" selection-end-line="48" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ServerReader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="139" selection-start-line="139" selection-end-line="139" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1501#1502#0" expanded="true" />
+            <element signature="e#1526#1527#0" expanded="true" />
+            <element signature="e#5551#5552#0" expanded="true" />
+            <element signature="e#5609#5610#0" expanded="true" />
           </folding>
         </state>
       </provider>

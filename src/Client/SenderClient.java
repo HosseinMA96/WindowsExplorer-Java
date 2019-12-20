@@ -46,6 +46,13 @@ public class SenderClient extends Thread {
     public void run() {
        // preInit(base);
         initialize(base, "");
+        System.out.println("OK LET's FIX THIS");
+        for (int i=0;i<addedFiles.size();i++)
+            System.out.println(addedFiles.get(i));
+
+        System.out.println("SPACER");
+        for(int i=0;i<dirs.size();i++)
+            System.out.println(dirs.get(i));
         identify();
         broadcastDeletedFiles();
 
@@ -172,7 +179,6 @@ public class SenderClient extends Thread {
                     addedFiles.add(F[i].getAbsolutePath());
                     dirs.add(aux);
                 } else {
-
                     String temp = F[i].getName();
                     temp = aux + "\\" + temp;
                     initialize(F[i], temp);
@@ -182,25 +188,7 @@ public class SenderClient extends Thread {
 
     }
 
-    private void preInit(File directory) {
-        File[] F = directory.listFiles();
 
-        if (F != null) {
-            if (F.length == 0) {
-                File divert = new File(directory.getAbsolutePath() + "\\" + "divert");
-                try {
-                    divert.createNewFile();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                for (int i = 0; i < F.length; i++)
-                    if (F[i].isDirectory())
-                        preInit(F[i]);
-            }
-
-        }
-    }
 
 }
 
