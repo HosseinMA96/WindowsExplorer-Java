@@ -55,8 +55,9 @@ public class ServerReader extends Thread {
 
         try {
             initialize();
-            saveFile();
-       //     manageDels();
+            identify();
+            receiveDeletetFileNames();
+            saveFiles();
             System.out.println("saveFiles finished, in server reader . ");
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,14 +65,22 @@ public class ServerReader extends Thread {
 
     }
 
-    private void initialize() throws Exception {
+    private void receiveDeletetFileNames() throws Exception {
 
-        File del = new File("E:\\DELS");
-        if (del.exists())
-            MultiServer.deleteFile(del);
+        deletedFilenames = new ArrayList<>();
 
-        del.mkdir();
+        while (true) {
 
+            String delName = br.readLine();
+
+            if (delName.equals(":END"))
+                break;
+
+            deletedFilenames.add(delName);
+        }
+    }
+
+    private void identify() throws Exception {
         turn = br.readLine();
 
 
@@ -84,7 +93,6 @@ public class ServerReader extends Thread {
                 turn = "second";
             }
 
-
             bp.flush();
 
         } else {
@@ -92,49 +100,15 @@ public class ServerReader extends Thread {
             bp.flush();
         }
 
+    }
 
-        while (true) {
-//            System.out.println("in while");
-            String fileName = br.readLine();
-            if (fileName.equals(":END"))
-                break;
+    private void initialize() throws Exception {
 
+        File del = new File("E:\\DELS");
+        if (del.exists())
+            MultiServer.deleteFile(del);
 
-        //    System.out.println(fileName + "  was file name ");
-            addedFiles.add(fileName);
-
-            //      Scanner scanner=new Scanner(System.in);
-            //     int b=scanner.nextInt();
-            //   System.out.println("DOWN gggg");
-        }
-
-
-        while (true) {
-
-            String delName = br.readLine();
-       //     System.out.println(delName + "  was del name ");
-
-            if (delName.equals(":END") || delName.equals("::END"))
-                break;
-
-
-            //      System.out.println(delName + " " + delName.length());
-            deletedFilenames.add(delName);
-            //      System.out.println("DOWN HERE");
-
-        }
-
-
-        String sz = br.readLine();
-        //     System.out.println(sz);
-        int szz = Integer.parseInt(sz);
-
-        for (int i = 0; i < szz; i++) {
-            sz = br.readLine();
-            dirs.add(sz);
-        }
-
-
+        del.mkdir();
     }
 
 //    private void manageDels() {
@@ -157,37 +131,48 @@ public class ServerReader extends Thread {
 //    }
 
 
-    private void saveFile() throws IOException {
+    private void saveFiles() throws IOException {
+        boolean withdraw = false;
 
         BufferedInputStream bis = new BufferedInputStream(input);
         DataInputStream dis = new DataInputStream(bis);
 
         int filesCount = dis.readInt();
-        System.out.println("File count is "+filesCount);
+        System.out.println(" int turn : +" + turn + " File count is " + filesCount);
+
+        if (filesCount == 0) {
+            filesCount = 10;
+            withdraw = true;
+
+        }
+
         File[] files = new File[filesCount];
 
-        String dummy=base.getAbsolutePath();
+        String dummy = base.getAbsolutePath();
 
-        if(turn.equals("first"))
-        {
-            base=new File("E:\\temp1");
+        if (turn.equals("first")) {
+            base = new File("E:\\temp1");
 
-            if(base.exists())
+            if (base.exists())
                 MultiServer.deleteFile(base);
 
-            base.mkdir();
-        }
+            base = new File("E:\\temp1");
 
-        else
-        {
-            base=new File("E:\\temp2");
+            base.mkdirs();
+        } else {
+            base = new File("E:\\temp2");
 
-            if(base.exists())
+            if (base.exists())
                 MultiServer.deleteFile(base);
 
-            base.mkdir();
+            base = new File("E:\\temp2");
+            base.mkdirs();
         }
 
+        if (withdraw) {
+            dis.close();
+            return;
+        }
 
         for (int i = 0; i < filesCount; i++) {
             long fileLength = dis.readLong();
@@ -195,8 +180,8 @@ public class ServerReader extends Thread {
             String path = dis.readUTF();
 
 
-            System.out.println("file name is "+fileName);
-            System.out.println("path is "+path);
+            System.out.println("file name is " + fileName);
+            System.out.println("path is " + path);
 
 
             String temp = base.getAbsolutePath() + path;
@@ -205,7 +190,12 @@ public class ServerReader extends Thread {
             if (!tempFile.exists())
                 tempFile.mkdirs();
 
-            files[i] = new File(base.getAbsolutePath() + "\\" + path +"\\"+fileName);
+            if (path != null && path.length() != 0)
+                path = "\\" + path;
+
+
+            files[i] = new File(base.getAbsolutePath() + path + "\\" + fileName);
+            System.out.println("last one is : "+files[i].getAbsolutePath());
 
 
             FileOutputStream fos = new FileOutputStream(files[i]);
@@ -215,13 +205,6 @@ public class ServerReader extends Thread {
 
             bos.close();
         }
-
-
-//        File del = new File("E:\\DELS");
-//        if (del.exists())
-//            MultiServer.deleteFile(del);
-
-
         dis.close();
     }
 

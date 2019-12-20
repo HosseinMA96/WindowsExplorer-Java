@@ -32,7 +32,8 @@ public class Model {
     private ArrayList<String> deletedFileNames = new ArrayList<>();
     private ArrayList<String> addedFileNames = new ArrayList<>();
     private String tag = "none";
-
+    private String nestPath = "C:\\Users\\erfan\\Desktop\\nest1";
+    private File nestFile;
 
     /**
      * Setter for careTaker
@@ -272,6 +273,7 @@ public class Model {
 
         initializeWatching(new File(syncPath));
         this.syncPath = syncPath;
+        receivedFileAddress = syncPath;
     }
 
     /**
@@ -290,6 +292,7 @@ public class Model {
      */
     public void setReceivedFileAddress(String receivedFileAddress) {
         this.receivedFileAddress = receivedFileAddress;
+        this.syncPath = receivedFileAddress;
     }
 
     /**
@@ -562,6 +565,10 @@ public class Model {
 
     }
 
+    /**
+     * Given that it is now time to Sync, this method sees what files must be coppied to the nest folder. That is, the files which have been added
+     * and have not ever been deleted (with the same name)
+     */
     public void logChanges() {
         File F = new File(syncPath);
         addedFileNames = new ArrayList<>();
@@ -592,12 +599,86 @@ public class Model {
             }
 
         }
+
+
     }
 
+    /**
+     * A File to hold all files which must be broadcasted to other pc
+     */
+    private void generateNestFile() {
+        nestFile = new File(nestPath);
+
+        if (nestFile.exists())
+            deleteFile(nestFile);
+
+        nestFile = new File(nestPath);
+        nestFile.mkdirs();
+
+
+        File dummy = new File(syncPath);
+//        File[] files = dummy.listFiles();
+//
+//        if (files != null) {
+//            for (int i = 0; i < files.length; i++) {
+//                boolean coppy = true;
+//
+//                if (addedFileNames != null)
+//                    for (int j = 0; j < addedFileNames.size(); j++)
+//                        if (files[i].getName().equals(addedFileNames.get(j))) {
+//                            coppy = false;
+//                            break;
+//                        }
+//
+//                if (loggedFileNames != null)
+//                    for (int j = 0; j < loggedFileNames.size(); j++)
+//                        if (files[i].getName().equals(loggedFileNames.get(j))) {
+//                            coppy = false;
+//                            break;
+//                        }
+//
+//                if (coppy) {
+//                    try {
+//                        pasteFile(files[i].getAbsolutePath(), nestPath + "\\" + files[i].getName());
+//                        System.out.println("from : " + files[i].getAbsolutePath() + " to : " + nestPath + "\\" + files[i].getName());
+//                    } catch (Exception e) {
+//                        JOptionPane.showInputDialog(null, "Unable to move files from sync path to nest Folder");
+//                    }
+//                }
+//
+//
+//            }
+//        }
+
+        if(addedFileNames != null)
+        {
+            for (int i=0;i<addedFileNames.size();i++)
+            {
+                try{
+                    pasteFile(addedFileNames.get(i), nestPath + "\\" + new File(addedFileNames.get(i)).getName());
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+
+        }
+
+
+    }
+
+    /**
+     * Initialize watching on a given file, setting deleted array to null and recording file names
+     *
+     * @param F
+     */
     public void initializeWatching(File F) {
         File[] files = F.listFiles();
         deletedFileNames = new ArrayList<>();
         loggedFileNames = new ArrayList<>();
+        addedFileNames = new ArrayList<>();
 
         if (files != null)
             for (int i = 0; i < files.length; i++)
@@ -620,8 +701,7 @@ public class Model {
         File F = new File(syncPath);
 
         ///////////////////////////////////////////////////////////
-        //  public static void main(String[] args) throws Exception {
-        int port = 220000;
+        int port = 22000;
 
 
         while (true) {
@@ -636,22 +716,23 @@ public class Model {
         }
 
         while (true) {
-            if(new File(receivedFileAddress).isDirectory())
+            if (new File(receivedFileAddress).isDirectory())
                 break;
 
             else
                 receivedFileAddress = JOptionPane.showInputDialog("Error, directory to save files. Enter a valid directory.");
 
+
         }
 
-
-
-
+        JOptionPane.showMessageDialog(null, "added length : " + addedFileNames.size());
+        JOptionPane.showMessageDialog(null, "dels : " + deletedFileNames.size());
+        generateNestFile();
         File syncFile = new File(syncPath);
-        File receivedFileFile = new File(receivedFileAddress);
+        receivedFileAddress = syncPath;
 
-        new TransferHandler(remoteComputerAddress, port, syncFile, receivedFileFile, tag).start();
 
+        new TransferHandler(remoteComputerAddress, port, nestFile, syncFile, tag).start();
 
 
     }
@@ -662,7 +743,9 @@ public class Model {
         private File synsFile, writtenIn;
         private SenderClient senderClient;
         private ReceiverClient receiverClient;
-        private String identity;
+        private String identity, syncPathLock ;
+        private File[] syncPathFileLock ;
+        private  ArrayList<String> deletedFileLock;;
 
         public TransferHandler(String host, int port, File syncFile, File writtenIn, String identity) {
             this.host = host;
@@ -670,34 +753,60 @@ public class Model {
             this.synsFile = syncFile;
             this.writtenIn = writtenIn;
             this.identity = identity;
+            syncPathLock=syncPath;
+            deletedFileLock=deletedFileNames;
+            syncPathFileLock=new File(syncPathLock).listFiles();
+
+        }
+
+        private void removeFilesDeletedByThisOneFromSyncPath() {
+            File[] F = new File(syncPathLock).listFiles();
+
+            if (F != null && deletedFileLock != null)
+                for (int i = 0; i < F.length; i++)
+                    for (int j = 0; j < deletedFileLock.size(); j++)
+                        if (F[i].getName().equals(deletedFileLock.get(j))) {
+                            deleteFile(F[i]);
+                            break;
+                        }
+
         }
 
         @Override
         public void run() {
-            // SenderClient sc = new SenderClient("127.0.0.1", 22000, new File("C:\\Users\\erfan\\Desktop\\base1"));
 
-            senderClient = new SenderClient(host, port, synsFile);
-
-//            try {
-//
-//                String str = senderClient.getBr().readLine();
-//                System.out.println(str);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-
+            removeFilesDeletedByThisOneFromSyncPath();
+            senderClient = new SenderClient(host, port, synsFile, deletedFileNames);
             senderClient.start();
 
-            if (identity.equals("none"))
-                tag = senderClient.getIdentity();
 
             try {
                 senderClient.join();
-                receiverClient = new ReceiverClient(writtenIn, host, port);
+
+                if (identity.equals("none"))
+                    tag = senderClient.getIdentity();
+
+                receiverClient = new ReceiverClient(writtenIn, host, port, tag);
                 receiverClient.start();
+                receiverClient.join();
+            //    trim();
+                //    inflict(receiverClient.getDeletedFilesNames());
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+
+        }
+
+        private void inflict(ArrayList<String> revise) {
+
+            if (revise != null && syncPathFileLock != null)
+                for (int i = 0; i < syncPathFileLock.length; i++)
+                    for (int j = 0; j < revise.size(); j++)
+                        if (syncPathFileLock[i].getName().equals(revise.get(j))) {
+                            deleteFile(syncPathFileLock[i]);
+                            break;
+                        }
 
 
         }

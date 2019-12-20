@@ -1,0 +1,334 @@
+@startuml
+
+title __CONTROLLER's Class Diagram__\n
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller {
+          ~ coppyPressed : boolean
+          ~ cutPressed : boolean
+          - controlPressed : boolean
+          - coppy : ArrayList<File>
+          - currentGridIconColumn : int
+          - currentGridIconRow : int
+          - gridIcons : ArrayList<GridIcon>
+          - headerCol : int
+          - search : ArrayList<File>
+          - selectedFiles : ArrayList<File>
+          + Controller()
+          + initController()
+          + open()
+          + upgradeSelectedFiles()
+          + upgradeView()
+          ~ calcRowAndColumn()
+          ~ findNewNames()
+          ~ handleFrameKeyListener()
+          ~ handleSearchFieldListener()
+          ~ handleSettingsListener()
+          ~ initializeTable()
+          - compare()
+          - massiveSearch()
+          - sort()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.AboutMeListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.CopyListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.CutListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.DeleteListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.DrawRect {
+          - files : File[]
+          - leftClicked : boolean
+          - x : int
+          - x2 : int
+          - xOnScreen1 : int
+          - xOnScreen2 : int
+          - y : int
+          - y2 : int
+          - yOnScreen1 : int
+          - yOnScreen2 : int
+          + DrawRect()
+          + drawPerfectRect()
+          + handleMouseListeners()
+          + paint()
+          + setEndPoint()
+          + setFiles()
+          + setStartPoint()
+          ~ addButtons()
+          ~ checkButtonsContained()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.FrameKeyListener {
+          + keyPressed()
+          + keyReleased()
+          + keyTyped()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.GoUpListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.GridIcon {
+          - path : String
+          - pressedBackgroundColor : Color
+          - previouslySelected : boolean
+          - setSelected : boolean
+          - shortenedName : String
+          - time : long
+          + GridIcon()
+          + getPath()
+          + isPreviouslySelected()
+          + isSetSelected()
+          + paint()
+          + setContentAreaFilled()
+          + setPreviouslySelected()
+          + setSetSelected()
+          ~ addListener()
+          ~ getXMid()
+          ~ getYMid()
+          - generateTooltip()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.GridListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.HelpListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.ListListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.ListenToAddressTextField {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.NewFileListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.NewFolderListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.OpenListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.PasteListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.PropertiesListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.RenameListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.SetAsSyncPathListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.SettingsListener {
+          + actionPerformed()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.TableHeaderListener {
+          + mouseClicked()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace ontroller {
+      class Controller.Controller.TableListener {
+          + mouseClicked()
+          + mouseEntered()
+          + mouseExited()
+          + mousePressed()
+          + mouseReleased()
+      }
+    }
+  }
+  
+
+  Controller.Controller o-- Controller.Controller.DrawRect : drawRect
+  Controller.Controller o-- Controller.Controller.FrameKeyListener : frameKeyListener
+  Controller.Controller o-- Model.Model : myModel
+  Controller.Controller o-- View.View : myView
+  Controller.Controller +-down- Controller.Controller.AboutMeListener
+  Controller.Controller +-down- Controller.Controller.CopyListener
+  Controller.Controller +-down- Controller.Controller.CutListener
+  Controller.Controller +-down- Controller.Controller.DeleteListener
+  Controller.Controller +-down- Controller.Controller.DrawRect
+  Controller.Controller +-down- Controller.Controller.FrameKeyListener
+  Controller.Controller +-down- Controller.Controller.GoUpListener
+  Controller.Controller +-down- Controller.Controller.GridIcon
+  Controller.Controller +-down- Controller.Controller.GridListener
+  Controller.Controller +-down- Controller.Controller.HelpListener
+  Controller.Controller +-down- Controller.Controller.ListListener
+  Controller.Controller +-down- Controller.Controller.ListenToAddressTextField
+  Controller.Controller +-down- Controller.Controller.NewFileListener
+  Controller.Controller +-down- Controller.Controller.NewFolderListener
+  Controller.Controller +-down- Controller.Controller.OpenListener
+  Controller.Controller +-down- Controller.Controller.PasteListener
+  Controller.Controller +-down- Controller.Controller.PropertiesListener
+  Controller.Controller +-down- Controller.Controller.RenameListener
+  Controller.Controller +-down- Controller.Controller.SetAsSyncPathListener
+  Controller.Controller +-down- Controller.Controller.SettingsListener
+  Controller.Controller +-down- Controller.Controller.TableHeaderListener
+  Controller.Controller +-down- Controller.Controller.TableListener
+  Controller.Controller.AboutMeListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.CopyListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.CutListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.CutListener -up-|> Controller.Controller.CopyListener
+  Controller.Controller.DeleteListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.DrawRect -up-|> javax.swing.JPanel
+  Controller.Controller.FrameKeyListener .up.|> java.awt.event.KeyListener
+  Controller.Controller.GoUpListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.GridIcon -up-|> javax.swing.JButton
+  Controller.Controller.GridListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.HelpListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.ListListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.ListenToAddressTextField .up.|> java.awt.event.ActionListener
+  Controller.Controller.NewFileListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.NewFolderListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.OpenListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.PasteListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.PropertiesListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.RenameListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.SetAsSyncPathListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.SettingsListener .up.|> java.awt.event.ActionListener
+  Controller.Controller.TableHeaderListener -up-|> java.awt.event.MouseAdapter
+  Controller.Controller.TableListener .up.|> java.awt.event.MouseListener
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

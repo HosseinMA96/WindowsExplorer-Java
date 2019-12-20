@@ -97,7 +97,6 @@ public class Controller {
             }
         });
 
-
         initializeTable();
 
 
@@ -473,6 +472,7 @@ public class Controller {
      * An inner class  Listener for New File feature
      */
     class NewFileListener implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             myModel.newFile();
 
@@ -521,6 +521,7 @@ public class Controller {
         });
 
 
+
         settings.getReceivedFileAddress().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -555,6 +556,43 @@ public class Controller {
 
                 upgradeView();
                 myModel.writeSettingsToFile();
+            }
+        });
+
+
+        settings.getSyncInterval().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String interval=settings.getSyncInterval().getSelectedItem()+"";
+
+                if(interval.charAt(0)=='n')
+                    return;
+
+                int delayInMiliSeconds=0;
+
+                if(interval.charAt(0)=='1' && interval.charAt(interval.length()-1)=='e')
+                    delayInMiliSeconds=60*1*1000;
+
+                else if(interval.charAt(0)=='5')
+                    delayInMiliSeconds=5*60*1*1000;
+
+                else if (interval.charAt(0)=='3')
+                    delayInMiliSeconds=30*60*1*1000;
+
+                else if(interval.charAt(0) == '1')
+                    delayInMiliSeconds=60*60*1*1000;
+
+
+                ActionListener syncPerformer = new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        myModel.sync();
+                    }
+                };
+                new Timer(delayInMiliSeconds, syncPerformer).start();
+
+
+
+
             }
         });
 
@@ -1676,6 +1714,7 @@ public class Controller {
                                     JOptionPane.showMessageDialog(null, "Access is denied to the file", "Eror", 0);
                                     myModel.goToParent();
                                     upgradeView();
+                                    return;
                                 }
 
 
@@ -2071,6 +2110,7 @@ public class Controller {
             });
 
         }
+
 
         /**
          * We have overriden the paint method so that we can put our selection rectangle above GridICons presented

@@ -15,10 +15,10 @@ public class ServerWriter extends Thread {
     private String turn;
     private DataOutputStream dos;
     private ArrayList<String> addedFiles, dirs;
-    private ArrayList<String> delete;
+    private ArrayList<String> toBeDeletedInFirst, deletedOftTheFirst,inflictedDelete;
     private File base;
 
-    public ServerWriter(Socket socket, File file, ArrayList<String> del) {
+    public ServerWriter(Socket socket, File file, ArrayList<String> toBeDeletedInFirst, ArrayList<String> deletedOftTheFirst) {
         try {
             this.socket = socket;
             input = socket.getInputStream();
@@ -28,12 +28,13 @@ public class ServerWriter extends Thread {
             addedFiles = new ArrayList<>();
             File[] dummy = file.listFiles();
             dirs = new ArrayList<>();
-            base=file;
-
+            base = file;
+            this.toBeDeletedInFirst = toBeDeletedInFirst;
+            this.deletedOftTheFirst = deletedOftTheFirst;
 
 
             bp = new PrintWriter(new OutputStreamWriter(output));
-            delete = del;
+            br = new BufferedReader(new InputStreamReader(input));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,7 +44,9 @@ public class ServerWriter extends Thread {
     public void run() {
 
         try {
+            identify();
             broadcastPrepreation(base, "");
+            broadcastDeletedString();
             sendAllDirFiles();
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,6 +58,31 @@ public class ServerWriter extends Thread {
 
     }
 
+    private void broadcastDeletedString()
+    {
+        if(inflictedDelete==null)
+            inflictedDelete=new ArrayList<>();
+
+        for (int i=0;i<inflictedDelete.size();i++)
+        {
+            bp.println(inflictedDelete.get(i));
+            bp.flush();
+        }
+
+        bp.println(":END");
+        bp.flush();
+    }
+
+    private void identify() throws Exception{
+        turn = br.readLine();
+        System.out.println("In serverWriter, identity: "+turn);
+
+        if(turn.equals("first"))
+            inflictedDelete=toBeDeletedInFirst;
+
+        else
+            inflictedDelete=deletedOftTheFirst;
+    }
 
     private void sendAllDirFiles() throws Exception {
 
@@ -73,7 +101,7 @@ public class ServerWriter extends Thread {
         DataOutputStream dos = new DataOutputStream(bos);
 
         dos.writeInt(files.length);
-        int k=-1;
+        int k = -1;
 
         for (File file : files) {
             k++;
@@ -82,7 +110,7 @@ public class ServerWriter extends Thread {
 
             String name = file.getName();
             dos.writeUTF(name);
-            String path=dirs.get(k);
+            String path = dirs.get(k);
             dos.writeUTF(path);
 
 
@@ -133,18 +161,18 @@ public class ServerWriter extends Thread {
     private void broadcastPrepreation(File directory, String aux) {
         File[] F = directory.listFiles();
 
-        if(F !=null)
-        for (int i = 0; i < F.length; i++) {
-            if (F[i].isFile()) {
-                addedFiles.add(F[i].getAbsolutePath());
-                dirs.add(aux);
-            } else {
-                String temp = F[i].getName();
-                temp = aux + "\\" + temp;
+        if (F != null)
+            for (int i = 0; i < F.length; i++) {
+                if (F[i].isFile()) {
+                    addedFiles.add(F[i].getAbsolutePath());
+                    dirs.add(aux);
+                } else {
+                    String temp = F[i].getName();
+                    temp = aux + "\\" + temp;
 
-                broadcastPrepreation(F[i], temp);
+                    broadcastPrepreation(F[i], temp);
+                }
             }
-        }
 
     }
 }

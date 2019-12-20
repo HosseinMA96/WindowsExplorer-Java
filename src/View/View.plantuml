@@ -1,0 +1,260 @@
+@startuml
+
+title __VIEW's Class Diagram__\n
+
+  namespace  {
+    namespace iew {
+      class View.AboutMe {
+          - aboutMeFrame : JFrame
+          + AboutMe()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace iew {
+      class View.FileTableModel {
+          - columnClassses : Class[]
+          - columnNames : String[]
+          - files : File[]
+          + FileTableModel()
+          + getColumnClass()
+          + getColumnCount()
+          + getColumnName()
+          + getRowCount()
+          + getValueAt()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace iew {
+      class View.GridEmptySpacePopMenu {
+          - invoker : Component
+          - newFile : JMenuItem
+          - newFolder : JMenuItem
+          - paste : JMenuItem
+          - popupMenu : JPopupMenu
+          - properties : JMenuItem
+          + GridEmptySpacePopMenu()
+          + getNewFile()
+          + getNewFolder()
+          + getPaste()
+          + getProperties()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace iew {
+      class View.Help {
+          - help : JFrame
+          - textArea : JTextArea
+          + Help()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace iew {
+      class View.OptionPane {
+          ~ isFile : boolean
+          + OptionPane()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace iew {
+      class View.PopMenu {
+          - copy : JMenuItem
+          - cut : JMenuItem
+          - delete : JMenuItem
+          - invoker : Component
+          - newFile : JMenuItem
+          - newFolder : JMenuItem
+          - open : JMenuItem
+          - paste : JMenuItem
+          - popupMenu : JPopupMenu
+          - properties : JMenuItem
+          - rename : JMenuItem
+          + PopMenu()
+          + getCopy()
+          + getCut()
+          + getDelete()
+          + getNewFile()
+          + getNewFolder()
+          + getOpen()
+          + getPaste()
+          + getProperties()
+          + getRename()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace iew {
+      class View.ProgressBar {
+          - bar : JProgressBar
+          - done : int
+          - frame : JFrame
+          - total : int
+          + ProgressBar()
+          + setDone()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace iew {
+      class View.Settings {
+          - firstTimeAddress : String
+          - flashBackLabel : JLabel
+          - flashBacks : String[]
+          - frame : JFrame
+          - gridDisplayFormatCheckBox : JCheckBox
+          - incomingFileAddressLabel : JLabel
+          - initialAddressLabel : JLabel
+          - initialAddressTextField : JTextField
+          - initialDisplayFormatLabel : JLabel
+          - lookAndFeels : String[]
+          - lookNFeel : JComboBox
+          - lookNFeelLabel : JLabel
+          - maxFlashbacks : JComboBox
+          - otherPCAddressLabel : JLabel
+          - otherPCPortLabel : JLabel
+          - receivedFileAddress : JTextField
+          - remoteComputerAddressTextField : JTextField
+          - remoteComputerPort : JTextField
+          - syncInterval : JComboBox
+          - syncIntervalLabel : JLabel
+          - syncIntervals : String[]
+          - tableDisplayFormatCheckBox : JCheckBox
+          + Settings()
+          + getGridDisplayFormatCheckBox()
+          + getInitialAddressTextField()
+          + getLookNFeel()
+          + getMaxFlashbacks()
+          + getOtherPCAddress()
+          + getReceivedFileAddress()
+          + getRemoteComputerAddressTextField()
+          + getRemoteComputerPort()
+          + getSyncInterval()
+          + getTableDisplayFormatCheckBox()
+          + setFirstTimeAddress()
+      }
+    }
+  }
+  
+
+  namespace  {
+    namespace iew {
+      class View.View {
+          - addressTextField : JTextField
+          - currentAddress : String
+          - currentDirectoryFiles : File[]
+          - edit : JMenu
+          - edit_Copy : JMenuItem
+          - edit_Cut : JMenuItem
+          - edit_Paste : JMenuItem
+          - edit_Rename : JMenuItem
+          - edit_Synchronize : JMenuItem
+          - file : JMenu
+          - file_Delete : JMenuItem
+          - file_NewFile : JMenuItem
+          - file_NewFolder : JMenuItem
+          - file_SetCurrentForSync : JMenuItem
+          - frame : JFrame
+          - gridDisplay : JButton
+          - hasPrevView : boolean
+          - help : JMenu
+          - help_AboutMe : JMenuItem
+          - help_Help : JMenuItem
+          - help_Settings : JMenuItem
+          - leftArrow : JButton
+          - leftScrollPane : JScrollPane
+          - leftTree : JTree
+          - numberOfSelectedLabel : JLabel
+          - rightArrow : JButton
+          - rightScrollPane : JScrollPane
+          - rightSidePanel : JPanel
+          - searchTextField : JTextField
+          - splitPane : JSplitPane
+          - status : int
+          - table : JTable
+          - tableDisplay : JButton
+          - uppArrow : JButton
+          - upperMenuBar : JMenuBar
+          + View()
+          + addMenuBars()
+          + addStatus()
+          + focusGained()
+          + focusLost()
+          + getAddressTextField()
+          + getEdit_Copy()
+          + getEdit_Cut()
+          + getEdit_Paste()
+          + getEdit_Rename()
+          + getEdit_Synchronize()
+          + getFile_Delete()
+          + getFile_NewFile()
+          + getFile_NewFolder()
+          + getFile_SetCurrentForSync()
+          + getFrame()
+          + getGridDisplay()
+          + getHelp_AboutMe()
+          + getHelp_Help()
+          + getHelp_Settings()
+          + getLeftArrow()
+          + getLeftScrollPane()
+          + getLeftTree()
+          + getNumberOfSelectedLabel()
+          + getRightArrow()
+          + getRightScrollPane()
+          + getSearchTextField()
+          + getSplitPane()
+          + getStatus()
+          + getTable()
+          + getTableDisplay()
+          + getUppArrow()
+          + hasPreview()
+          + makeLeftTree()
+          + setAddressTextField()
+          + setCurrentAddress()
+          + setCurrentDirectoryFiles()
+          + setGridDisplay()
+          + setLeftScrollPane()
+          + setListDisplay()
+          + setLookAndFeel()
+          + setRightScrollPane()
+          + setRightSidePanel()
+          + setSplitPane()
+          + setStatus()
+      }
+    }
+  }
+  
+
+  View.FileTableModel -up-|> javax.swing.table.AbstractTableModel
+  View.GridEmptySpacePopMenu -up-|> javax.swing.JPopupMenu
+  View.PopMenu -up-|> javax.swing.JPopupMenu
+  View.View .up.|> java.awt.event.FocusListener
+  View.View -up-|> javax.swing.JFrame
+  View.View o-- View.FileTableModel : model
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

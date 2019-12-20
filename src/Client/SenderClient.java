@@ -23,8 +23,9 @@ public class SenderClient extends Thread {
 
 
     //  public SenderClient(String host, int port, ArrayList<String> addedFiles, ArrayList<String> nestedDirs) {
-    public SenderClient(String host, int port, File theBase) {
+    public SenderClient(String host, int port, File theBase,ArrayList<String> deletedFiles) {
         try {
+            this.deletedFiles=deletedFiles;
             addedFiles = new ArrayList<>();
             socket = new Socket(host, port);
             output = socket.getOutputStream();
@@ -43,20 +44,35 @@ public class SenderClient extends Thread {
 
     @Override
     public void run() {
+       // preInit(base);
         initialize(base, "");
-        sendFile();
+        identify();
+        broadcastDeletedFiles();
+
+        try{
+            sendAllFiles();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
-    public BufferedReader getBr() {
-        return br;
+
+    private void broadcastDeletedFiles()
+    {
+        if(deletedFiles !=null)
+        for (int i=0;i<deletedFiles.size();i++)
+        {
+            bw.println(deletedFiles.get(i));
+            bw.flush();
+        }
+
+        bw.println(":END");
+        bw.flush();
+
     }
-
-    public Socket getSocket() {
-        return socket;
-    }
-
-    public void sendFile() {
-
+    private void identify() {
         try {
             bw.println(identity);
             bw.flush();
@@ -73,39 +89,12 @@ public class SenderClient extends Thread {
             System.out.println("Pre identity");
             System.out.println(identity);
 
-            for (int i = 0; i < addedFiles.size(); i++) {
-                bw.println(new File(addedFiles.get(i)).getName());
-                bw.flush();
-            }
-
-            bw.println(":END");
-            bw.flush();
-
-            //Deleted files must be upgraded
-            bw.println("deleteA");
-            bw.flush();
-
-
-            bw.println(":END");
-            bw.flush();
-
-            bw.println(addedFiles.size() + "");
-            bw.flush();
-
-            for (int i = 0; i < addedFiles.size(); i++) {
-                bw.println(dirs.get(i));
-                bw.flush();
-            }
-
-
-            sendAFile();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void sendAFile() throws Exception {
+    private void sendAllFiles() throws Exception {
         BufferedOutputStream bos = new BufferedOutputStream(output);
         DataOutputStream dos = new DataOutputStream(bos);
         File[] files = new File[addedFiles.size()];

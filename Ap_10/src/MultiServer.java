@@ -8,17 +8,13 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+
 
 public class MultiServer {
     private static File base;
-    private static int clientCount = 0;
-    //   private static ArrayList<ServerReader> serverReaders = new ArrayList<>();
-    private static String tag;
-    private String inputStr;
-    private static ArrayList<String> deleted;
     private static ArrayList<String> toBeDeletedInFirst = new ArrayList<>();
+    private static ArrayList<String> firstDeleted, secondDeleted;
+
 
     private static void initializeServer() {
 
@@ -28,7 +24,7 @@ public class MultiServer {
 
 
         base = new File("E:\\JFileManagerItems");
-        base.mkdir();
+        base.mkdirs();
 
         //    JOptionPane.showMessageDialog(null,"times in E del");
 
@@ -50,6 +46,7 @@ public class MultiServer {
         if (f.isDirectory()) {
             File[] temp = f.listFiles();
 
+            if(temp != null)
             for (int i = 0; i < temp.length; i++)
                 deleteFile(temp[i]);
 
@@ -69,42 +66,37 @@ public class MultiServer {
     public static void main(String[] args) throws Exception {
 
 //        ServerReader fs = new ServerReader(22000);
-        ServerSocket serverSocket = new ServerSocket(22000);
+        ServerSocket serverSocket = new ServerSocket(35000);
         initializeServer();
+
 
         while (true) {
 
             //BAYAD BA TAG BEGI KE KI VASL SHODE BE CHE MANZOORI. INO DOROST KON BA TIME NEMISHE BEGI
 
-
             Socket socketReader1 = serverSocket.accept();
             ServerReader serverReader1 = new ServerReader(socketReader1, true, base);
-           // serverReader1.start();
-            System.out.println("first reader started");
+
+            System.out.println("first reader accepted");
 
             Socket socketReader2 = serverSocket.accept();
+            System.out.println("second reader accepted");
             ServerReader serverReader2 = new ServerReader(socketReader2, false, base);
-        //    serverReader2.start();
 
-      //      serverReader1.getBp().println(":CLEARANCE");
-       //     serverReader2.getBp().println(":CLEARANCE");
 
             serverReader1.start();
             serverReader2.start();
 
-            System.out.println("second reader started");
+            System.out.println("both reader started");
 
 
-
-
-
+            //ESHTEB NASHE DILITA :|
             Socket socketWriter1 = serverSocket.accept();
-            ServerWriter serverWriter1 = new ServerWriter(socketWriter1, base, null);
+            ServerWriter serverWriter1 = new ServerWriter(socketWriter1, base, toBeDeletedInFirst,firstDeleted);
 
 
             Socket socketWriter2 = serverSocket.accept();
-            ServerWriter serverWriter2 = new ServerWriter(socketWriter2, base, null);
-
+            ServerWriter serverWriter2 = new ServerWriter(socketWriter2, base, toBeDeletedInFirst,firstDeleted);
 
 
             serverReader1.join();
@@ -119,7 +111,6 @@ public class MultiServer {
             serverWriter1.start();
 
 
-
             System.out.println("Both writers started");
 
 
@@ -130,7 +121,8 @@ public class MultiServer {
 
 
     private static void mergeFile(ServerReader serverReader1, ServerReader serverReader2) {
-        ArrayList<String> firstDeleted, secondDeleted;
+        firstDeleted = new ArrayList<>();
+        secondDeleted = new ArrayList<>();
 
         if (serverReader1.getTurn().equals("first")) {
             firstDeleted = serverReader1.getDeletedFilenames();
@@ -145,26 +137,24 @@ public class MultiServer {
 
 
         File[] files = firstFile.listFiles();
+
         initializeServer();
 
         if (files != null)
             for (int i = 0; i < files.length; i++) {
-                boolean coppy = true;
+                try {
+                    System.out.println("base absolote " + base.getAbsolutePath());
+                    System.out.println("file path " + files[i].getAbsolutePath());
+                    pasteFile(files[i].getAbsolutePath(), base.getAbsolutePath() + "\\" + files[i].getName());
 
-                for (int j = 0; j < firstDeleted.size(); j++)
-                    if (firstDeleted.get(j).equals(files[i].getName())) {
-                        coppy = false;
-                        break;
-                    }
+                    for (int j = 0; j < secondDeleted.size(); j++)
+                        if (files[i].getName().equals(secondDeleted.get(j))) {
+                            secondDeleted.remove(j + 0);
+                            break;
+                        }
 
-                if (coppy) {
-                    try {
-                        System.out.println("base absolote "+base.getAbsolutePath());
-                        System.out.println("file path "+files[i].getAbsolutePath());
-                        pasteFile(files[i].getAbsolutePath(), base.getAbsolutePath()+"\\"+files[i].getName());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
 
@@ -178,8 +168,8 @@ public class MultiServer {
             for (int i = 0; i < files.length; i++) {
                 boolean coppy = true;
 
-                for (int j = 0; j < secondDeleted.size(); j++)
-                    if (secondDeleted.get(j).equals(files[i].getName())) {
+                for (int j = 0; j < firstDeleted.size(); j++)
+                    if (firstDeleted.get(j).equals(files[i].getName())) {
                         coppy = false;
                         break;
                     }
@@ -187,6 +177,8 @@ public class MultiServer {
                 if (dummyFiles != null)
                     for (int j = 0; j < dummyFiles.length; j++) {
                         if (dummyFiles[j].getName().equals(files[i].getName())) {
+                            //In case of owerriten new file, first delete it from second cache then add it from first one
+                            firstDeleted.add(dummyFiles[j].getName());
                             coppy = false;
                             break;
                         }
@@ -194,7 +186,7 @@ public class MultiServer {
 
                 if (coppy) {
                     try {
-                        pasteFile(files[i].getAbsolutePath(), base.getAbsolutePath()+"\\"+files[i].getName());
+                        pasteFile(files[i].getAbsolutePath(), base.getAbsolutePath() + "\\" + files[i].getName());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -203,23 +195,7 @@ public class MultiServer {
 
             }
 
-        files = base.listFiles();
-        toBeDeletedInFirst = new ArrayList<>();
-
-        for (int i = 0; i < secondDeleted.size(); i++) {
-
-            boolean mustDelete = true;
-
-            if (files != null)
-                for (int j = 0; j < files.length; j++)
-                    if (secondDeleted.get(i).equals(files[i].getName())) {
-                        mustDelete = false;
-                        break;
-                    }
-
-            if (mustDelete)
-                toBeDeletedInFirst.add(secondDeleted.get(i));
-        }
+        toBeDeletedInFirst = secondDeleted;
     }
 
 
@@ -250,7 +226,7 @@ public class MultiServer {
         } else {
             //Copy the file content from one place to another;
             Files.copy(sourceFolder.toPath(), destinationFolder.toPath(), StandardCopyOption.REPLACE_EXISTING);
-         //   Files.copy(sourceFolder.toPath(), destinationFolder.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+            //   Files.copy(sourceFolder.toPath(), destinationFolder.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
 
         }
 
