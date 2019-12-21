@@ -28,44 +28,10 @@ public class JFileManager {
         model = new Model();
         initializeModelWithDefaultSettings();
 
-        //   JOptionPane.showMessageDialog(null,"In main, CA is "+ model.getCurrentAddress());
         view = new View();
         Controller controller = new Controller(model, view);
         controller.initController();
         initializeTray();
-
-//        MyProgressBar  myProgressBar=new MyProgressBar(0,10000,10000);
-//
-//        int u=0;
-//
-//        for (int i=0;i<10000;i++)
-//        {
-//            for (int j=0;j<1000000;j++)
-//            {
-//                u++;
-//                u/=2;
-//            }
-//
-//            myProgressBar.oneAdd();
-//        }
-//
-//
-//
-//        for (int i=0;i<10000;i++)
-//        {
-//            for (int j=0;j<1000000;j++)
-//            {
-//                u++;
-//                u/=2;
-//            };
-//
-//            myProgressBar.oneDelete();
-//        }
-//
-
-
-
-
     }
 
     /**

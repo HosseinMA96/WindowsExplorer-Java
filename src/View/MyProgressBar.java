@@ -14,10 +14,8 @@ public class MyProgressBar {
     private JLabel label=new JLabel();
 
     /**
-     * Cunstructor for this class
-     *
+     * Constructor for this class
      * @param done
-     *
      * @param del
      * @param add
      */
@@ -55,13 +53,18 @@ public class MyProgressBar {
         bar.setVisible(true);
     }
 
-
+    /**
+     * report deleting one file
+     */
     public void oneDelete() {
         deleted++;
         done++;
         upgradeStats();
     }
 
+    /**
+     * report adding one file
+     */
     public void oneAdd() {
         added++;
         done++;
@@ -69,6 +72,9 @@ public class MyProgressBar {
     }
 
 
+    /**
+     * Upgrade status of this rogress bar
+     */
     private void upgradeStats() {
         if(total != 0)
         bar.setValue((done * 100) / total);

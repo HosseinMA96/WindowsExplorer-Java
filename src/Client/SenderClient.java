@@ -1,5 +1,8 @@
-package Client;
+/**
+ * A Class to handle sending files and  deletes operations
+ */
 
+package Client;
 
 import javax.swing.*;
 import java.io.*;
@@ -15,17 +18,25 @@ public class SenderClient extends Thread {
     private InputStream input;
     private ArrayList<String> addedFiles, dirs;
     private ArrayList<String> deletedFiles;
-    private String identity ;
+    private String identity;
     private PrintWriter bw;
     private BufferedReader br;
     private DataOutputStream dos;
     private File base;
 
 
-    //  public SenderClient(String host, int port, ArrayList<String> addedFiles, ArrayList<String> nestedDirs) {
-    public SenderClient(String host, int port, File theBase,ArrayList<String> deletedFiles,String tag) {
+    /**
+     * Constructor for this class
+     *
+     * @param host
+     * @param port
+     * @param theBase
+     * @param deletedFiles
+     * @param tag
+     */
+    public SenderClient(String host, int port, File theBase, ArrayList<String> deletedFiles, String tag) {
         try {
-            this.deletedFiles=deletedFiles;
+            this.deletedFiles = deletedFiles;
             addedFiles = new ArrayList<>();
             socket = new Socket(host, port);
             output = socket.getOutputStream();
@@ -34,8 +45,8 @@ public class SenderClient extends Thread {
             br = new BufferedReader(new InputStreamReader(input));
             dos = new DataOutputStream(output);
             dirs = new ArrayList<>();
-            base=theBase;
-            identity=tag;
+            base = theBase;
+            identity = tag;
 
 
         } catch (Exception e) {
@@ -43,44 +54,39 @@ public class SenderClient extends Thread {
         }
     }
 
+    /**
+     * Run method
+     */
     @Override
     public void run() {
-        // preInit(base);
-        initialize(base, "");
-//        System.out.println("OK LET's FIX THIS");
-//        for (int i=0;i<addedFiles.size();i++)
-//            System.out.println(addedFiles.get(i));
-//
-//        System.out.println("SPACER");
-//        for(int i=0;i<dirs.size();i++)
-//            System.out.println(dirs.get(i));
         identify();
         broadcastDeletedFiles();
 
-        try{
+        try {
             sendAllFiles();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
-    private void broadcastDeletedFiles()
-    {
-        if(deletedFiles !=null)
-            for (int i=0;i<deletedFiles.size();i++)
-            {
+    /**
+     * A Method to send deleted file names from current pc
+     */
+    private void broadcastDeletedFiles() {
+        if (deletedFiles != null)
+            for (int i = 0; i < deletedFiles.size(); i++) {
                 bw.println(deletedFiles.get(i));
                 bw.flush();
-                System.out.println("in "+identity+" deleted file is : "+deletedFiles.get(i));
             }
 
         bw.println(":END");
         bw.flush();
 
     }
+
+    /**
+     * A method to identify the turn of this pc which remains constant
+     */
     private void identify() {
         try {
             bw.println(identity);
@@ -95,7 +101,6 @@ public class SenderClient extends Thread {
                 identity = "second";
 
 
-            System.out.println("Pre identity");
             System.out.println(identity);
 
         } catch (Exception e) {
@@ -103,6 +108,11 @@ public class SenderClient extends Thread {
         }
     }
 
+    /**
+     * A Method to send all newly added files from this pc
+     *
+     * @throws Exception
+     */
     private void sendAllFiles() throws Exception {
         BufferedOutputStream bos = new BufferedOutputStream(output);
         DataOutputStream dos = new DataOutputStream(bos);
@@ -137,60 +147,14 @@ public class SenderClient extends Thread {
         socket.close();
     }
 
+    /**
+     * Getter for identity
+     *
+     * @return identity
+     */
     public String getIdentity() {
         return identity;
     }
-
-//    public static void main(String[] args) throws Exception {
-//        SenderClient sc = new SenderClient("127.0.0.1", 22000, new File("C:\\Users\\erfan\\Desktop\\base1"));
-//        sc.start();
-//
-//        File F = new File("C:\\Users\\erfan\\Desktop\\first");
-//
-//
-//        System.out.println();
-//
-//        try {
-//            sc.join();
-//
-//
-//            Scanner scanner = new Scanner(System.in);
-//            String A = scanner.nextLine();
-//
-//
-//            // System.out.println("after join");
-//            ReceiverClient rc = new ReceiverClient(F, "127.0.0.1", 22000);
-//
-//            rc.start();
-//
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-
-//}
-
-    void initialize(File directory, String aux) {
-        File[] F = directory.listFiles();
-
-
-        if (F != null)
-            for (int i = 0; i < F.length; i++) {
-                if (F[i].isFile()) {
-                    addedFiles.add(F[i].getAbsolutePath());
-                    dirs.add(aux);
-                } else {
-                    String temp = F[i].getName();
-                    temp = aux + "\\" + temp;
-                    initialize(F[i], temp);
-                }
-            }
-
-
-    }
-
-
 
 }
 

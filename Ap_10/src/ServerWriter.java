@@ -1,3 +1,7 @@
+/**
+ * A Method to send merged files and delete strings to clients over socket
+ */
+
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import jdk.internal.util.xml.impl.Input;
 
@@ -18,6 +22,13 @@ public class ServerWriter extends Thread {
     private ArrayList<String> toBeDeletedInFirst, deletedOftTheFirst,inflictedDelete;
     private File base;
 
+    /**
+     * Constructor of this class
+     * @param socket
+     * @param file
+     * @param toBeDeletedInFirst
+     * @param deletedOftTheFirst
+     */
     public ServerWriter(Socket socket, File file, ArrayList<String> toBeDeletedInFirst, ArrayList<String> deletedOftTheFirst) {
         try {
             this.socket = socket;
@@ -40,6 +51,9 @@ public class ServerWriter extends Thread {
         }
     }
 
+    /**
+     * Run method of this class
+     */
     @Override
     public void run() {
 
@@ -52,12 +66,11 @@ public class ServerWriter extends Thread {
             e.printStackTrace();
         }
 
-        //    bp.println("END:FILE:SEND");
-        //      bp.flush();
-        //  sendDeleteString();
-
     }
 
+    /**
+     * A Method to send merged deleted orders to the client
+     */
     private void broadcastDeletedString()
     {
         if(inflictedDelete==null)
@@ -65,7 +78,6 @@ public class ServerWriter extends Thread {
 
         for (int i=0;i<inflictedDelete.size();i++)
         {
-            System.out.println(turn + " DEL ORDER : " +inflictedDelete.get(i));
             bp.println(inflictedDelete.get(i));
             bp.flush();
         }
@@ -74,9 +86,12 @@ public class ServerWriter extends Thread {
         bp.flush();
     }
 
+    /**
+     * A Method to detect the client's turn
+     * @throws Exception
+     */
     private void identify() throws Exception{
         turn = br.readLine();
-        System.out.println("In serverWriter, identity: "+turn);
 
         if(turn.equals("first"))
             inflictedDelete=toBeDeletedInFirst;
@@ -85,18 +100,18 @@ public class ServerWriter extends Thread {
             inflictedDelete=deletedOftTheFirst;
     }
 
+    /**
+     * A Method to send all files from the merged directory to the clients
+     * @throws Exception
+     */
     private void sendAllDirFiles() throws Exception {
 
-        //  String directory = ...;
-        //    String hostDomain = ...;
-        //   int port = ...;
 
         File[] files = new File[addedFiles.size()];
         for (int i = 0; i < addedFiles.size(); i++)
             files[i] = new File(addedFiles.get(i));
 
 
-        // Socket socket = new Socket(InetAddress.getByName(hostDomain), port);
 
         BufferedOutputStream bos = new BufferedOutputStream(output);
         DataOutputStream dos = new DataOutputStream(bos);
@@ -128,37 +143,11 @@ public class ServerWriter extends Thread {
 
     }
 
-//
-//    private void sendFile(File F, String pathToThisFile) throws Exception {
-//        //   DataOutputStream dos = new DataOutputStream(output);
-//        FileInputStream fis = new FileInputStream(F);
-//        bp.println(pathToThisFile);
-//        bp.flush();
-//
-////            for (int i = 0; i < addedFiles.size(); i++) {
-//        byte[] buffer = new byte[4096];
-//
-//        while (fis.read(buffer) > 0) {
-//            dos.write(buffer);
-//        }
-//
-////            }
-//        fis.close();
-//    }
-
-//    private void sendDeleteString() {
-//        String flsh = delete.size() + "";
-//        System.out.println("faulty string is : " + flsh);
-//        bp.println(delete.size() + "");
-//        bp.flush();
-//
-//
-//        for (int i = 0; i < delete.size(); i++) {
-//            bp.println(delete.get(i));
-//            bp.flush();
-//        }
-//    }
-
+    /**
+     * A Method to prepare files from the merged directory to be sent
+     * @param directory
+     * @param aux
+     */
     private void broadcastPrepreation(File directory, String aux) {
         File[] F = directory.listFiles();
 

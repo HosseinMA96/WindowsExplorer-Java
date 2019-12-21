@@ -1,3 +1,7 @@
+/**
+ * A Class to read and save files from socket
+ */
+
 import javax.swing.*;
 import java.io.*;
 import java.net.ServerSocket;
@@ -12,7 +16,6 @@ public class ServerReader extends Thread {
     private File base;
     Socket socket;
     private ArrayList<String> addedFiles = new ArrayList<>();
-    //ArrayList<String>deletedFileNames=new ArrayList<>();
     private ArrayList<String> deletedFilenames = new ArrayList<>(), dirs = new ArrayList<>();
     private InputStream input;
     private OutputStream output;
@@ -23,13 +26,15 @@ public class ServerReader extends Thread {
     private DataInputStream dis;
 
 
-    //  public ServerReader(int port) {
+    /**
+     * Constructor for this class
+     * @param socket
+     * @param first
+     * @param location
+     */
     public ServerReader(Socket socket, boolean first, File location) {
         try {
 
-            //    serverSocket = new ServerSocket(port);
-            //    initializeServer();
-            //   Socket socket=serverSocket.accept();
             this.socket = socket;
             isFirst = first;
             base = location;
@@ -46,6 +51,9 @@ public class ServerReader extends Thread {
         }
     }
 
+    /**
+     * Run method
+     */
     @Override
     public void run() {
 
@@ -54,13 +62,16 @@ public class ServerReader extends Thread {
             identify();
             receiveDeletetFileNames();
             saveFiles();
-            System.out.println("saveFiles finished, in server reader . ");
         } catch (Exception e) {
-          //  e.printStackTrace();
+
         }
 
     }
 
+    /**
+     * A Method to receive deleted files names
+     * @throws Exception
+     */
     private void receiveDeletetFileNames() throws Exception {
 
         deletedFilenames = new ArrayList<>();
@@ -73,10 +84,13 @@ public class ServerReader extends Thread {
                 break;
 
             deletedFilenames.add(delName);
-            System.out.println(turn + " has deleted file "+ delName);
         }
     }
 
+    /**
+     * A Method to detect the turn of the connected pc
+     * @throws Exception
+     */
     private void identify() throws Exception {
         turn = br.readLine();
 
@@ -99,6 +113,10 @@ public class ServerReader extends Thread {
 
     }
 
+    /**
+     * Initialize where the deleted fiels are saved
+     * @throws Exception
+     */
     private void initialize() throws Exception {
 
         File del = new File("E:\\DELS");
@@ -108,26 +126,11 @@ public class ServerReader extends Thread {
         del.mkdir();
     }
 
-//    private void manageDels() {
-//        if (deletedFilenames == null || deletedFilenames.size() == 0)
-//            return;
-//
-//        File[] files = base.listFiles();
-//
-//        for (int i = 0; i < deletedFilenames.size(); i++)
-//            for (int j = 0; j < files.length; j++) {
-//                if (files[j] == null)
-//                    continue;
-//
-//                if (files[j].getName().equals(deletedFilenames.get(i))) {
-//                    File F = files[j];
-//                    MultiServer.deleteFile(F);
-//                    files[j] = null;
-//                }
-//            }
-//    }
 
-
+    /**
+     * A Method to save files read from the socket
+     * @throws Exception
+     */
     private void saveFiles() throws Exception {
         boolean withdraw = false;
 
@@ -139,7 +142,6 @@ public class ServerReader extends Thread {
 
 
 
-       // System.out.println(" int turn : +" + turn + " File count is " + filesCount);
 
         if (filesCount <1) {
             filesCount = 10;
@@ -181,9 +183,6 @@ public class ServerReader extends Thread {
             String path = dis.readUTF();
 
 
-//            System.out.println("file name is " + fileName);
-//            System.out.println("path is " + path);
-
 
             String temp = base.getAbsolutePath() + path;
             File tempFile = new File(temp);
@@ -196,7 +195,7 @@ public class ServerReader extends Thread {
 
 
             files[i] = new File(base.getAbsolutePath() + path + "\\" + fileName);
-//            System.out.println("last one is : "+files[i].getAbsolutePath());
+
 
 
             FileOutputStream fos = new FileOutputStream(files[i]);
@@ -209,10 +208,18 @@ public class ServerReader extends Thread {
         dis.close();
     }
 
+    /**
+     * Getter for deletedFilenames
+     * @return deletedFilenames
+     */
     public ArrayList<String> getDeletedFilenames() {
         return this.deletedFilenames;
     }
 
+    /**
+     * Getter for turn
+     * @return turn
+     */
     public String getTurn() {
         return turn;
     }

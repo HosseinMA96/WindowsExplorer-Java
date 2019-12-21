@@ -1,3 +1,7 @@
+/**
+ * A Class which acts as the servers, reads and manipulates files from sockets and sends them to the computers
+ */
+
 import javafx.scene.control.ProgressBar;
 
 import javax.swing.*;
@@ -18,6 +22,9 @@ public class MultiServer {
     private static ArrayList<String> firstDeleted, secondDeleted;
 
 
+    /**
+     * Initialize the process, make the place needed to save the incoming files
+     */
     private static void initializeServer() {
 
         base = new File("E:\\JFileManagerItems");
@@ -28,18 +35,18 @@ public class MultiServer {
         base = new File("E:\\JFileManagerItems");
         base.mkdirs();
 
-
-        //    JOptionPane.showMessageDialog(null,"times in E del");
-
-        //     System.out.println("make " + base.mkdir());
     }
 
+    /**
+     * A function to delete file f
+     *
+     * @param f
+     */
     public static void deleteFile(File f) {
 
         if (f.isFile()) {
             try {
                 f.delete();
-
 
 
             } catch (Exception ex) {
@@ -50,7 +57,7 @@ public class MultiServer {
         if (f.isDirectory()) {
             File[] temp = f.listFiles();
 
-            if(temp != null)
+            if (temp != null)
                 for (int i = 0; i < temp.length; i++)
                     deleteFile(temp[i]);
 
@@ -66,20 +73,20 @@ public class MultiServer {
 
     }
 
-
+    /**
+     * Main method, always runs the server
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
 
-//        ServerReader fs = new ServerReader(22000);
         ServerSocket serverSocket = new ServerSocket(30000);
         initializeServer();
 
 
-
-
         while (true) {
 
-
-            //BAYAD BA TAG BEGI KE KI VASL SHODE BE CHE MANZOORI. INO DOROST KON BA TIME NEMISHE BEGI
 
             Socket socketReader1 = serverSocket.accept();
             ServerReader serverReader1 = new ServerReader(socketReader1, true, base);
@@ -97,24 +104,23 @@ public class MultiServer {
             System.out.println("both reader started");
 
 
-
             serverReader1.join();
             serverReader2.join();
 
 
             mergeFile(serverReader1, serverReader2);
 
-            //ESHTEB NASHE DILITA :|
+
             Socket socketWriter1 = serverSocket.accept();
-            ServerWriter serverWriter1 = new ServerWriter(socketWriter1, base, toBeDeletedInFirst,firstDeleted);
+            ServerWriter serverWriter1 = new ServerWriter(socketWriter1, base, toBeDeletedInFirst, firstDeleted);
 
 
             Socket socketWriter2 = serverSocket.accept();
-            ServerWriter serverWriter2 = new ServerWriter(socketWriter2, base, toBeDeletedInFirst,firstDeleted);
-
+            ServerWriter serverWriter2 = new ServerWriter(socketWriter2, base, toBeDeletedInFirst, firstDeleted);
 
 
             System.out.println("Both readers joined");
+            System.out.println("Both writers started");
 
 
             serverWriter2.start();
@@ -127,8 +133,7 @@ public class MultiServer {
             initializeServer();
 
 
-
-            System.out.println("Both writers started");
+            System.out.println("Both writers joined");
 
 
         }
@@ -136,7 +141,12 @@ public class MultiServer {
 
     }
 
-
+    /**
+     * A Method to merge two files read from two computers, taking into account their turns and also deleted files
+     *
+     * @param serverReader1
+     * @param serverReader2
+     */
     private static void mergeFile(ServerReader serverReader1, ServerReader serverReader2) {
         firstDeleted = new ArrayList<>();
         secondDeleted = new ArrayList<>();
@@ -151,12 +161,12 @@ public class MultiServer {
 
 
         System.out.println("IN MULTI SERVER, FIRST DELETED ARRAYLIST IS :");
-        for (int i=0;i<firstDeleted.size();i++)
+        for (int i = 0; i < firstDeleted.size(); i++)
             System.out.println(firstDeleted.get(i));
 
 
         System.out.println("IN MULTI SERVER, SECOND DELETED ARRAYLIST IS :");
-        for (int i=0;i<secondDeleted.size();i++)
+        for (int i = 0; i < secondDeleted.size(); i++)
             System.out.println(secondDeleted.get(i));
 
         File firstFile = new File("E:\\temp1");
@@ -170,8 +180,7 @@ public class MultiServer {
         if (files != null)
             for (int i = 0; i < files.length; i++) {
                 try {
-//                    System.out.println("base absolote " + base.getAbsolutePath());
-//                    System.out.println("file path " + files[i].getAbsolutePath());
+
                     pasteFile(files[i].getAbsolutePath(), base.getAbsolutePath() + "\\" + files[i].getName());
 
                     for (int j = 0; j < secondDeleted.size(); j++)
@@ -204,7 +213,6 @@ public class MultiServer {
                 if (dummyFiles != null)
                     for (int j = 0; j < dummyFiles.length; j++) {
                         if (dummyFiles[j].getName().equals(files[i].getName())) {
-                            //In case of owerriten new file, first delete it from second cache then add it from first one
                             firstDeleted.add(dummyFiles[j].getName());
                             coppy = false;
                             break;
@@ -225,7 +233,13 @@ public class MultiServer {
         toBeDeletedInFirst = secondDeleted;
     }
 
-
+    /**
+     * A Method to paste file from one address to another
+     *
+     * @param from
+     * @param to
+     * @throws IOException
+     */
     public static void pasteFile(String from, String to) throws IOException {
 
         File sourceFolder = new File(from);
@@ -233,45 +247,31 @@ public class MultiServer {
         File destinationFolder = new File(to);
 
         if (sourceFolder.isDirectory()) {
-            //Verify if destinationFolder is already present; If not then create it
+
             if (!destinationFolder.exists()) {
                 destinationFolder.mkdir();
 
             }
 
-            //Get all files from source directory
+
             String files[] = sourceFolder.list();
 
-            //Iterate over all files and copy them to destinationFolder one by one
+
             for (String file : files) {
                 File srcFile = new File(sourceFolder, file);
                 File destFile = new File(destinationFolder, file);
 
-                //Recursive function call
+
                 pasteFile(srcFile.getAbsolutePath(), destFile.getAbsolutePath());
             }
         } else {
-            //Copy the file content from one place to another;
+
             Files.copy(sourceFolder.toPath(), destinationFolder.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            //   Files.copy(sourceFolder.toPath(), destinationFolder.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
 
         }
 
 
     }
 
-
-    private static void deleteTemps()
-    {
-
-        File temp1=new File("E:\\temp1");
-        File temp2=new File("E:\\temp2");
-
-        if(temp1.exists())
-            deleteFile(temp1);
-
-        if(temp2.exists())
-            deleteFile(temp2);
-    }
 
 }

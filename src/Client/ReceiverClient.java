@@ -1,3 +1,7 @@
+/**
+ * A class to receive files and delete orders from server
+ */
+
 package Client;
 
 
@@ -23,7 +27,15 @@ public class ReceiverClient extends Thread {
     private ArrayList<String> onceDeleted = new ArrayList<>();
     MyProgressBar myProgressBar;
 
-
+    /**
+     * Constructor for this class
+     *
+     * @param saveAddress
+     * @param host
+     * @param port
+     * @param tag
+     * @throws Exception
+     */
     public ReceiverClient(File saveAddress, String host, int port, String tag) throws Exception {
         base = saveAddress;
         socket = new Socket(host, port);
@@ -36,9 +48,9 @@ public class ReceiverClient extends Thread {
 
     }
 
-    /////////////////////////
-
-
+    /**
+     * A Method to initialize saving route
+     */
     private void initialize() {
 
         File F;
@@ -51,10 +63,13 @@ public class ReceiverClient extends Thread {
             F.mkdir();
         }
 
-
-        //     System.out.println("make " + base.mkdir());
     }
 
+    /**
+     * A Method to delete a File without recording the action
+     *
+     * @param f
+     */
     public static void deleteFile(File f) {
 
         if (f.isFile()) {
@@ -85,8 +100,10 @@ public class ReceiverClient extends Thread {
 
     }
 
-    ////////////////////
 
+    /**
+     * The run method
+     */
     @Override
     public void run() {
         initialize();
@@ -102,9 +119,6 @@ public class ReceiverClient extends Thread {
             e.printStackTrace();
         }
 
-        //   receiveDeleteArray();
-        // System.out.println("in Receiver finished");
-
     }
 
     /**
@@ -115,22 +129,11 @@ public class ReceiverClient extends Thread {
     private void manageDeletes() {
         File[] F = base.listFiles();
 
-//        if (F != null && deletedFilesNames != null) {
-//            for (int i = 0; i < F.length; i++)
-//                for (int j = 0; j < deletedFilesNames.size(); j++)
-//                    if (F[i].getName().equals(deletedFilesNames.get(j))) {
-//                        deleteFile(F[i]);
-//                        break;
-//                    }
-//        }
 
-
-        for (int i=0;i<deletedFilesNames.size();i++)
-        {
-            if(F != null)
-                for (int j=0;j<F.length;j++)
-                    if(F[j] != null & F[j].exists() && F[j].getName().equals(deletedFilesNames.get(i)))
-                    {
+        for (int i = 0; i < deletedFilesNames.size(); i++) {
+            if (F != null)
+                for (int j = 0; j < F.length; j++)
+                    if (F[j] != null & F[j].exists() && F[j].getName().equals(deletedFilesNames.get(i))) {
                         deleteFile(F[j]);
                         break;
                     }
@@ -140,6 +143,11 @@ public class ReceiverClient extends Thread {
 
     }
 
+    /**
+     * This method receives deleted files names
+     *
+     * @throws Exception
+     */
     private void receiveDeletedFilesNames() throws Exception {
         String dummy;
         deletedFilesNames = new ArrayList<>();
@@ -153,20 +161,22 @@ public class ReceiverClient extends Thread {
             deletedFilesNames.add(dummy);
         }
 
-        System.out.println("in "+tag +" Inflicted deleted files :");
-
-        for(int i=0;i<deletedFilesNames.size();i++)
-            System.out.println(deletedFilesNames.get(i));
-
 
     }
 
+    /**
+     * This method declares the turn of this pc which is constant
+     */
     private void identify() {
-        System.out.println("in receiver client, tag is : " + tag);
         bw.println(tag);
         bw.flush();
     }
 
+    /**
+     * A Method to receive files from server
+     *
+     * @throws Exception
+     */
     private void receiveFiles() throws Exception {
 
         BufferedInputStream bis = new BufferedInputStream(input);
@@ -175,8 +185,7 @@ public class ReceiverClient extends Thread {
         int filesCount = dis.readInt();
         File[] files = new File[filesCount];
 
-        myProgressBar=new MyProgressBar(0,deletedFilesNames.size(),filesCount-1);
-        // JOptionPane.showMessageDialog(null,tag+" you should see pb : ");
+        myProgressBar = new MyProgressBar(0, deletedFilesNames.size(), filesCount - 1);
 
         for (int i = 0; i < filesCount; i++) {
             long fileLength = dis.readLong();
@@ -194,21 +203,11 @@ public class ReceiverClient extends Thread {
                 path = "\\" + path;
 
             files[i] = new File(base.getAbsolutePath() + path + "\\" + fileName);
-//            System.out.println("bingo : " + base.getAbsolutePath() + "\t" + path + "\\" + "\t" + fileName);
-//            System.out.println(base.getAbsolutePath());
-//            System.out.println(path);
-//            System.out.println(fileName);
-//            System.out.println("totally together : " + files[i].getAbsolutePath());
-            //Handle Overwrite
-
-
             checkOverWrite(files[i]);
 
             if (!tempFile.exists())
                 tempFile.mkdirs();
-            ///////////////////////////////////
 
-            //    files[i] = new File(savingDir.getAbsolutePath() + "\\" + fileName);
 
             FileOutputStream fos = new FileOutputStream(files[i]);
             BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -223,11 +222,11 @@ public class ReceiverClient extends Thread {
 
     }
 
-    public ArrayList<String> getDeletedFilesNames() {
-        return deletedFilesNames;
-    }
-
-
+    /**
+     * A Method to check and delete occurrence of these file name in the destination folder
+     *
+     * @param toBeAdded
+     */
     void checkOverWrite(File toBeAdded) {
 
         if (toBeAdded.getParentFile().equals(base)) {
@@ -242,24 +241,17 @@ public class ReceiverClient extends Thread {
 
         }
         File temp = toBeAdded;
-//        System.out.println("to be added getparent file: " + temp.getParentFile());
-//        System.out.println("to be added getparnt String: " + temp.getParent());
 
-        //    File[] F = base.listFiles();
         while (!temp.getParentFile().equals(base)) {
-//            System.out.println("Temp is " + temp.getAbsolutePath());
             temp = temp.getParentFile();
         }
 
-
-//        System.out.println("after " + temp.getAbsolutePath());
 
         File[] files = base.listFiles();
 
         if (files != null)
             for (int i = 0; i < files.length; i++)
                 if (files[i].getName().equals(temp.getName())) {
-                    boolean shallDelete = true;
 
                     for (int j = 0; j < onceDeleted.size(); j++)
                         if (onceDeleted.get(j).equals(files[i].getName()))
@@ -272,24 +264,6 @@ public class ReceiverClient extends Thread {
 
     }
 
-
-    void trim(File currentFile) {
-        File F[] = currentFile.listFiles();
-
-        if (F != null) {
-            for (int i = 0; i < F.length; i++) {
-                if (F[i].isFile() && (F[i].getName().equals("divert.txt") || F[i].getName().equals("divert"))) {
-                    deleteFile(F[i]);
-
-                }
-
-                if (F[i].isDirectory())
-                    trim(F[i]);
-            }
-
-
-        }
-    }
 }
 
 

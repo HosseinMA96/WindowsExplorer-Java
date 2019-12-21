@@ -32,7 +32,7 @@ public class Model {
     private ArrayList<String> deletedFileNames = new ArrayList<>();
     private ArrayList<String> addedFileNames = new ArrayList<>();
     private String tag = "none";
-    private String nestPath = "C:\\Users\\erfan\\Desktop\\nest1";
+    private String nestPath = "E:\\nest1";
     private File nestFile;
 
     /**
@@ -604,7 +604,7 @@ public class Model {
     }
 
     /**
-     * A File to hold all files which must be broadcasted to other pc
+     * A File to hold all files which must be broadcast to other pc
      */
     private void generateNestFile() {
         nestFile = new File(nestPath);
@@ -615,40 +615,6 @@ public class Model {
         nestFile = new File(nestPath);
         nestFile.mkdirs();
 
-
-        File dummy = new File(syncPath);
-//        File[] files = dummy.listFiles();
-//
-//        if (files != null) {
-//            for (int i = 0; i < files.length; i++) {
-//                boolean coppy = true;
-//
-//                if (addedFileNames != null)
-//                    for (int j = 0; j < addedFileNames.size(); j++)
-//                        if (files[i].getName().equals(addedFileNames.get(j))) {
-//                            coppy = false;
-//                            break;
-//                        }
-//
-//                if (loggedFileNames != null)
-//                    for (int j = 0; j < loggedFileNames.size(); j++)
-//                        if (files[i].getName().equals(loggedFileNames.get(j))) {
-//                            coppy = false;
-//                            break;
-//                        }
-//
-//                if (coppy) {
-//                    try {
-//                        pasteFile(files[i].getAbsolutePath(), nestPath + "\\" + files[i].getName());
-//                        System.out.println("from : " + files[i].getAbsolutePath() + " to : " + nestPath + "\\" + files[i].getName());
-//                    } catch (Exception e) {
-//                        JOptionPane.showInputDialog(null, "Unable to move files from sync path to nest Folder");
-//                    }
-//                }
-//
-//
-//            }
-//        }
 
         if (addedFileNames != null) {
             for (int i = 0; i < addedFileNames.size(); i++) {
@@ -683,12 +649,16 @@ public class Model {
 
     }
 
+    /**
+     * A Method to add a dummy file to all empty directories so the can be sent over socket
+     *
+     * @param directory
+     */
     private void preInit(File directory) {
         File[] F = directory.listFiles();
 
         if (F != null) {
             if (F.length == 0) {
-                //      JOptionPane.showMessageDialog(null,directory.getAbsolutePath());
                 File divert = new File(directory.getAbsolutePath() + "\\" + "divert");
                 try {
                     divert.createNewFile();
@@ -705,7 +675,7 @@ public class Model {
     }
 
     /**
-     * A Method to Synchronize
+     * A Method to Synchronize two computers
      */
     public void sync() {
         if (syncPath == null || !new File(syncPath).isDirectory()) {
@@ -717,7 +687,6 @@ public class Model {
 
         File F = new File(syncPath);
 
-        ///////////////////////////////////////////////////////////
         int port = 22000;
 
 
@@ -755,6 +724,9 @@ public class Model {
 
     }
 
+    /**
+     * This class handles sync operation in a new thread
+     */
     class TransferHandler extends Thread {
         private String host;
         private int port;
@@ -764,8 +736,15 @@ public class Model {
         private String syncPathLock;
         private File[] syncPathFileLock;
         private ArrayList<String> deletedFileLock;
-        ;
 
+        /**
+         * Constructor for this class
+         *
+         * @param host
+         * @param port
+         * @param syncFile
+         * @param writtenIn
+         */
         public TransferHandler(String host, int port, File syncFile, File writtenIn) {
             this.host = host;
             this.port = port;
@@ -777,6 +756,9 @@ public class Model {
 
         }
 
+        /**
+         * Remove all files already removed once in this pc before starting the sync operation
+         */
         private void removeFilesDeletedByThisOneFromSyncPath() {
             File[] F = new File(syncPathLock).listFiles();
 
@@ -790,6 +772,9 @@ public class Model {
 
         }
 
+        /**
+         * Run method of the thread
+         */
         @Override
         public void run() {
 
@@ -809,8 +794,7 @@ public class Model {
                 receiverClient.join();
                 postinit(new File(syncPathLock));
                 initializeWatching(new File(syncPath));
-                //    trim();
-                //    inflict(receiverClient.getDeletedFilesNames());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -818,20 +802,11 @@ public class Model {
 
         }
 
-        private void inflict(ArrayList<String> revise) {
-
-            if (revise != null && syncPathFileLock != null)
-                for (int i = 0; i < syncPathFileLock.length; i++)
-                    for (int j = 0; j < revise.size(); j++)
-                        if (syncPathFileLock[i].getName().equals(revise.get(j))) {
-                            deleteFile(syncPathFileLock[i]);
-                            break;
-                        }
-
-
-        }
-
-
+        /**
+         * Remove all dummy files added
+         *
+         * @param directory
+         */
         private void postinit(File directory) {
             File[] F = directory.listFiles();
 
