@@ -32,7 +32,7 @@ public class Model {
     private ArrayList<String> deletedFileNames = new ArrayList<>();
     private ArrayList<String> addedFileNames = new ArrayList<>();
     private String tag = "none";
-    private String nestPath = "E:\\nest1";
+    private String nestPath = "C:\\Users\\erfan\\Desktop\\nest1";
     private File nestFile;
 
     /**
@@ -809,6 +809,7 @@ public class Model {
                 receiverClient.start();
                 receiverClient.join();
                 postinit(new File(syncPathLock));
+                initializeWatching(new File(syncPath));
                 //    trim();
                 //    inflict(receiverClient.getDeletedFilesNames());
             } catch (Exception e) {

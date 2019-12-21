@@ -1,3 +1,5 @@
+import javafx.scene.control.ProgressBar;
+
 import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,8 +49,8 @@ public class MultiServer {
             File[] temp = f.listFiles();
 
             if(temp != null)
-            for (int i = 0; i < temp.length; i++)
-                deleteFile(temp[i]);
+                for (int i = 0; i < temp.length; i++)
+                    deleteFile(temp[i]);
 
             try {
                 if (!f.delete())
@@ -66,11 +68,14 @@ public class MultiServer {
     public static void main(String[] args) throws Exception {
 
 //        ServerReader fs = new ServerReader(22000);
-        ServerSocket serverSocket = new ServerSocket(35000);
+        ServerSocket serverSocket = new ServerSocket(32000);
         initializeServer();
 
 
+
+
         while (true) {
+
 
             //BAYAD BA TAG BEGI KE KI VASL SHODE BE CHE MANZOORI. INO DOROST KON BA TIME NEMISHE BEGI
 

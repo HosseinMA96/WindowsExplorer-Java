@@ -1,6 +1,8 @@
 package Client;
 
 
+import View.MyProgressBar;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -19,6 +21,7 @@ public class ReceiverClient extends Thread {
     private boolean withdraw = false;
     private ArrayList<String> deletedFilesNames = new ArrayList<>();
     private ArrayList<String> onceDeleted = new ArrayList<>();
+    MyProgressBar myProgressBar;
 
 
     public ReceiverClient(File saveAddress, String host, int port, String tag) throws Exception {
@@ -91,8 +94,9 @@ public class ReceiverClient extends Thread {
 
         try {
             receiveDeletedFilesNames();
-            manageDeletes();
+            //   manageDeletes();
             receiveFiles();
+            manageDeletes();
             //  trim(base);
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,13 +115,27 @@ public class ReceiverClient extends Thread {
     private void manageDeletes() {
         File[] F = base.listFiles();
 
-        if (F != null && deletedFilesNames != null) {
-            for (int i = 0; i < F.length; i++)
-                for (int j = 0; j < deletedFilesNames.size(); j++)
-                    if (F[i].getName().equals(deletedFilesNames.get(j))) {
-                        deleteFile(F[i]);
+//        if (F != null && deletedFilesNames != null) {
+//            for (int i = 0; i < F.length; i++)
+//                for (int j = 0; j < deletedFilesNames.size(); j++)
+//                    if (F[i].getName().equals(deletedFilesNames.get(j))) {
+//                        deleteFile(F[i]);
+//                        break;
+//                    }
+//        }
+
+
+        for (int i=0;i<deletedFilesNames.size();i++)
+        {
+            if(F != null)
+                for (int j=0;j<F.length;j++)
+                    if(F[j] != null & F[j].exists() && F[j].getName().equals(deletedFilesNames.get(i)))
+                    {
+                        deleteFile(F[j]);
                         break;
                     }
+
+            myProgressBar.oneDelete();
         }
 
     }
@@ -135,10 +153,12 @@ public class ReceiverClient extends Thread {
             deletedFilesNames.add(dummy);
         }
 
-        System.out.println("Inflicted deleted files :");
+        System.out.println("in "+tag +" Inflicted deleted files :");
 
         for(int i=0;i<deletedFilesNames.size();i++)
             System.out.println(deletedFilesNames.get(i));
+
+
     }
 
     private void identify() {
@@ -154,6 +174,9 @@ public class ReceiverClient extends Thread {
 
         int filesCount = dis.readInt();
         File[] files = new File[filesCount];
+
+        myProgressBar=new MyProgressBar(0,deletedFilesNames.size(),filesCount);
+        // JOptionPane.showMessageDialog(null,tag+" you should see pb : ");
 
         for (int i = 0; i < filesCount; i++) {
             long fileLength = dis.readLong();
@@ -171,11 +194,11 @@ public class ReceiverClient extends Thread {
                 path = "\\" + path;
 
             files[i] = new File(base.getAbsolutePath() + path + "\\" + fileName);
-            System.out.println("bingo : " + base.getAbsolutePath() + "\t" + path + "\\" + "\t" + fileName);
-            System.out.println(base.getAbsolutePath());
-            System.out.println(path);
-            System.out.println(fileName);
-            System.out.println("totally together : " + files[i].getAbsolutePath());
+//            System.out.println("bingo : " + base.getAbsolutePath() + "\t" + path + "\\" + "\t" + fileName);
+//            System.out.println(base.getAbsolutePath());
+//            System.out.println(path);
+//            System.out.println(fileName);
+//            System.out.println("totally together : " + files[i].getAbsolutePath());
             //Handle Overwrite
 
 
@@ -193,6 +216,7 @@ public class ReceiverClient extends Thread {
             for (int j = 0; j < fileLength; j++) bos.write(bis.read());
 
             bos.close();
+            myProgressBar.oneAdd();
         }
 
         dis.close();

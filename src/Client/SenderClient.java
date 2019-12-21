@@ -44,7 +44,7 @@ public class SenderClient extends Thread {
 
     @Override
     public void run() {
-       // preInit(base);
+        // preInit(base);
         initialize(base, "");
         System.out.println("OK LET's FIX THIS");
         for (int i=0;i<addedFiles.size();i++)
@@ -69,12 +69,12 @@ public class SenderClient extends Thread {
     private void broadcastDeletedFiles()
     {
         if(deletedFiles !=null)
-        for (int i=0;i<deletedFiles.size();i++)
-        {
-            bw.println(deletedFiles.get(i));
-            bw.flush();
-            System.out.println("in "+identity+" deleted file is : "+deletedFiles.get(i));
-        }
+            for (int i=0;i<deletedFiles.size();i++)
+            {
+                bw.println(deletedFiles.get(i));
+                bw.flush();
+                System.out.println("in "+identity+" deleted file is : "+deletedFiles.get(i));
+            }
 
         bw.println(":END");
         bw.flush();

@@ -5,12 +5,11 @@
 package APP;
 
 import Controller.Controller;
-import Memento.CareTaker;
 import Model.Model;
 import View.View;
-import com.sun.org.apache.xpath.internal.operations.Mod;
+import View.MyProgressBar;
 
-import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +33,37 @@ public class JFileManager {
         Controller controller = new Controller(model, view);
         controller.initController();
         initializeTray();
+
+//        MyProgressBar  myProgressBar=new MyProgressBar(0,10000,10000);
+//
+//        int u=0;
+//
+//        for (int i=0;i<10000;i++)
+//        {
+//            for (int j=0;j<1000000;j++)
+//            {
+//                u++;
+//                u/=2;
+//            }
+//
+//            myProgressBar.oneAdd();
+//        }
+//
+//
+//
+//        for (int i=0;i<10000;i++)
+//        {
+//            for (int j=0;j<1000000;j++)
+//            {
+//                u++;
+//                u/=2;
+//            };
+//
+//            myProgressBar.oneDelete();
+//        }
+//
+
+
 
 
     }

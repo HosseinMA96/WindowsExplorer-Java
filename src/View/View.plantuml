@@ -100,7 +100,7 @@ title __VIEW's Class Diagram__\n
 
   namespace  {
     namespace iew {
-      class View.ProgressBar {
+      class View.MyProgressBar {
           - bar : JProgressBar
           - done : int
           - frame : JFrame
