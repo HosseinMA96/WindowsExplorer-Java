@@ -160,8 +160,8 @@ public class Model {
 
         if (f.isFile()) {
             try {
-                if (!f.delete())
-                    JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 1);
+                f.delete();
+
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, "Error happened in deleting process", "Error", 1);
@@ -750,7 +750,7 @@ public class Model {
         receivedFileAddress = syncPath;
 
 
-        new TransferHandler(remoteComputerAddress, port, nestFile, syncFile, tag).start();
+        new TransferHandler(remoteComputerAddress, port, nestFile, syncFile).start();
 
 
     }
@@ -761,17 +761,16 @@ public class Model {
         private File synsFile, writtenIn;
         private SenderClient senderClient;
         private ReceiverClient receiverClient;
-        private String identity, syncPathLock;
+        private String syncPathLock;
         private File[] syncPathFileLock;
         private ArrayList<String> deletedFileLock;
         ;
 
-        public TransferHandler(String host, int port, File syncFile, File writtenIn, String identity) {
+        public TransferHandler(String host, int port, File syncFile, File writtenIn) {
             this.host = host;
             this.port = port;
             this.synsFile = syncFile;
             this.writtenIn = writtenIn;
-            this.identity = identity;
             syncPathLock = syncPath;
             deletedFileLock = deletedFileNames;
             syncPathFileLock = new File(syncPathLock).listFiles();
@@ -795,14 +794,14 @@ public class Model {
         public void run() {
 
             removeFilesDeletedByThisOneFromSyncPath();
-            senderClient = new SenderClient(host, port, synsFile, deletedFileNames);
+            senderClient = new SenderClient(host, port, synsFile, deletedFileNames, tag);
             senderClient.start();
 
 
             try {
                 senderClient.join();
 
-                if (identity.equals("none"))
+                if (tag.equals("none"))
                     tag = senderClient.getIdentity();
 
                 receiverClient = new ReceiverClient(writtenIn, host, port, tag);

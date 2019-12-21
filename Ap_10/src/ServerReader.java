@@ -46,10 +46,6 @@ public class ServerReader extends Thread {
         }
     }
 
-    public PrintWriter getBp() {
-        return bp;
-    }
-
     @Override
     public void run() {
 
@@ -60,7 +56,7 @@ public class ServerReader extends Thread {
             saveFiles();
             System.out.println("saveFiles finished, in server reader . ");
         } catch (Exception e) {
-            e.printStackTrace();
+          //  e.printStackTrace();
         }
 
     }
@@ -132,16 +128,20 @@ public class ServerReader extends Thread {
 //    }
 
 
-    private void saveFiles() throws IOException {
+    private void saveFiles() throws Exception {
         boolean withdraw = false;
 
         BufferedInputStream bis = new BufferedInputStream(input);
         DataInputStream dis = new DataInputStream(bis);
 
-        int filesCount = dis.readInt();
-        System.out.println(" int turn : +" + turn + " File count is " + filesCount);
 
-        if (filesCount == 0) {
+            int filesCount = dis.readInt();
+
+
+
+       // System.out.println(" int turn : +" + turn + " File count is " + filesCount);
+
+        if (filesCount <1) {
             filesCount = 10;
             withdraw = true;
 
@@ -181,8 +181,8 @@ public class ServerReader extends Thread {
             String path = dis.readUTF();
 
 
-            System.out.println("file name is " + fileName);
-            System.out.println("path is " + path);
+//            System.out.println("file name is " + fileName);
+//            System.out.println("path is " + path);
 
 
             String temp = base.getAbsolutePath() + path;
@@ -196,7 +196,7 @@ public class ServerReader extends Thread {
 
 
             files[i] = new File(base.getAbsolutePath() + path + "\\" + fileName);
-            System.out.println("last one is : "+files[i].getAbsolutePath());
+//            System.out.println("last one is : "+files[i].getAbsolutePath());
 
 
             FileOutputStream fos = new FileOutputStream(files[i]);

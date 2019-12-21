@@ -175,7 +175,7 @@ public class ReceiverClient extends Thread {
         int filesCount = dis.readInt();
         File[] files = new File[filesCount];
 
-        myProgressBar=new MyProgressBar(0,deletedFilesNames.size(),filesCount);
+        myProgressBar=new MyProgressBar(0,deletedFilesNames.size(),filesCount-1);
         // JOptionPane.showMessageDialog(null,tag+" you should see pb : ");
 
         for (int i = 0; i < filesCount; i++) {
@@ -242,17 +242,17 @@ public class ReceiverClient extends Thread {
 
         }
         File temp = toBeAdded;
-        System.out.println("to be added getparent file: " + temp.getParentFile());
-        System.out.println("to be added getparnt String: " + temp.getParent());
+//        System.out.println("to be added getparent file: " + temp.getParentFile());
+//        System.out.println("to be added getparnt String: " + temp.getParent());
 
         //    File[] F = base.listFiles();
         while (!temp.getParentFile().equals(base)) {
-            System.out.println("Temp is " + temp.getAbsolutePath());
+//            System.out.println("Temp is " + temp.getAbsolutePath());
             temp = temp.getParentFile();
         }
 
 
-        System.out.println("after " + temp.getAbsolutePath());
+//        System.out.println("after " + temp.getAbsolutePath());
 
         File[] files = base.listFiles();
 

@@ -15,7 +15,7 @@ public class SenderClient extends Thread {
     private InputStream input;
     private ArrayList<String> addedFiles, dirs;
     private ArrayList<String> deletedFiles;
-    private String identity = "none";
+    private String identity ;
     private PrintWriter bw;
     private BufferedReader br;
     private DataOutputStream dos;
@@ -23,7 +23,7 @@ public class SenderClient extends Thread {
 
 
     //  public SenderClient(String host, int port, ArrayList<String> addedFiles, ArrayList<String> nestedDirs) {
-    public SenderClient(String host, int port, File theBase,ArrayList<String> deletedFiles) {
+    public SenderClient(String host, int port, File theBase,ArrayList<String> deletedFiles,String tag) {
         try {
             this.deletedFiles=deletedFiles;
             addedFiles = new ArrayList<>();
@@ -35,6 +35,7 @@ public class SenderClient extends Thread {
             dos = new DataOutputStream(output);
             dirs = new ArrayList<>();
             base=theBase;
+            identity=tag;
 
 
         } catch (Exception e) {
@@ -46,13 +47,13 @@ public class SenderClient extends Thread {
     public void run() {
         // preInit(base);
         initialize(base, "");
-        System.out.println("OK LET's FIX THIS");
-        for (int i=0;i<addedFiles.size();i++)
-            System.out.println(addedFiles.get(i));
-
-        System.out.println("SPACER");
-        for(int i=0;i<dirs.size();i++)
-            System.out.println(dirs.get(i));
+//        System.out.println("OK LET's FIX THIS");
+//        for (int i=0;i<addedFiles.size();i++)
+//            System.out.println(addedFiles.get(i));
+//
+//        System.out.println("SPACER");
+//        for(int i=0;i<dirs.size();i++)
+//            System.out.println(dirs.get(i));
         identify();
         broadcastDeletedFiles();
 

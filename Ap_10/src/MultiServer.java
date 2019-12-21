@@ -28,6 +28,7 @@ public class MultiServer {
         base = new File("E:\\JFileManagerItems");
         base.mkdirs();
 
+
         //    JOptionPane.showMessageDialog(null,"times in E del");
 
         //     System.out.println("make " + base.mkdir());
@@ -37,8 +38,9 @@ public class MultiServer {
 
         if (f.isFile()) {
             try {
-                if (!f.delete())
-                    JOptionPane.showMessageDialog(null, "Unable to delete", "Error", 1);
+                f.delete();
+
+
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, "Error happened in deleting process", "Error", 1);
@@ -68,7 +70,7 @@ public class MultiServer {
     public static void main(String[] args) throws Exception {
 
 //        ServerReader fs = new ServerReader(22000);
-        ServerSocket serverSocket = new ServerSocket(32000);
+        ServerSocket serverSocket = new ServerSocket(30000);
         initializeServer();
 
 
@@ -119,6 +121,13 @@ public class MultiServer {
             serverWriter1.start();
 
 
+            serverWriter1.join();
+            serverWriter2.join();
+
+            initializeServer();
+
+
+
             System.out.println("Both writers started");
 
 
@@ -161,8 +170,8 @@ public class MultiServer {
         if (files != null)
             for (int i = 0; i < files.length; i++) {
                 try {
-                    System.out.println("base absolote " + base.getAbsolutePath());
-                    System.out.println("file path " + files[i].getAbsolutePath());
+//                    System.out.println("base absolote " + base.getAbsolutePath());
+//                    System.out.println("file path " + files[i].getAbsolutePath());
                     pasteFile(files[i].getAbsolutePath(), base.getAbsolutePath() + "\\" + files[i].getName());
 
                     for (int j = 0; j < secondDeleted.size(); j++)
@@ -249,6 +258,20 @@ public class MultiServer {
         }
 
 
+    }
+
+
+    private static void deleteTemps()
+    {
+
+        File temp1=new File("E:\\temp1");
+        File temp2=new File("E:\\temp2");
+
+        if(temp1.exists())
+            deleteFile(temp1);
+
+        if(temp2.exists())
+            deleteFile(temp2);
     }
 
 }
