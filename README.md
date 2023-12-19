@@ -1,6 +1,6 @@
 # WindowsExplorer-Java
-A windows explorer by Java
-This my midterm project for my advanced programming/Java course. It is a simple program that mimics windows file explorer. It also has capablities to synchronize two directories on windows so that after synchronization is initiated, all changes 
-in one directory is also reflected in the other (ie. file is added or deleted).
-Don't forget to change all directories which I have specified in my model class so that they reflect directories on your system. For example, directories for saving settings and etc.
+A Windows Explorer by Java
+This is my midterm project for my advanced programming/Java course. It mimics Windows File Explorer. It also has capabilities to synchronize two directories on Windows so that after synchronization is initiated, all changes 
+in one directory are also reflected in the other (ie. file is added or deleted).
+Don't forget to change all directories that I have specified in my model class so that they reflect directories on your system. For example, directories for saving settings, etc.
 
